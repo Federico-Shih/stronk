@@ -6,6 +6,7 @@ import router from './router'
 
 import './assets/main.css'
 import vuetify from './plugins/vuetify'
+import '@babel/polyfill'
 
 Vue.use(PiniaVuePlugin)
 

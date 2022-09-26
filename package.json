@@ -8,6 +8,7 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
     "pinia": "^2.0.16",
     "vue": "^2.7.10",
     "vue-router": "^3.5.4",
