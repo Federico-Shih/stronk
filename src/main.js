@@ -1,18 +1,19 @@
-import Vue from 'vue'
-import { createPinia, PiniaVuePlugin } from 'pinia'
+import Vue from "vue";
+import { createPinia, PiniaVuePlugin } from "pinia";
+import "material-design-icons-iconfont/dist/material-design-icons.css";
 
-import App from './App.vue'
-import router from './router'
+import App from "./App.vue";
+import router from "./router";
 
-import './assets/main.css'
-import vuetify from './plugins/vuetify'
-import '@babel/polyfill'
+import "./assets/main.css";
+import vuetify from "./plugins/vuetify";
+import "@babel/polyfill";
 
-Vue.use(PiniaVuePlugin)
+Vue.use(PiniaVuePlugin);
 
 new Vue({
   router,
   pinia: createPinia(),
   vuetify,
-  render: (h) => h(App)
-}).$mount('#app')
+  render: (h) => h(App),
+}).$mount("#app");

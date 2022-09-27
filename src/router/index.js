@@ -17,13 +17,26 @@ const router = new VueRouter({
       path: "/home",
       name: "home",
       component: () => import("../views/HomePage.vue"),
-      children: [
-        {
-          path: "explore",
-          name: "explore",
-          component: () => import("../views/ExplorePage.vue"),
-        },
-      ],
+    },
+    {
+      path: "explore",
+      name: "explore",
+      component: () => import("../views/ExplorePage.vue"),
+    },
+    {
+      path: "/community",
+      name: "community",
+      component: () => import("../views/CommunityPage.vue"),
+    },
+    {
+      path: "/profile",
+      name: "profile",
+      component: () => import("../views/ProfilePage.vue"),
+    },
+    {
+      path: "/exercises",
+      name: "exercises",
+      component: () => import("../views/ExercisePage.vue"),
     },
   ],
 });
