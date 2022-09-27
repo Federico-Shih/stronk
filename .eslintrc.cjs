@@ -7,5 +7,8 @@ module.exports = {
     "plugin:vue/essential",
     "eslint:recommended",
     "@vue/eslint-config-prettier"
-  ]
+  ],
+  "rules": {
+    "linebreak-style": 0
+  }
 }
