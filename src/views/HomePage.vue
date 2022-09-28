@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-main>
     <div>
       <h1 class="page-title">¡Bienvenido a Stronk!</h1>
     </div>
@@ -8,7 +8,7 @@
       <RoutineSlideGroup title="Mis rutinas" size-variant="long" :routines="routines"/>
       <RoutineSlideGroup title="Rutinas más populares" size-variant="long" :routines="routines"/>
     </div>
-  </div>
+  </v-main>
 </template>
 
 <script>
@@ -50,6 +50,6 @@ export default {
 
 <style>
 .page-title {
-  margin: 1em 1em;
+  margin: 0 1em;
 }
 </style>
