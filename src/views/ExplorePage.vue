@@ -2,13 +2,7 @@
     <v-main>
       <div class="page-title">
           <h1 class="mb-1">Explorar Nuevas Rutinas</h1>
-          <v-text-field
-              label="Busca una rutina en particular..."
-              outlined
-              class="rounded-lg"
-              prepend-inner-icon="mdi-magnify"
-          >
-          </v-text-field>
+          <search-bar title="Busca una rutina en particular..."></search-bar>
         </div>
       <div class="">
        <RoutineSlideGroup title="Rutinas Populares" size-variant="large" :routines="routines" />
@@ -26,9 +20,11 @@
 
 <script>
 import RoutineSlideGroup from "../components/RoutineSlideGroup.vue";
+import SearchBar from "../components/SearchBar.vue";
 export default {
   components: {
-    RoutineSlideGroup
+    RoutineSlideGroup,
+    SearchBar
   },
   computed:{
     theme(){
