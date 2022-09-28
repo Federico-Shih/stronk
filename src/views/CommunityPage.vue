@@ -9,11 +9,12 @@
         <CommunityProfileButton variant="large" display-name="Arnold Schwarzenegger" description="Body Builder" profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" />
         <CommunityProfileButton variant="large" display-name="Arnold Schwarzenegger" description="Body Builder" profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" />
       </v-col>
+      <v-spacer></v-spacer>
       <v-divider
           vertical
       ></v-divider>
-      <v-col class="ml-8">
-          <h2>Recomendados</h2>
+      <v-col class="mr-16 alignmentToTheRight">
+          <h2 class="align-self-start">Recomendados</h2>
           <CommunityProfileButton variant="small" display-name="Arnold Schwarzenegger" :profile-pic="Abdos" />
           <CommunityProfileButton variant="small" display-name="Arnold Schwarzenegger" profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" />
           <CommunityProfileButton variant="small" display-name="Arnold Schwarzenegger" profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" />
@@ -42,3 +43,11 @@ export default {
   },
 };
 </script>
+
+<style>
+  .alignmentToTheRight {
+    align-items: end;
+    display: flex;
+    flex-direction: column;
+  }
+</style>

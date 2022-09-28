@@ -10,7 +10,13 @@
     <v-list-item>
       <v-list-item-content>
         <div class="d-flex flex-row">
-          <img :src="this.picture" :alt="this.picture" width="150px" height="55px" class="mr-4"/>
+          <img
+            :src="this.picture"
+            :alt="this.picture"
+            width="150px"
+            height="55px"
+            class="mr-4"
+          />
           <div>
             <v-list-item-title class="font-weight-bold">
               {{ this.exerciseName }}
@@ -18,6 +24,10 @@
             <v-list-item-subtitle>
               {{ this.category }}
             </v-list-item-subtitle>
+          </div>
+          <v-spacer></v-spacer>
+          <div class="alignmentToTheRight">
+            <v-icon>mdi-dots-vertical</v-icon>
           </div>
         </div>
       </v-list-item-content>
@@ -73,5 +83,11 @@ export default {
 }
 .community-profile-font-small{
   font-size: 1.2em;
+}
+
+.alignmentToTheRight {
+  align-items: end;
+  display: flex;
+  flex-direction: column;
 }
 </style>
