@@ -13,7 +13,7 @@ export default {
 </script>
 
 <template>
-  <v-container>
+  <div>
     <div class="text-center">
       <h1>¡Conviertete en tu mejor versión!</h1>
       <p class="align-center">
@@ -30,7 +30,7 @@ export default {
     <div class="text-center mt-10">
       <h2>Rutinas Recomendadas</h2>
     </div>
-    <v-carousel height="400">
+    <v-carousel>
       <v-carousel-item
         v-for="(mysource, i) in sources"
         :key="i"
@@ -38,5 +38,5 @@ export default {
       >
       </v-carousel-item>
     </v-carousel>
-  </v-container>
+  </div>
 </template>
