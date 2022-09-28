@@ -37,7 +37,7 @@ export default {
 </script>
 
 <template>
-  <v-app-bar app color="primary">
+  <v-app-bar app color="primary" :style="{ height: '11%'}">
     <router-link to="/">
       <v-img max-width="100" :src="logo" />
     </router-link>

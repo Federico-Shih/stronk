@@ -1,13 +1,15 @@
 <template>
-  <div class="mt-2">
+  <div class="mt-2" :style="{ backgroundColor: 'lightGray', width: '100%', height: '100%' }">
     <h1 class="ml-10">Mis Rutinas</h1>
     <!-- cómo hago para que el div ocupe el espacio disponible?-->
-    <v-container :style="{ backgroundColor: 'gray' }" class="mt-8">
+    <v-container
+      class="mt-8 ps-4 colorViewer"
+    >
       <v-row>
         <h2>Rutinas que has creado</h2>
       </v-row>
 
-      <v-row>
+      <v-row class="alignedToCenter">
         <!-- Cómo hacerlo con v-for y counter-->
         <v-col v-for="(atr, index) in this.buttonAtributesOwn" :key="index">
           <RoutineButton
@@ -23,11 +25,13 @@
       </div>
     </v-container>
 
-    <v-container :style="{ backgroundColor: 'lightGray' }" class="mt-14">
+    <v-container
+      class="mt-14 mb-8 ps-4 colorViewer"
+    >
       <v-row>
         <h2>Rutinas Favoritas</h2>
       </v-row>
-      <v-row dense>
+      <v-row dense class="alignedToCenter">
         <v-col v-for="(atr, index) in this.buttonAtributesFav" :key="index">
           <div class="text-center align-center">
             <RoutineButton
@@ -77,4 +81,18 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.alignedToCenter {
+  align-items: center;
+  flex-direction: row;
+  width: 100vw;
+  display: flex;
+  /*<!-- también se podía usar padding-->*/
+}
+
+.colorViewer {
+  background-color: darkgray;
+  width: 100%;
+}
+</style>
