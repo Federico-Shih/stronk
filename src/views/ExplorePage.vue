@@ -1,5 +1,4 @@
 <template>
-  <v-app>
     <v-main class="grey lighten-2">
         <div  class="pl-8 mr-8">
           <h1>Explorar Nuevas Rutinas</h1>
@@ -45,7 +44,6 @@
         </v-row>
       </div>
     </v-main>
-  </v-app>
 </template>
 
 
