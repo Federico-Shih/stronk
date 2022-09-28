@@ -19,7 +19,7 @@ const router = new VueRouter({
       component: () => import("../views/HomePage.vue"),
     },
     {
-      path: "explore",
+      path: "/explore",
       name: "explore",
       component: () => import("../views/ExplorePage.vue"),
     },
