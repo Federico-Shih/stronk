@@ -29,6 +29,11 @@ const router = new VueRouter({
       component: () => import("../views/CommunityPage.vue"),
     },
     {
+      path: "/misRutinas",
+      name: "misRutinas",
+      component: () => import("../views/MisRutinas.vue"),
+    },
+    {
       path: "/profile",
       name: "profile",
       component: () => import("../views/ProfilePage.vue"),

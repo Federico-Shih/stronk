@@ -38,7 +38,9 @@ export default {
 
 <template>
   <v-app-bar app color="primary">
-    <v-img max-width="100" :src="logo" />
+    <router-link to="/">
+      <v-img max-width="100" :src="logo" />
+    </router-link>
     <router-link
       class="black--text ml-16 mt-2"
       v-for="link in ownedLinks"
