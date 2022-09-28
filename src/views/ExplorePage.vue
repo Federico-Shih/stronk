@@ -3,7 +3,7 @@
     <v-main class="grey lighten-2">
         <div  class="pl-8 mr-8">
           <h1>Explorar Nuevas Rutinas</h1>
-          <v-text-field placeholder="Busca una rutina en particular..." append-icon="" background-color="#D1d0d6"></v-text-field>
+          <v-text-field placeholder="Busca una rutina en particular..." append-icon="" background-color="#D1d0d6"  outlined class="rounded-lg"></v-text-field>
         </div>
       <div class="pl-8 mr-8">
        <v-carousel>
