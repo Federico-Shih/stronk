@@ -1,7 +1,7 @@
 <template>
   <v-card
     shaped
-    class="community-profile-long align-end flex flex-row"
+    class="community-profile-long align-end flex flex-row pt-2"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
     :elevation="hover ? 5 : 2"
@@ -13,8 +13,8 @@
           <img
             :src="this.picture"
             :alt="this.picture"
-            width="150px"
-            height="55px"
+            width="170px"
+            height="65px"
             class="mr-4"
           />
           <div>
@@ -75,8 +75,7 @@ export default {
 .community-profile-button-small{
   width: 400px;
   height: 75px;
-  margin:10px 5px;
-
+  margin: 10px 5px;
 }
 .community-profile-font-large{
   font-size: 1.8em;

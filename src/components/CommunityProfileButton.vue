@@ -1,5 +1,5 @@
 <template>
-  <v-card shaped elevation="2" class="community-profile-long align-end"
+  <v-card shaped class="community-profile-long align-end"
           @mouseenter="hover = true"
           @mouseleave="hover = false"
           :elevation="hover ? 5 : 2"
