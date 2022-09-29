@@ -1,15 +1,16 @@
 <template>
   <v-app class="app">
-    <NavBar/>
+    <NavBar />
     <v-main class="main">
-      <router-view/>
+      <router-view />
     </v-main>
+    <AuthPopup />
   </v-app>
 </template>
 
 <script>
-import RoutineButton from "./components/RoutineButton.vue";
 import NavBar from "./components/NavBar.vue";
+import AuthPopup from "./components/AuthPopup.vue";
 
 export default {
   name: "App",
@@ -18,9 +19,9 @@ export default {
     //
   }),
   components: {
-    RoutineButton,
+    AuthPopup,
     NavBar,
-  }
+  },
 };
 </script>
 

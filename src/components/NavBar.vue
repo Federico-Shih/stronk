@@ -1,8 +1,10 @@
 <script>
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "../stores/profile";
+import AuthPopup from "./AuthPopup.vue";
 import logotype from "../assets/logotipo.png";
 import temp from "../assets/cristiano.png";
+import { usePopupStore } from "../stores/auth";
 
 export default {
   name: "NavBar",
@@ -31,13 +33,20 @@ export default {
         { label: "Cerrar sesión", link: "" },
       ],
       temp,
+      expanded: false,
     };
+  },
+  methods: {
+    setExpanded(value) {
+      this.expanded = value;
+    },
+    ...mapActions(usePopupStore, ["showPopup"]),
   },
 };
 </script>
 
 <template>
-  <v-app-bar app color="primary" :style="{ height: '11%'}">
+  <v-app-bar app color="primary">
     <router-link to="/">
       <v-img max-width="100" :src="logo" />
     </router-link>
@@ -50,12 +59,20 @@ export default {
     >
     <v-spacer></v-spacer>
     <div v-if="!this.hasProfile">
-      <v-btn class="mx-5" elevation="1" color="accent">Registrarse</v-btn>
-      <v-btn elevation="1">Iniciar sesión</v-btn>
+      <v-btn
+        class="mx-5"
+        elevation="1"
+        color="accent"
+        @click="showPopup('/', 'register')"
+        >Registrarse</v-btn
+      >
+      <v-btn elevation="1" @click="showPopup('/', 'login')"
+        >Iniciar sesión</v-btn
+      >
     </div>
-    <div v-if="this.hasProfile">
+    <div v-else>
       <div class="text-center">
-        <v-menu offset-y>
+        <v-menu offset-y :value="expanded" :close-on-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               tile
@@ -65,10 +82,13 @@ export default {
               dark
               v-bind="attrs"
               v-on="on"
+              @click="setExpanded(!expanded)"
             >
               Bienvenido, Cristiano
               <v-img class="ml-2" :src="temp" max-width="30" />
-              <v-icon class="text--black" left> mdi-chevron-down </v-icon>
+              <v-icon class="text--black ml-3">
+                {{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
+              </v-icon>
             </v-btn>
           </template>
           <v-list>
