@@ -29,7 +29,9 @@ export default {
       ],
       dropdownItems: [
         { label: "Configuración de cuenta", link: "" },
+        { divider: true },
         { label: "Cambiar Idioma", link: "" },
+        { divider: true },
         { label: "Cerrar sesión", link: "" },
       ],
       temp,
@@ -51,11 +53,12 @@ export default {
       <v-img max-width="100" :src="logo" />
     </router-link>
     <router-link
-      class="black--text ml-16 mt-2"
-      v-for="link in ownedLinks"
-      :key="link.link"
-      :to="link.link"
-      >{{ link.label }}</router-link
+      v-for="{ link, label } in ownedLinks"
+      :key="link"
+      :to="link"
+      class="black--text ml-16 mt-2 text-decoration-none"
+      active-class="active"
+      >{{ label }}</router-link
     >
     <v-spacer></v-spacer>
     <div v-if="!this.hasProfile">
@@ -72,14 +75,18 @@ export default {
     </div>
     <div v-else>
       <div class="text-center">
-        <v-menu offset-y :value="expanded" :close-on-click="false">
+        <v-menu
+          :close-on-content-click="false"
+          offset-y
+          :value="expanded"
+          :close-on-click="false"
+        >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               tile
               rounded
               class="py-6"
-              color="secondary"
-              dark
+              :dark="!expanded"
               v-bind="attrs"
               v-on="on"
               @click="setExpanded(!expanded)"
@@ -91,17 +98,27 @@ export default {
               </v-icon>
             </v-btn>
           </template>
-          <v-list>
-            <v-list-item v-for="(item, index) in dropdownItems" :key="index">
-              <router-link :to="item.link"
-                ><v-list-item-title>{{
-                  item.label
-                }}</v-list-item-title></router-link
-              >
-            </v-list-item>
+          <v-list dense>
+            <template v-for="(item, index) in dropdownItems">
+              <v-divider v-if="item.divider" :key="index"> </v-divider>
+              <v-list-item :light="true" v-else :key="index">
+                <router-link
+                  style="width: 100%; height: 100%"
+                  :to="item.link"
+                  class="text-decoration-none"
+                  >{{ item.label }}</router-link
+                >
+              </v-list-item>
+            </template>
           </v-list>
         </v-menu>
       </div>
     </div>
   </v-app-bar>
 </template>
+
+<style>
+.active {
+  font-weight: bolder;
+}
+</style>
