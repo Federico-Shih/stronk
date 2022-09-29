@@ -40,7 +40,7 @@ export default {
       <h2>Rutinas Recomendadas</h2>
     </div>
     <div class="justify-center flex" :style="{ width: '80%' }">
-      <v-carousel delimiter-icon="mdi-minus">
+      <v-carousel delimiter-icon="mdi-plus">
         <v-carousel-item
           v-for="(mysource, i) in this.exerciseImages"
           :key="i"

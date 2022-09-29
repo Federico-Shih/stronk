@@ -1,12 +1,15 @@
 <template>
-  <v-slide-group>
-    <v-slide-item
-        v-for="n in 15"
-        :key="n"
-    >
-      <RoutineButton variant="small" title="Abdominales en 15 minutos!" image="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"/>
-    </v-slide-item>
-  </v-slide-group>
+  <div class="routine-slide-group-container" :style="{ background: $vuetify.theme.themes[theme].contback }">
+    <h2 class="routine-slide-group-title">{{title}}</h2>
+    <v-slide-group show-arrows="always">
+      <v-slide-item
+          v-for="(routine, idx) in routines"
+          :key="idx"
+      >
+        <RoutineButton :variant="sizeVariant" :title="routine.title" :image="routine.image"/>
+      </v-slide-item>
+    </v-slide-group>
+  </div>
 </template>
 
 <script>
@@ -16,10 +19,26 @@ export default {
   name: "RoutineSlideGroup.vue",
   components: {
     RoutineButton
+  },
+  computed:{
+    theme(){
+      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+    }
+  },
+  props: {
+    title: String,
+    routines: Array,
+    sizeVariant: String,
   }
 }
 </script>
 
 <style scoped>
-
+.routine-slide-group-title {
+  margin-left: 2.5em;
+}
+.routine-slide-group-container {
+  margin: 1em 0;
+  padding-top: 0.5em;
+}
 </style>

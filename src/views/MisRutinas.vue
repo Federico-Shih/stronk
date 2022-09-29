@@ -9,7 +9,7 @@
         <h2>Rutinas que has creado</h2>
       </v-row>
 
-      <v-row class="alignedToCenter">
+      <v-row class="alignedToCenter" >
         <!-- Cómo hacerlo con v-for y counter-->
         <v-col v-for="(atr, index) in this.buttonAtributesOwn" :key="index">
           <RoutineButton
@@ -21,7 +21,8 @@
       </v-row>
 
       <div class="text-center justify-center">
-        <v-btn color="primary" @click="increseCounter()"> Ver más</v-btn>
+       <!-- <v-btn color="primary" @click="increseCounter()"> Ver más</v-btn> -->
+        <v-icon>mdi-chevron-down</v-icon>
       </div>
     </v-container>
 
@@ -79,6 +80,11 @@ export default {
   },
   computed: {},
 };
+/* podemos hacer una método computed el cual haga un splice desde
+* donde queramos de un array hasta counter*3 por ejemplo, el v-for haría
+* items in métodoComputed*/
+
+/* flex-grow y width: 33%*/
 </script>
 
 <style scoped>

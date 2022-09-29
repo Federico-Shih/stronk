@@ -29,8 +29,8 @@ const router = new VueRouter({
       component: () => import("../views/CommunityPage.vue"),
     },
     {
-      path: "/misRutinas",
-      name: "misRutinas",
+      path: "/routines",
+      name: "routines",
       component: () => import("../views/MisRutinas.vue"),
     },
     {

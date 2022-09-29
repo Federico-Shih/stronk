@@ -10,12 +10,9 @@
         <v-card-title :class="variants.fontSizes[variant]">{{displayName}}</v-card-title>
         <v-card-subtitle v-show="variant==='large'"> {{description}}</v-card-subtitle>
       </div>
+      <v-icon right large class="ml-auto">mdi-chevron-right</v-icon>
     </v-list-item>
-    <v-card-actions>
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-    </v-card-actions>
+
   </v-card>
 </template>
 
@@ -54,12 +51,12 @@ export default {
 <style scoped>
 
 .community-profile-button-large{
-  width: 450px;
+  width: 550px;
   height: 100px;
   margin: 10px 5px;
 }
 .community-profile-button-small{
-  width: 300px;
+  width: 400px;
   height: 75px;
   margin:10px 5px;
 
