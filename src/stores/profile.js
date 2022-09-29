@@ -9,6 +9,9 @@ export const useProfileStore = defineStore({
     setProfile(profile) {
       this.profile = profile;
     },
+    logout() {
+      this.profile = {};
+    },
   },
   getters: {
     hasProfile() {

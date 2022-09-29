@@ -60,7 +60,9 @@ export default {
       this.$refs.form.validate();
       if (this.valid) {
         this.setProfile({ username: this.username, email: this.email });
-        this.$router.push(this.onAuthRoute);
+        if (this.onAuthRoute !== this.$route.path) {
+          this.$router.push(this.onAuthRoute);
+        }
         this.hidePopup();
       }
     },
@@ -70,7 +72,7 @@ export default {
 
 <template>
   <v-overlay :value="this.show">
-    <v-card class="pa-10 card-anim" min-width="500px">
+    <v-card class="pa-8 card-anim" min-width="500px">
       <v-btn
         style="position: absolute; right: 0; top: 0; z-index: 1000"
         class="ma-5"
@@ -78,7 +80,7 @@ export default {
         @click="hidePopup"
         ><v-icon>mdi-close</v-icon></v-btn
       >
-      <v-row style="position: relative">
+      <v-row style="position: relative" class="mb-5">
         <v-fade-transition hide-on-leave group>
           <v-col :key="1" v-if="isRegister" class="text-lg-center text-h5"
             >Registrarse</v-col

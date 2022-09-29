@@ -34,6 +34,11 @@ const router = new VueRouter({
       component: () => import("../views/MisRutinas.vue"),
     },
     {
+      path: "/routines/:id",
+      name: "routine",
+      component: () => import("../views/RoutinePage.vue"),
+    },
+    {
       path: "/profile",
       name: "profile",
       component: () => import("../views/ProfilePage.vue"),

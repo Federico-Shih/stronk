@@ -28,11 +28,17 @@ export default {
         { label: "Mi perfil", link: "/profile", protected: true },
       ],
       dropdownItems: [
-        { label: "Configuración de cuenta", link: "" },
+        { label: "Configuración de cuenta", link: "", click: () => {} },
         { divider: true },
-        { label: "Cambiar Idioma", link: "" },
+        { label: "Cambiar Idioma", link: "", click: () => {} },
         { divider: true },
-        { label: "Cerrar sesión", link: "" },
+        {
+          label: "Cerrar sesión",
+          link: "",
+          click: () => {
+            this.logout();
+          },
+        },
       ],
       temp,
       expanded: false,
@@ -43,6 +49,14 @@ export default {
       this.expanded = value;
     },
     ...mapActions(usePopupStore, ["showPopup"]),
+    ...mapActions(useProfileStore, ["logout"]),
+  },
+  watch: {
+    hasProfile(curr) {
+      if (curr) {
+        this.expanded = false;
+      }
+    },
   },
 };
 </script>
@@ -102,11 +116,15 @@ export default {
             <template v-for="(item, index) in dropdownItems">
               <v-divider v-if="item.divider" :key="index"> </v-divider>
               <v-list-item :light="true" v-else :key="index">
-                <router-link
+                <v-btn
                   style="width: 100%; height: 100%"
                   :to="item.link"
-                  class="text-decoration-none"
-                  >{{ item.label }}</router-link
+                  text
+                  @click="item.click"
+                  class="text-decoration-none text-left"
+                  ><div style="width: 100%; text-align: start">
+                    {{ item.label }}
+                  </div></v-btn
                 >
               </v-list-item>
             </template>
