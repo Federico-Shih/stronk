@@ -28,7 +28,6 @@ export default {
 .main {
   width: 100vw;
 }
-
 .app {
   position: absolute;
   left: 0;
