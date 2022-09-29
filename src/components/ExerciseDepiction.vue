@@ -6,6 +6,7 @@
     @mouseleave="hover = false"
     :elevation="hover ? 5 : 2"
     :class="variants.boxSizes[variant]"
+    :style="{ height: '100px'}"
   >
     <v-list-item>
       <v-list-item-content>

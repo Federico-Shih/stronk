@@ -3,24 +3,32 @@
     <v-row class="ml-8 d-flex flex-row justify-space-between">
       <v-col class="mr-16">
         <h1>Todos los Ejercicios</h1>
-        <search-bar title="Busca una rutina en particular..."></search-bar>
-        <ExerciseDepiction
-          variant="large"
-          :picture="abdominales"
-          exercise-name="Short Abs"
-          category="Abdominales"
-        />
+        <div class="d-flex flex-row">
+          <search-bar title="Busca una rutina en particular..."></search-bar>
+          <v-icon class="ml-6 mb-8">mdi-filter</v-icon>
+        </div>
+        <div v-for="i in 7" :key="i">
+          <ExerciseDepiction
+            variant="large"
+            :picture="abdominales"
+            exercise-name="Short Abs"
+            category="Abdominales"
+            class="mt-0"
+          />
+        </div>
       </v-col>
       <v-spacer></v-spacer>
       <v-divider vertical></v-divider>
-      <v-col class="mr-16 alignmentToTheRight">
-        <h2 class="align-self-start mb-2">Mis Ejercicios</h2>
-        <ExerciseDepiction
-          variant="small"
-          :picture="abdominales"
-          exercise-name="Short Abs"
-          category="Abdominales"
-        />
+      <v-col class="mr-16 alignmentToTheRight" :style="{ height: '10px' }">
+        <h2 class="align-self-start mb-2 mt-2">Mis Ejercicios</h2>
+        <div v-for="n in 7" :key="n">
+          <ExerciseDepiction
+            variant="small"
+            :picture="abdominales"
+            exercise-name="Short Abs"
+            category="Abdominales"
+          />
+        </div>
       </v-col>
     </v-row>
   </v-main>
