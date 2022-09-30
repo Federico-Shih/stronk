@@ -1,34 +1,40 @@
 <template>
-  <div class="mt-2" :style="{ backgroundColor: 'lightGray', width: '100%', height: '100%' }">
+  <div class="mt-2" :style="{ width: '100%', height: '100%' }">
     <h1 class="ml-10">Mis Rutinas</h1>
     <!-- cómo hago para que el div ocupe el espacio disponible?-->
-    <v-container
-      class="mt-8 ps-4 colorViewer"
-    >
-      <v-row>
-        <h2>Rutinas que has creado</h2>
-      </v-row>
-
-      <v-row class="alignedToCenter" >
-        <!-- Cómo hacerlo con v-for y counter-->
-        <v-col v-for="(atr, index) in this.buttonAtributesOwn" :key="index">
-          <RoutineButton
-            :variant="atr.variant"
-            :title="atr.title"
-            :image="atr.image"
-          />
-        </v-col>
-      </v-row>
-
-      <div class="text-center justify-center">
-       <!-- <v-btn color="primary" @click="increseCounter()"> Ver más</v-btn> -->
-        <v-icon>mdi-chevron-down</v-icon>
+    <div class="alignedToCenter flex-grow-1" :style="{ backgroundColor: 'black' }">
+      <div
+        class="d-flex flex-row flex-wrap justify-space-around"
+        :style="{ backgroundColor: 'lightGray', width: '87%' }"
+      >
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
+        <div class="alignedToCenter" :style="{ width: '22%' }">
+          <RoutineButton variant="small" title="abs" image="abs" />
+        </div>
       </div>
-    </v-container>
+    </div>
 
-    <v-container
-      class="mt-14 mb-8 ps-4 colorViewer"
-    >
+    <v-container class="mt-14 mb-8 ps-4 colorViewer">
       <v-row>
         <h2>Rutinas Favoritas</h2>
       </v-row>
@@ -81,17 +87,16 @@ export default {
   computed: {},
 };
 /* podemos hacer una método computed el cual haga un splice desde
-* donde queramos de un array hasta counter*3 por ejemplo, el v-for haría
-* items in métodoComputed*/
+ * donde queramos de un array hasta counter*3 por ejemplo, el v-for haría
+ * items in métodoComputed*/
 
 /* flex-grow y width: 33%*/
 </script>
 
 <style scoped>
-
 .alignedToCenter {
   align-items: center;
-  flex-direction: row;
+  flex-direction: column;
   width: 100vw;
   display: flex;
   /*<!-- también se podía usar padding-->*/

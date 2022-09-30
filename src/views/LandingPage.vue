@@ -11,7 +11,7 @@ import android from "../assets/android.png";
 export default {
   data() {
     return {
-      exerciseImages: [abs, abslat, fle, estirar],
+      exerciseImages: [abslat, abs, fle, estirar],
       socialMediaIcons: [facebook, twitter, instagram, android],
     };
   },
