@@ -1,58 +1,63 @@
 <template>
   <div class="mt-2" :style="{ width: '100%', height: '100%' }">
     <h1 class="ml-10">Mis Rutinas</h1>
-    <!-- cómo hago para que el div ocupe el espacio disponible?-->
-    <div class="alignedToCenter flex-grow-1" :style="{ backgroundColor: 'black' }">
+    <div class="alignedToCenter flex-grow-1">
+      <div class="pa-1" :style="{ background: $vuetify.theme.themes[theme].contback, width: '87%' }">
+        <h2>Creadas Por Mi</h2>
+      </div>
       <div
-        class="d-flex flex-row flex-wrap justify-space-around"
-        :style="{ backgroundColor: 'lightGray', width: '87%' }"
+        class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4"
+        :style="{
+          background: $vuetify.theme.themes[theme].contback,
+          width: '87%',
+        }"
       >
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
+        <div
+          class="alignedToCenter"
+          :style="{ width: '25%' }"
+          v-for="atr in ownToShow"
+          :key="atr.id"
+        >
+          <RoutineButton
+            :variant="atr.variant"
+            :title="atr.title"
+            :image="atr.image"
+          />
         </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
-        <div class="alignedToCenter" :style="{ width: '22%' }">
-          <RoutineButton variant="small" title="abs" image="abs" />
-        </div>
+        <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
+          >mdi-chevron-double-down</v-icon
+        >
       </div>
     </div>
 
-    <v-container class="mt-14 mb-8 ps-4 colorViewer">
-      <v-row>
+    <div class="alignedToCenter flex-grow-1">
+      <div class="mt-10 pt-2 pl-1" :style="{ background: $vuetify.theme.themes[theme].contback, width: '87%' }">
         <h2>Rutinas Favoritas</h2>
-      </v-row>
-      <v-row dense class="alignedToCenter">
-        <v-col v-for="(atr, index) in this.buttonAtributesFav" :key="index">
-          <div class="text-center align-center">
-            <RoutineButton
-              :variant="atr.variant"
-              :title="atr.title"
-              :image="atr.image"
-            />
-          </div>
-        </v-col>
-      </v-row>
-      <div class="text-center justify-center">
-        <v-btn color="primary" @click="increseCounter()"> Ver más</v-btn>
       </div>
-    </v-container>
+      <div
+        class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4"
+        :style="{
+          background: $vuetify.theme.themes[theme].contback,
+          width: '87%',
+        }"
+      >
+        <div
+          class="alignedToCenter"
+          :style="{ width: '25%' }"
+          v-for="atr in favToShow"
+          :key="atr.id"
+        >
+          <RoutineButton
+            :variant="atr.variant"
+            :title="atr.title"
+            :image="atr.image"
+          />
+        </div>
+        <v-icon v-if="favShowArrow" @click="increaseCounterFav"
+          >mdi-chevron-double-down</v-icon
+        >
+      </div>
+    </div>
   </div>
 </template>
 
@@ -66,25 +71,79 @@ export default {
   components: { RoutineButton },
   data() {
     return {
-      counter: 1,
+      counterOwn: 1,
+      counterFav: 1,
+      amountShownEachLine: 4,
       buttonAtributesOwn: [
-        { variant: "small", title: "Abs", image: abs },
-        { variant: "small", title: "Abs2", image: abslat },
-        { variant: "small", title: "flex", image: fle },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
       ],
       buttonAtributesFav: [
-        { variant: "small", title: "Abs para el veranito", image: abs },
-        { variant: "small", title: "Abs como los de Messi", image: abslat },
-        { variant: "small", title: "Flexiones en 15 min", image: fle },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
+        { variant: "small", title: "Abs2", image: abslat, id: 2 },
+        { variant: "small", title: "flex", image: fle, id: 3 },
+        { variant: "small", title: "Abs", image: abs, id: 1 },
       ],
     };
   },
   methods: {
-    increseCounter() {
-      this.counter = this.counter + 1;
+    increaseCounterOwn() {
+      this.counterOwn = this.counterOwn + 1;
+    },
+    increaseCounterFav() {
+      this.counterFav = this.counterFav + 1;
     },
   },
-  computed: {},
+  computed: {
+    ownToShow() {
+      return this.buttonAtributesOwn.slice(
+        0,
+        this.counterOwn * this.amountShownEachLine
+      );
+    },
+    favToShow() {
+      return this.buttonAtributesFav.slice(
+        0,
+        this.counterFav * this.amountShownEachLine
+      );
+    },
+    theme() {
+      return this.$vuetify.theme.dark ? "dark" : "light";
+    },
+    ownShowArrow() {
+      return (
+        this.counterOwn * this.amountShownEachLine <
+        this.buttonAtributesOwn.length
+      );
+    },
+    favShowArrow() {
+      return (
+        this.counterFav * this.amountShownEachLine <
+        this.buttonAtributesFav.length
+      );
+    },
+  },
 };
 /* podemos hacer una método computed el cual haga un splice desde
  * donde queramos de un array hasta counter*3 por ejemplo, el v-for haría
