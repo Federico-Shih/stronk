@@ -48,6 +48,11 @@ const router = new VueRouter({
       name: "exercises",
       component: () => import("../views/ExercisePage.vue"),
     },
+    {
+      path: "/exercises/data",
+      name: "exercise_details",
+      component: () => import("../views/ExerciseDetailsPage.vue"),
+    },
   ],
 });
 

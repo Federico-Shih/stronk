@@ -1,5 +1,5 @@
 <template>
-  <v-main class="px-16">
+  <v-main class="px-8">
     <v-row class="ml-8 d-flex flex-row justify-space-between">
       <v-col class="mr-16">
         <h1>Comunidad</h1>
