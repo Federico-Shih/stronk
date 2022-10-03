@@ -25,9 +25,11 @@
         </v-btn>
         <h3 class="mt-1">hecho por {{ creatorname }}</h3>
       </div>
-      <div class="d-flex flex-row offset-1 mr-6 mt-1 justify-space-between">
-        <h3 class="pr-4">Categorias:</h3>
-        <v-btn v-for="index in category.length" x-small class="rounded-l-pill mt-1 mr-5">{{category[index-1]}}</v-btn>
+      <div class="d-flex flex-row offset-1 justify-space-between">
+        <h3 class="pr-4 mt-1">Categorias:</h3>
+        <v-chip-group active-class="primary--text">
+          <v-chip v-for="index in category.length" small class="rounded-l-pill px-5">{{category[index-1]}}</v-chip>
+        </v-chip-group>
       </div>
     </div>
     <div class="d-flex flex-column ml-8 mb-8" style="width: 70%">
