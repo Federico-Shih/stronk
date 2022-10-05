@@ -36,14 +36,12 @@
       </div>
       <div class="d-flex flex-row offset-1 justify-space-between">
         <h3 class="pr-4 mt-1">Categorias:</h3>
-        <v-chip-group active-class="primary--text">
-          <v-chip
-            v-for="index in category.length"
-            small
-            class="rounded-l-pill px-5"
-          >{{ category[index - 1] }}
-          </v-chip>
-        </v-chip-group>
+        <v-chip
+          v-for="index in category.length"
+          label
+          class="mr-2"
+        >{{ category[index - 1] }}
+        </v-chip>
       </div>
     </div>
     <div class="d-flex flex-column ml-8 mb-8" style="width: 70%">

@@ -13,7 +13,9 @@ export default {
     img: abdominales,
     cycles: [cycle1, cycle2],
     loading: true,
-    routine: null
+    routine: null,
+    ratingMenu: false,
+    yourRating: 0
   })
 };
 </script>
@@ -33,7 +35,7 @@ export default {
           <v-icon large>mdi-arrow-left</v-icon>
         </v-btn>
         <h4 class="text-h4 font-weight-bold ml-5">{{ routine.title }}</h4>
-        <v-btn icon @click="() => {}" class="ml-auto">
+        <v-btn icon @click="routine.liked = !routine.liked" class="ml-auto">
           <v-icon color="primary" large>{{
               routine.liked ? "mdi-heart" : "mdi-heart-outline"
             }}
@@ -58,22 +60,53 @@ export default {
         >
           <v-chip>{{ category.name }}</v-chip>
         </span>
-        <v-chip
-          large
-          label
-          class="d-flex flex-row align-center text--primary mt-8"
-          style="position: absolute; right: 0"
+        <v-menu
+            v-model="ratingMenu"
+            :close-on-content-click="false"
+
+            offset-y
         >
-          {{ routine.rating }}
-          <v-rating
-            disabled
-            readonly
-            :value="routine.rating"
-            half-increments
-            dense
-            class="ml-3"
-          ></v-rating>
-        </v-chip>
+          <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                  large
+                  label
+                  class="d-flex flex-row align-center text--primary mt-8"
+                  style="position: absolute; right: 0"
+                  v-bind="attrs"
+                  v-on="on"
+              >
+                {{ routine.rating }}
+                <v-rating
+                    disabled
+                    readonly
+                    :value="routine.rating"
+                    half-increments
+                    dense
+                    class="ml-3"
+                ></v-rating>
+              </v-chip>
+          </template>
+          <v-card class="pa-4">
+            <h4>Tu puntación para esta rutina:</h4>
+            <div class="d-flex flex-row align-baseline">
+              <v-rating
+                  v-model="yourRating"
+                  color="primary"
+                  dense
+                  empty-icon="mdi-star-outline"
+                  full-icon="mdi-star"
+                  half-icon="mdi-star-half-full"
+                  half-increments
+                  hover
+                  length="5"
+                  size="24"
+                  value="3"
+              ></v-rating>
+              <h4 class="ml-2">{{this.yourRating}}</h4>
+            </div>
+          </v-card>
+        </v-menu>
+
       </div>
       <div style="width: 50%" class="mt-5">
         {{ routine.description }}
