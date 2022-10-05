@@ -59,6 +59,11 @@ const router = new VueRouter({
       component: () => import("../views/ExerciseDetailsPage.vue"),
     },
     {
+      path: "/exercises/data/edit",
+      name: "exercises_edit_create",
+      component: () => import("../views/ExerciseEditCreationPage.vue"),
+    },
+    {
       path: "*",
       name: "404",
       component: () => import("../views/ErrorFourOFour.vue"),

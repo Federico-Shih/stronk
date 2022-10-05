@@ -10,9 +10,7 @@
   >
     <div class="mb-2 ml-6 d-flex flex-row justify-space-between">
       <div class="d-flex flex-row justify-start">
-        <v-btn icon @click="() => this.$router.go(-1)">
-          <v-icon large>mdi-arrow-left</v-icon>
-        </v-btn>
+        <GoBackButton/>
         <h1 class="pl-4">Nombre del Ejercicio</h1>
       </div>
 
@@ -70,8 +68,14 @@
 
 <script>
 import temp from "../assets/arnold.png";
+import GoBackButton from "../components/GoBackButton.vue";
+
 
 export default {
+  components: {
+   GoBackButton
+
+  },
   mounted() {
     this.$route.params.id;
   },
