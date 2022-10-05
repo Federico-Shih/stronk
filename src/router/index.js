@@ -36,7 +36,7 @@ const router = new VueRouter({
     {
       path: "/routines/:id",
       name: "routine",
-      component: () => import("../views/RoutineDetailsPage.vue")
+      component: () => import("../views/RoutineDetailsPage.vue"),
     },
     {
       path: "/profile/:id",
@@ -58,7 +58,15 @@ const router = new VueRouter({
       name: "exercise_details",
       component: () => import("../views/ExerciseDetailsPage.vue"),
     },
+    {
+      path: "*",
+      name: "404",
+      component: () => import("../views/ErrorFourOFour.vue"),
+    },
   ],
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
 });
 
 export default router;

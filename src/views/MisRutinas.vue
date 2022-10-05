@@ -2,14 +2,20 @@
   <div class="mt-2" :style="{ width: '100%', height: '100%' }">
     <h1 class="ml-10">Mis Rutinas</h1>
     <div class="alignedToCenter flex-grow-1">
-      <div class="pa-1" :style="{ background: $vuetify.theme.themes[theme].contback, width: '87%' }">
+      <div
+        class="pa-1"
+        :style="{
+          background: $vuetify.theme.themes[theme].contback,
+          width: '78%',
+        }"
+      >
         <h2>Creadas Por Mi</h2>
       </div>
       <div
         class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4"
         :style="{
           background: $vuetify.theme.themes[theme].contback,
-          width: '87%',
+          width: '78%',
         }"
       >
         <div
@@ -18,11 +24,13 @@
           v-for="atr in ownToShow"
           :key="atr.id"
         >
-          <RoutineButton
-            :variant="atr.variant"
-            :title="atr.title"
-            :image="atr.image"
-          />
+          <router-link to="/routines/1" style="text-decoration: none; color: inherit;">
+            <RoutineButton
+              :variant="atr.variant"
+              :title="atr.title"
+              :image="atr.image"
+            />
+          </router-link>
         </div>
         <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
           >mdi-chevron-double-down</v-icon
@@ -31,14 +39,20 @@
     </div>
 
     <div class="alignedToCenter flex-grow-1">
-      <div class="mt-10 pt-2 pl-1" :style="{ background: $vuetify.theme.themes[theme].contback, width: '87%' }">
+      <div
+        class="mt-10 pt-2 pl-1"
+        :style="{
+          background: $vuetify.theme.themes[theme].contback,
+          width: '78%',
+        }"
+      >
         <h2>Rutinas Favoritas</h2>
       </div>
       <div
         class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4"
         :style="{
           background: $vuetify.theme.themes[theme].contback,
-          width: '87%',
+          width: '78%',
         }"
       >
         <div
@@ -47,11 +61,13 @@
           v-for="atr in favToShow"
           :key="atr.id"
         >
-          <RoutineButton
-            :variant="atr.variant"
-            :title="atr.title"
-            :image="atr.image"
-          />
+          <router-link to="/routines/1" style="text-decoration: none; color: inherit;">
+            <RoutineButton
+              :variant="atr.variant"
+              :title="atr.title"
+              :image="atr.image"
+            />
+          </router-link>
         </div>
         <v-icon v-if="favShowArrow" @click="increaseCounterFav"
           >mdi-chevron-double-down</v-icon

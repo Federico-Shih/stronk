@@ -1,12 +1,16 @@
 <template>
-  <div class="routine-slide-group-container" :style="{ background: $vuetify.theme.themes[theme].contback }">
-    <h2 class="routine-slide-group-title">{{title}}</h2>
+  <div
+    class="routine-slide-group-container"
+    :style="{ background: $vuetify.theme.themes[theme].contback }"
+  >
+    <h2 class="routine-slide-group-title">{{ title }}</h2>
     <v-slide-group show-arrows="always">
-      <v-slide-item
-          v-for="(routine, idx) in routines"
-          :key="idx"
-      >
-        <RoutineButton :variant="sizeVariant" :title="routine.title" :image="routine.image"/>
+      <v-slide-item v-for="(routine, idx) in routines" :key="idx">
+        <RoutineButton
+          :variant="sizeVariant"
+          :title="routine.title"
+          :image="routine.image"
+        />
       </v-slide-item>
     </v-slide-group>
   </div>
@@ -18,19 +22,19 @@ import RoutineButton from "@/components/RoutineButton.vue";
 export default {
   name: "RoutineSlideGroup.vue",
   components: {
-    RoutineButton
+    RoutineButton,
   },
-  computed:{
-    theme(){
-      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
-    }
+  computed: {
+    theme() {
+      return this.$vuetify.theme.dark ? "dark" : "light";
+    },
   },
   props: {
     title: String,
     routines: Array,
     sizeVariant: String,
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

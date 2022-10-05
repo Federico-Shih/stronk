@@ -1,12 +1,18 @@
 <template>
-  <v-card class="rounded-lg"
-          :class="variants.boxSizes[variant]"
-          @mouseenter="hover = true"
-          @mouseleave="hover = false"
-          :elevation="hover ? 5 : 0">
+  <v-card
+    class="rounded-lg"
+    :class="variants.boxSizes[variant]"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+    :elevation="hover ? 5 : 0"
+  >
     <v-img :src="image" :alt="title" class="routine-button-image">
       <div class="fill-height bottom-gradient d-flex flex-column justify-end">
-        <v-card-title class="routine-button-text" :class="variants.fontSizes[variant]">{{ title }}</v-card-title>
+        <v-card-title
+          class="routine-button-text"
+          :class="variants.fontSizes[variant]"
+          >{{ title }}</v-card-title
+        >
       </div>
     </v-img>
   </v-card>
@@ -28,14 +34,14 @@ export default {
         boxSizes: {
           small: "routine-button-small",
           long: "routine-button-long",
-          large: "routine-button-large"
+          large: "routine-button-large",
         },
         fontSizes: {
           small: "text-small",
           long: "text-medium",
-          large: "text-large"
-        }
-      }
+          large: "text-large",
+        },
+      },
     };
   },
 };
@@ -88,9 +94,9 @@ export default {
 
 .bottom-gradient {
   background-image: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.8) 0%,
-      transparent 72px
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    transparent 72px
   );
 }
 </style>

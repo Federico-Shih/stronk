@@ -16,6 +16,9 @@ export default {
         link.protected ? this.hasProfile : true
       );
     },
+    LogoClicked() {
+      return this.hasProfile ? "/home" : "/";
+    },
   },
   data() {
     return {
@@ -63,7 +66,7 @@ export default {
 
 <template>
   <v-app-bar app color="primary">
-    <router-link to="/">
+    <router-link :to="LogoClicked">
       <v-img max-width="100" :src="logo" />
     </router-link>
     <router-link

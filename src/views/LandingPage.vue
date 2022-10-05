@@ -45,6 +45,7 @@ export default {
           v-for="(mysource, i) in this.exerciseImages"
           :key="i"
           :src="mysource"
+          @click="$router.push('/routines/1')"
         >
         </v-carousel-item>
       </v-carousel>
