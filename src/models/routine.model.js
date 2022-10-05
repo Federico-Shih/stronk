@@ -37,3 +37,21 @@ export const cycle1 = new Cycle(
 );
 
 export const cycle2 = new Cycle("Activo", 3, exerciseMock, exerciseMock2);
+
+export const routine = {
+  title: "Abdominales en 15 minutos",
+  description:
+    "Con esta rutinar abdominales en sólo 15 minutoara el fulbo, Con esta rutina podrás entrenar abdominales en sólo 15 minutos! Perfecto para el fulbo, Con esta rutina podrás entrenar abdominales en sólo 15 minutos! Perfecto para el fulbo, Con esta rutina podrás entales en sólo 15 minutos! Perfecto para el fulbo",
+  author: {
+    img: abdominales,
+    name: "Lionel Messi",
+    username: "lionel-messi"
+  },
+  categories: [
+    { name: "Core", id: "core" },
+    { name: "Principiante", id: "noob" }
+  ],
+  cycles: [cycle1, cycle2, cycle1],
+  rating: 4.3,
+  liked: true
+};

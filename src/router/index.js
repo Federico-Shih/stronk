@@ -36,7 +36,7 @@ const router = new VueRouter({
     {
       path: "/routines/:id",
       name: "routine",
-      component: () => import("../views/RoutinePage.vue"),
+      component: () => import("../views/RoutineDetailsPage.vue")
     },
     {
       path: "/profile",
