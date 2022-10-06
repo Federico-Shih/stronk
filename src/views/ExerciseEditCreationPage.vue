@@ -29,34 +29,19 @@
       <div class="d-flex flex-row justify-space-between">
         <div class="d-flex flex-column" style="width: 40%">
           <h3>Nombre</h3>
-          <v-text-field dense outlined class="rounded-lg" />
+          <v-text-field v-model="name" dense outlined class="rounded-lg" />
         </div>
         <div class="d-flex flex-column mr-16" >
           <h4>Dificultad</h4>
-          <v-chip-group mandatory column active-class="primary--text" >
-            <v-chip class="rounded-l-pill pa-5"> Principiante</v-chip>
-            <v-chip class="rounded-l-pill pa-5"> Intermedio</v-chip>
-            <v-chip class="rounded-l-pill pa-5"> Avanzado</v-chip>
+          <v-chip-group v-model="typeSelected" mandatory column active-class="primary--text">
+            <v-chip v-for="index in type.length" class="pa-5">{{type[index-1]}}</v-chip>
           </v-chip-group>
         </div>
       </div>
-      <div>
-        <div class="d-flex flex-row justify-space-between">
-          <div class="d-flex flex-column" style="width: 40%">
+      <div class="d-flex flex-column " style="width:40%">
             <h3>Descripcion del Ejercicio</h3>
-            <v-textarea dense outlined class="rounded-lg" />
-          </div>
-          <div class="d-flex flex-column mr-16" >
-            <h4>Categoria(s)</h4>
-            <v-chip-group multiple column >
-              <v-chip class="rounded-l-pill pa-5"> Musculo Grande</v-chip>
-              <v-chip class="rounded-l-pill pa-5"> Musculo Chico</v-chip>
-              <v-chip class="rounded-l-pill pa-5"> Anadir</v-chip>
-            </v-chip-group>
-          </div>
-        </div>
+            <v-textarea v-model="description" dense outlined class="rounded-lg" />
       </div>
-
 
     </div>
   </div>
@@ -71,18 +56,13 @@ export default {
   },
   data(){
     return{
-      edit:true
+      edit:true,
+      name:'nombre',
+      description:'descripcion',
+      type:['Ejercicio','Descanso'],
+      typeSelected:0,
     }
   }
 };
 
 </script>
-
-<style scoped>
-.alignmentToTheRight {
-  align-items: end;
-  display: flex;
-  flex-direction: column;
-}
-
-</style>
