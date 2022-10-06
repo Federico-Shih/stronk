@@ -65,7 +65,6 @@ export const useEditCycleList = defineStore("editcyclelist", {
     setCycleRepetitions(cycle, reps) {
       this.cycles[cycle].repetitions = reps;
     },
-    getCycles
   },
   getters: {
     getOrderedCycles() {

@@ -39,6 +39,11 @@ const router = new VueRouter({
       component: () => import("../views/RoutineDetailsPage.vue"),
     },
     {
+      path: "/routines/:id/edit",
+      name: "routine_edit",
+      component: () => import("../views/RoutineEditCreationPage.vue"),
+    },
+    {
       path: "/profile/:id",
       name: "profile",
       component: () => import("../views/ProfilePage.vue"),
