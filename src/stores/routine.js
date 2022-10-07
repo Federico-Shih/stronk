@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import {cycle1} from "@/models/routine.model";
 
 export const CycleTypes = {
   WARMUP: "warmup",
@@ -23,71 +24,27 @@ export const useEditRoutine = defineStore("editroutine", {
   }
 });
 
-export const useEditCycleList = defineStore("editcyclelist", {
+export const useCycles = defineStore("cyclelist", {
   state: () => ({
-    cycles: {},
-    maxCycle: 0
+    cycles: {
+    },
   }),
   actions: {
-    createCycle(position) {
-      const newCycles = [...this.cycles];
-      Object.entries(this.cycles).forEach(([key, value]) => {
-        if (value.order >= position) {
-          newCycles[key] = { ...value, order: value.order + 1 };
-        }
-      });
-
-      newCycles[this.maxCycle] = {
-        name: "",
-        detail: "",
-        type: CycleTypes.EXERCISE,
-        order: position,
-        repetitions: 0,
-        id: this.maxCycle
-      };
-      this.maxCycle += 1;
-    },
-    swapPositions(cycleIdA, cycleIdB) {
-      const aPosition = this.cycles[cycleIdA].order;
-      this.cycles[cycleIdA].order = this.cycles[cycleIdB].order;
-      this.cycles[cycleIdB].order = aPosition;
-    },
-    deleteCycle(cycleId) {
-      delete this.cycles[cycleId];
-      // TODO: actualizar las ordenes
-    },
-    setCycleName(cycle, name) {
-      this.cycles[cycle].name = name;
-    },
-    setCycleType(cycle, type) {
-      this.cycles[cycle].type = type;
-    },
-    setCycleRepetitions(cycle, reps) {
-      this.cycles[cycle].repetitions = reps;
-    },
+    async callCycleById(id) {
+      if (!this.cycles[id]) {
+        this.cycles[id] = cycle1;
+      }
+    }
   },
   getters: {
-    getOrderedCycles() {
-      return Object.values(this.cycles).sort(
-        (cycleA, cycleB) => cycleA.order - cycleB.order
-      );
+    getCycleById: (state) => {
+      return (id) => {
+        return state.cycles[id];
+      }
     }
   }
 });
 
-export const useEditCycle = defineStore("editcycle", {
-  state: () => ({
-    cycleExercises: {}
-  }),
-  getters: {},
-  actions: {
-    addCycleList(cycleId) {
-      this.cycleExercises[cycleId] = {};
-    },
-    createExercise(cycleId, exerciseId, reps, duration) {
-    }
-  }
-});
 
 // export const routine = {
 //   title: "Abdominales en 15 minutos",

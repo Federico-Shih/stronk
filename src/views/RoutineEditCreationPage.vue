@@ -1,5 +1,5 @@
 <template>
-  <EditCycle bus="" routine-id="" order=""></EditCycle>
+  <EditCycle bus="" :routine-id="0" :order="0"></EditCycle>
 </template>
 
 <script>

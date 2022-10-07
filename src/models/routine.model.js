@@ -15,6 +15,7 @@ export class Cycle {
     this.title = cycleTitle;
     this.times = cycleTimes;
     this.exercises = exercises;
+    this.id = 0;
   }
 }
 

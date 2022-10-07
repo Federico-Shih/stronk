@@ -2,23 +2,17 @@
   <div class="d-flex flex-row">
     <div class="d-flex flex-column">
       <h3 class="font-weight-medium text-decoration-none">
-        {{ this.title }}
+        {{ value.name }}
       </h3>
       <div>
-        <span v-if="exercise.reps"
-        >{{ this.repetitions }} repeticiones
-          {{ this.duration ? "| " : "" }}</span
-        >
-        <span v-if="exercise.duration"
-        >{{ this.duration }}s</span
-        >
+        <v-text-field v-model="value.duration"></v-text-field>
       </div>
     </div>
 
     <v-img
         class="flex-grow-0 ml-auto"
         width="80px"
-        :src="exercise.img_url"
+        :src="value.img_url"
         @click.stop="
                     (event) => {
                       console.log(event);
@@ -30,7 +24,13 @@
 
 <script>
 export default {
-  name: "EditExercise"
+  name: "EditExercise",
+  props: ['value'],
+  methods: {
+    handleInput (e) {
+      this.$emit('input', this.value)
+    }
+  }
 }
 </script>
 
