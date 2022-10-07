@@ -36,21 +36,24 @@ export const useProfileStore = defineStore({
       }
     },
     async createNewProfile(username, password, email, firstname, lastname) {
-      await fetch("localhost:8080/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": `bearer ${this.getToken()}`,
-        },
-        //tiene que ser un string si o si
-        body: JSON.stringify({
-          username,
-          password,
-          email,
-          firstname,
-          lastname,
-        }),
-      });
+      try {
+        await fetch("http://localhost:8080/api/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // "Authorization": `bearer ${this.getToken()}`,
+          },
+          body: JSON.stringify({
+            username,
+            password,
+            email,
+            firstname,
+            lastname,
+          }),
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
     async verify_email(email, code) {
       try {
@@ -68,9 +71,7 @@ export const useProfileStore = defineStore({
             }),
           }
         );
-        const text = await response.text();
-        const result = text ? JSON.parse(text) : "";
-        if (result !== "") {
+        if (response.ok) {
           this.correctEmailVerification = true;
         }
       } catch (error) {

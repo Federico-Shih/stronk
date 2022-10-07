@@ -58,10 +58,6 @@ export default {
         "Utilice un nombre con, a lo sumo, 14 carácteres",
       (v) => !!v || "Tiene que ingresar Nombre y Apellido",
     ],
-    verificationRules: [
-      (v) => !!v || "Tiene que ingresar el código de verificación",
-      (v) => v.length !== 6 || "Debe ser de 6 caractéres",
-    ],
     hidePass: true,
     hideConfirm: true,
     isRegister: true,
@@ -120,6 +116,7 @@ export default {
     },
     setStartingConditionsAndClose() {
       this.$refs.form.reset();
+      this.password = "";
       this.isRegister = true;
       this.isVerification = false;
       this.hidePopup();
@@ -159,7 +156,7 @@ export default {
               label="Nombre de Usuario"
               :counter="MAX_USERLENGTH"
               :rules="usernameRules"
-              v-if="isRegister || isVerification"
+              v-if="isRegister || !isVerification"
               :key="1"
               required
             ></v-text-field>
@@ -186,7 +183,7 @@ export default {
             v-model="email"
             :rules="emailRules"
             label="Correo Electrónico"
-            v-if="!isVerification"
+            v-if="isRegister"
             required
             :key="2"
           ></v-text-field>
@@ -203,7 +200,6 @@ export default {
           ></v-text-field>
           <v-text-field
             v-if="isVerification"
-            :rules="verificationRules"
             label="Validación"
             required
             :key="4"
@@ -227,7 +223,12 @@ export default {
             <v-btn v-if="!isVerification" type="submit" color="primary">{{
               isRegister ? "Registrarse" : "Iniciar Sesión"
             }}</v-btn>
-            <v-btn v-if="isVerification" @click="verify()" color="primary">
+            <v-btn
+              v-if="isVerification"
+              @click="verify()"
+              color="primary"
+              v-model="verificationCode"
+            >
               Verifique su correo electrónico
             </v-btn>
             <v-btn
