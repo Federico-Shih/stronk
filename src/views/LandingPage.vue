@@ -29,7 +29,7 @@ export default {
       </p>
     </div>
     <div class="text-center mt-8 pa-4">
-      <router-link to="/explore">
+      <router-link to="explore">
         <!-- qué raro que no lo tuve que importar -->
         <v-btn color="primary" class="v-size--x-large"
           >Explora Nuestras Rutinas</v-btn

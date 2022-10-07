@@ -1,10 +1,10 @@
 <script>
 import { mapActions, mapState } from "pinia";
-import { useProfileStore } from "../stores/profile";
+import { useProfileStore } from "@/stores/profile";
 import AuthPopup from "./AuthPopup.vue";
 import logotype from "../assets/logotipo.png";
 import temp from "../assets/cristiano.png";
-import { usePopupStore } from "../stores/auth";
+import { usePopupStore } from "@/stores/auth";
 
 export default {
   name: "NavBar",
@@ -28,7 +28,7 @@ export default {
         { label: "Comunidad", link: "/community" },
         { label: "Mis rutinas", link: "/routines", protected: true },
         { label: "Mis ejercicios", link: "/exercises", protected: true },
-        { label: "Mi perfil", link: "/profile", protected: true },
+        { label: "Mi perfil", link: "/profile/1", protected: true },
       ],
       dropdownItems: [
         { label: "Configuración de cuenta", link: "", click: () => {} },

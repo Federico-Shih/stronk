@@ -3,16 +3,16 @@ export default {
   props: {
     title: String,
     repetitions: Number,
-    exercises: Array
+    exercises: Array,
   },
-  name: "CycleCard"
+  name: "CycleCard",
 };
 </script>
 <template>
   <v-card outlined>
     <div style="padding-left: 180px; padding-bottom: 40px">
       <v-card-title class="font-weight-bold text-h5"
-      >{{ this.title }}
+        >{{ this.title }}
       </v-card-title>
       <v-card-text>
         <div v-for="(exercise, index) in exercises" :key="index" class="mt-3">
@@ -22,7 +22,7 @@ export default {
                 style="position: absolute; transform: translate(-54px)"
                 color="primary"
                 size="30"
-              >mdi-circle
+                >mdi-circle
               </v-icon>
               <router-link :to="'/exercises/' + exercise.id">
                 <div
@@ -37,11 +37,11 @@ export default {
                     </h3>
                     <div>
                       <span v-if="exercise.reps"
-                      >{{ exercise.reps }} repeticiones
+                        >{{ exercise.reps }} repeticiones
                         {{ exercise.duration ? "| " : "" }}</span
                       >
                       <span v-if="exercise.duration"
-                      >{{ exercise.duration }}s</span
+                        >{{ exercise.duration }}s</span
                       >
                     </div>
                   </div>

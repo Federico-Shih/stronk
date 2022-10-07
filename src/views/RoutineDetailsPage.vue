@@ -15,8 +15,8 @@ export default {
     loading: true,
     routine: null,
     ratingMenu: false,
-    yourRating: 0
-  })
+    yourRating: 0,
+  }),
 };
 </script>
 
@@ -36,20 +36,19 @@ export default {
         </v-btn>
         <h4 class="text-h4 font-weight-bold ml-5">{{ routine.title }}</h4>
         <v-btn icon @click="routine.liked = !routine.liked" class="ml-auto">
-          <v-icon color="primary" large>{{
-              routine.liked ? "mdi-heart" : "mdi-heart-outline"
-            }}
+          <v-icon color="primary" large
+            >{{ routine.liked ? "mdi-heart" : "mdi-heart-outline" }}
           </v-icon>
         </v-btn>
       </div>
       <div class="d-flex flex-row align-center" style="position: relative">
         <span
-        ><v-img
-          height="50px"
-          width="50px"
-          :src="routine.author.img"
-          class="rounded-circle"
-        ></v-img
+          ><v-img
+            height="50px"
+            width="50px"
+            :src="routine.author.img"
+            class="rounded-circle"
+          ></v-img
         ></span>
         <span class="ml-3">hecha por {{ routine.author.name }}</span>
         <span class="ml-10 mr-2">Categorias:</span>
@@ -60,53 +59,47 @@ export default {
         >
           <v-chip>{{ category.name }}</v-chip>
         </span>
-        <v-menu
-            v-model="ratingMenu"
-            :close-on-content-click="false"
-
-            offset-y
-        >
+        <v-menu v-model="ratingMenu" :close-on-content-click="false" offset-y>
           <template v-slot:activator="{ on, attrs }">
-              <v-chip
-                  large
-                  label
-                  class="d-flex flex-row align-center text--primary mt-8"
-                  style="position: absolute; right: 0"
-                  v-bind="attrs"
-                  v-on="on"
-              >
-                {{ routine.rating }}
-                <v-rating
-                    disabled
-                    readonly
-                    :value="routine.rating"
-                    half-increments
-                    dense
-                    class="ml-3"
-                ></v-rating>
-              </v-chip>
+            <v-chip
+              large
+              label
+              class="d-flex flex-row align-center text--primary mt-8"
+              style="position: absolute; right: 0"
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{ routine.rating }}
+              <v-rating
+                disabled
+                readonly
+                :value="routine.rating"
+                half-increments
+                dense
+                class="ml-3"
+              ></v-rating>
+            </v-chip>
           </template>
           <v-card class="pa-4">
             <h4>Tu puntación para esta rutina:</h4>
             <div class="d-flex flex-row align-baseline">
               <v-rating
-                  v-model="yourRating"
-                  color="primary"
-                  dense
-                  empty-icon="mdi-star-outline"
-                  full-icon="mdi-star"
-                  half-icon="mdi-star-half-full"
-                  half-increments
-                  hover
-                  length="5"
-                  size="24"
-                  value="3"
+                v-model="yourRating"
+                color="primary"
+                dense
+                empty-icon="mdi-star-outline"
+                full-icon="mdi-star"
+                half-icon="mdi-star-half-full"
+                half-increments
+                hover
+                length="5"
+                size="24"
+                value="3"
               ></v-rating>
-              <h4 class="ml-2">{{this.yourRating}}</h4>
+              <h4 class="ml-2">{{ this.yourRating }}</h4>
             </div>
           </v-card>
         </v-menu>
-
       </div>
       <div style="width: 50%" class="mt-5">
         {{ routine.description }}
@@ -119,7 +112,7 @@ export default {
       <div style="width: 600px; position: relative">
         <v-container
           class="width_full primary text-h5 font-weight-bold mb-6 rounded-pill"
-        >Inicio
+          >Inicio
         </v-container>
         <CycleCard
           class="mt-3"
@@ -141,7 +134,7 @@ export default {
         ></div>
         <v-container
           class="width_full primary text-h5 font-weight-bold rounded-pill mt-6"
-        >Fin
+          >Fin
         </v-container>
       </div>
       <div style="width: 400px; height: 600px; background-color: grey"></div>
