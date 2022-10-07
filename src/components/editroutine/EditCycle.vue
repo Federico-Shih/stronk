@@ -45,6 +45,7 @@
 
 import EditExercise from "@/components/editroutine/EditExercise.vue";
 import {CycleTypes} from "@/stores/routine";
+import abspic from "@/assets/abdominales.jpg";
 
 export default {
   name: "EditCycle",
@@ -95,7 +96,8 @@ export default {
     exercises: [{
       name: 'Jumping Jacks',
       duration: 0,
-      repetitions: 30
+      repetitions: 30,
+      img_url: abspic
     },
       {
         name: 'Abdominales',

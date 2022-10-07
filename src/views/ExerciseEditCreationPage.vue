@@ -1,48 +1,34 @@
 <template>
-  <div
-      class="mt-4"
-      style="
-       {
-        width: 100%;
-        height: 100%;
-      }
-    "
-  >
-    <div class="mb-2 ml-6 d-flex flex-row justify-space-between">
+  <div class="d-flex flex-column justify-start px-4 py-8">
+    <div class="d-flex flex-row justify-space-between">
       <div class="d-flex flex-row justify-start">
         <GoBackButton/>
         <h1 class="pl-4">{{ (edit)? 'Editar':'Crear' }} un Ejercicio</h1>
       </div>
-      <div class="d-flex flex-row justify-space-between mr-16 mt-2">
+      <div class="d-flex flex-row mr-8">
         <v-btn outlined  class="rounded-pill mr-4">
           <v-icon left>mdi-close</v-icon>
-          Descartar Ejercicio
+          Descartar {{ edit? " Cambios": " Ejercicio"}}
         </v-btn>
-
         <v-btn outlined class="rounded-pill">
           <v-icon left>mdi-content-save</v-icon>
-          Guardar Ejercicio
+          Guardar {{ edit? " Cambios": " Ejercicio"}}
         </v-btn>
       </div>
     </div>
-    <div class="ml-16 d-flex flex-column">
-      <div class="d-flex flex-row justify-space-between">
-        <div class="d-flex flex-column" style="width: 40%">
-          <h3>Nombre</h3>
-          <v-text-field v-model="name" dense outlined class="rounded-lg" />
-        </div>
-        <div class="d-flex flex-column mr-16" >
-          <h4>Dificultad</h4>
+    <div class="ml-16 d-flex flex-row justify-space-between">
+      <div class="d-flex flex-column justify-start pt-4" style="width: 40%">
+        <v-text-field v-model="name" label="Nombre del Ejercicio" dense outlined class="rounded-lg" />
+        <v-textarea v-model="description" label="Descripción del Ejercicio" dense outlined class="rounded-lg" />
+      </div>
+      <div class="d-flex flex-column justify-start">
+        <div class="d-flex flex-row align-center mr-8" >
+          <h4 class="mr-4">Tipo de Actividad: </h4>
           <v-chip-group v-model="typeSelected" mandatory column active-class="primary--text">
             <v-chip v-for="index in type.length" class="pa-5">{{type[index-1]}}</v-chip>
           </v-chip-group>
         </div>
       </div>
-      <div class="d-flex flex-column " style="width:40%">
-            <h3>Descripcion del Ejercicio</h3>
-            <v-textarea v-model="description" dense outlined class="rounded-lg" />
-      </div>
-
     </div>
   </div>
 </template>
@@ -56,9 +42,9 @@ export default {
   },
   data(){
     return{
-      edit:true,
-      name:'nombre',
-      description:'descripcion',
+      edit:false,
+      name:'',
+      description:'',
       type:['Ejercicio','Descanso'],
       typeSelected:0,
     }

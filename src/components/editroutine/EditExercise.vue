@@ -1,24 +1,22 @@
 <template>
   <div class="d-flex flex-row">
     <div class="d-flex flex-column">
-      <h3 class="font-weight-medium text-decoration-none">
+      <h3 class="font-weight-bold text-decoration-none mb-2">
         {{ value.name }}
       </h3>
-      <div>
-        <v-text-field v-model="value.duration"></v-text-field>
+      <div class="d-flex flex-row justify-space-between">
+        <div class="d-flex flex-row align-center">
+          <v-img
+              class="flex-grow-0 ml-auto mr-4"
+              width="10em"
+              height="7em"
+              :src="value.img_url"
+          ></v-img>
+          <v-text-field class="mr-2" v-model="value.repetitions" outlined dense label="Repeticiones"/>
+          <v-text-field v-model="value.duration" outlined dense label="Tiempo (segs)" />
+        </div>
       </div>
     </div>
-
-    <v-img
-        class="flex-grow-0 ml-auto"
-        width="80px"
-        :src="value.img_url"
-        @click.stop="
-                    (event) => {
-                      console.log(event);
-                    }
-                  "
-    ></v-img>
   </div>
 </template>
 
