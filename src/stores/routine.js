@@ -1,11 +1,76 @@
-import {defineStore} from "pinia";
-import {useProfileStore} from "./profile";
+import { defineStore } from "pinia";
+import { useProfileStore } from "./profile";
 
 export const CycleTypes = {
   WARMUP: "warmup",
   EXERCISE: "exercise",
   COOLDOWN: "cooldown"
 };
+
+export const useMyRoutines = defineStore("myroutines", {
+  state: () => ({
+    page: 0,
+    routines: [],
+    isLastPage: false
+  }),
+  actions: {
+    async getNextPage(pageSize) {
+      try {
+        const profileStore = useProfileStore();
+
+        const res = await fetch(
+          "http://localhost:8080/api/users/current/routines?" +
+          new URLSearchParams({ page: this.page, size: pageSize }),
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${profileStore.getToken}`
+            }
+          }
+        );
+        const { isLastPage, content } = await res.json();
+        this.isLastPage = isLastPage;
+        this.page += 1;
+        this.routines.push(...content);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+});
+
+export const useFavoriteRoutines = defineStore("myfavorites", {
+  state: () => ({
+    page: 0,
+    favorites: [],
+    isLastFavorite: false
+  }),
+  actions: {
+    async getNextPage(pageSize) {
+      try {
+        const profileStore = useProfileStore();
+
+        const res = await fetch(
+          "http://localhost:8080/api/favourites?" +
+          new URLSearchParams({ page: this.page, size: pageSize }),
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${profileStore.getToken}`
+            }
+          }
+        );
+        const { isLastPage, content } = await res.json();
+        console.log(isLastPage);
+        this.isLastFavorite = isLastPage;
+        this.page += 1;
+        this.favorites.push(...content);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+});
 
 export const useSaveRoutine = defineStore("editroutine", {
   state: () => ({

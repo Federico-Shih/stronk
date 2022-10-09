@@ -21,20 +21,29 @@
         <div
           class="alignedToCenter"
           :style="{ width: '25%' }"
-          v-for="atr in ownToShow"
+          v-for="atr in myRoutineList"
           :key="atr.id"
         >
-          <router-link to="/routines/1" style="text-decoration: none; color: inherit;">
+          <router-link
+            :to="`/routines/${atr.id}`"
+            style="text-decoration: none; color: inherit"
+          >
             <RoutineButton
-              :variant="atr.variant"
-              :title="atr.title"
-              :image="atr.image"
+              variant="small"
+              :title="atr.name"
+              :image="atr.metadata?.image"
             />
           </router-link>
         </div>
         <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
-          >mdi-chevron-double-down</v-icon
+        >mdi-chevron-double-down
+        </v-icon
         >
+        <router-link to="/routines/create">
+          <h2 v-if="myRoutineList.length === 0" class="text--black">
+            No tienes rutinas, empezá creando tu primera!
+          </h2>
+        </router-link>
       </div>
     </div>
 
@@ -58,69 +67,44 @@
         <div
           class="alignedToCenter"
           :style="{ width: '25%' }"
-          v-for="atr in favToShow"
+          v-for="atr in myFavoritesList"
           :key="atr.id"
         >
-          <router-link to="/routines/1" style="text-decoration: none; color: inherit;">
+          <router-link
+            :to="`/routines/${atr.id}`"
+            style="text-decoration: none; color: inherit"
+          >
             <RoutineButton
-              :variant="atr.variant"
-              :title="atr.title"
-              :image="atr.image"
+              variant="small"
+              :title="atr.name"
+              :image="atr.metadata?.image"
             />
           </router-link>
         </div>
         <v-icon v-if="favShowArrow" @click="increaseCounterFav"
-          >mdi-chevron-double-down</v-icon
+        >mdi-chevron-double-down
+        </v-icon
         >
+        <h2 v-if="myRoutineList.length === 0" class="text--black">
+          No tienes favoritos, explorá las rutinas de la comunidad!
+        </h2>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import abs from "../assets/abdominales.jpg";
-import abslat from "../assets/abdominallateral.jpg";
-import fle from "../assets/flexiones.jpg";
 import RoutineButton from "@/components/RoutineButton.vue";
+import { useFavoriteRoutines, useMyRoutines } from "../stores/routine";
+import { mapState } from "pinia";
+
 export default {
   name: "MisRutinas.vue",
   components: { RoutineButton },
   data() {
     return {
-      counterOwn: 1,
-      counterFav: 1,
       amountShownEachLine: 4,
-      buttonAtributesOwn: [
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-      ],
-      buttonAtributesFav: [
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-        { variant: "small", title: "Abs2", image: abslat, id: 2 },
-        { variant: "small", title: "flex", image: fle, id: 3 },
-        { variant: "small", title: "Abs", image: abs, id: 1 },
-      ],
+      buttonAtributesFav: []
     };
   },
   methods: {
@@ -132,34 +116,30 @@ export default {
     },
   },
   computed: {
-    ownToShow() {
-      return this.buttonAtributesOwn.slice(
-        0,
-        this.counterOwn * this.amountShownEachLine
-      );
+    ...mapState(useMyRoutines, ["routines", "isLastPage"]),
+    ...mapState(useFavoriteRoutines, ["favorites, isLastFavorite"]),
+    myRoutineList() {
+      return this.routines;
     },
-    favToShow() {
-      return this.buttonAtributesFav.slice(
-        0,
-        this.counterFav * this.amountShownEachLine
-      );
+    myFavoritesList() {
+      return this.favorites;
     },
     theme() {
       return this.$vuetify.theme.dark ? "dark" : "light";
     },
     ownShowArrow() {
-      return (
-        this.counterOwn * this.amountShownEachLine <
-        this.buttonAtributesOwn.length
-      );
+      return !this.isLastPage;
     },
     favShowArrow() {
-      return (
-        this.counterFav * this.amountShownEachLine <
-        this.buttonAtributesFav.length
-      );
-    },
+      return !this.isLastFavorite;
+    }
   },
+  async created() {
+    const routineStore = useMyRoutines();
+    await routineStore.getNextPage(this.amountShownEachLine);
+    const favoriteStore = useFavoriteRoutines();
+    await favoriteStore.getNextPage(this.amountShownEachLine);
+  }
 };
 /* podemos hacer una método computed el cual haga un splice desde
  * donde queramos de un array hasta counter*3 por ejemplo, el v-for haría
