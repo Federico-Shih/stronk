@@ -22,7 +22,7 @@ export default {
     },
     emailTakenRule() {
       return !this.emailAlreadyTaken || "Email ya existe";
-    }
+    },
   },
   watch: {
     show(curr) {
@@ -44,7 +44,7 @@ export default {
     },
     password() {
       this.usernameNotFound = false;
-    }
+    },
   },
   data: () => ({
     MAX_USERLENGTH: 20,
@@ -60,7 +60,7 @@ export default {
     lastname: "",
     emailRules: [
       (v) => !!v || "Tiene que ingresar correo electrónico",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"
+      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
     ],
     passwordRules: [
       (v) => !!v || "Tiene que ingresar contraseña",
@@ -95,6 +95,7 @@ export default {
       "createNewProfile",
       "verify_email",
       "resend_verification",
+      "loadCurrentNames",
     ]),
     ...mapState(useProfileStore, [
       "getToken",
@@ -129,6 +130,7 @@ export default {
         } else {
           await this.login(this.username, this.password);
           if (this.getHasProfile()) {
+            await this.loadCurrentNames();
             this.setStartingConditionsAndClose();
           } else {
             this.usernameNotFound = true;

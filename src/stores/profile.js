@@ -19,15 +19,15 @@ export const useProfileStore = defineStore({
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken()}`,
+              Authorization: `bearer ${this.token}`,
             },
           }
         );
-        const text = await response.text();
-        const result = text ? JSON.parse(text) : "";
-        if (result !== "") {
-          this.firstname = result.firstname;
-          this.lastname = result.lastname;
+        console.log(response);
+        const res = await response.json();
+        if (response.status === 200) {
+          this.firstname = res.firstName;
+          this.lastname = res.lastName;
         }
       } catch (error) {
         console.log(error);
@@ -40,14 +40,14 @@ export const useProfileStore = defineStore({
         const response = await fetch("http://localhost:8080/api/users/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
             // "Authorization": `bearer ${this.getToken()}`,
           },
           //tiene que ser un string si o si
           body: JSON.stringify({
             username,
-            password
-          })
+            password,
+          }),
         });
         const res = await response.json();
         if (response.status === 200) {
@@ -65,7 +65,7 @@ export const useProfileStore = defineStore({
         const response = await fetch("http://localhost:8080/api/users", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
             // "Authorization": `bearer ${this.getToken()}`,
           },
           body: JSON.stringify({
@@ -120,9 +120,19 @@ export const useProfileStore = defineStore({
         console.log(error);
       }
     },
-    logout() {
+    async logout() {
       this.validated = false;
       this.token = "";
+      try {
+        await fetch("http://localhost:8080/api/users/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   getters: {
@@ -136,7 +146,7 @@ export const useProfileStore = defineStore({
     getCorrectVerification() {
       return this.correctEmailVerification;
     },
-    getFistname() {
+    getFirstname() {
       return this.firstname;
     },
     getLastname() {

@@ -1,7 +1,6 @@
 <script>
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "@/stores/profile";
-import AuthPopup from "./AuthPopup.vue";
 import logotype from "../assets/logotipo.png";
 import temp from "../assets/cristiano.png";
 import { usePopupStore } from "@/stores/auth";
@@ -10,7 +9,11 @@ export default {
   name: "NavBar",
   computed: {
     ...mapState(useProfileStore, ["profile"]),
-    ...mapState(useProfileStore, ["getHasProfile"]),
+    ...mapState(useProfileStore, [
+      "getHasProfile",
+      "getFirstname",
+      "getLastname",
+    ]),
     ownedLinks() {
       return this.links.filter((link) =>
         link.protected ? this.getHasProfile : true
@@ -54,17 +57,15 @@ export default {
     },
     ...mapActions(usePopupStore, ["showPopup"]),
     ...mapActions(useProfileStore, ["logout"]),
-    ...mapActions(useProfileStore, [
-      "getFirstname",
-      "getLastname",
-      "loadCurrentNames",
-    ]),
   },
   watch: {
     getHasProfile(curr) {
       if (curr) {
         this.expanded = false;
       }
+    },
+    getFirstname(curr) {
+      this.firstname = curr;
     },
   },
 };
@@ -114,7 +115,7 @@ export default {
               v-on="on"
               @click="setExpanded(!expanded)"
             >
-              Bienvenido
+              Bienvenido, {{ firstname }}
               <v-img class="ml-2" :src="temp" max-width="30" />
               <v-icon class="text--black ml-3">
                 {{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
