@@ -15,7 +15,7 @@
       </div>
 
       <div class="mr-16 alignmentToTheRight">
-        <v-btn outlined class="rounded-pill">
+        <v-btn outlined class="rounded-pill" @click="showExPopup()">
           <v-icon left>mdi-pencil</v-icon>
           Editar Ejercicio
         </v-btn>
@@ -62,18 +62,22 @@
     <div class="d-flex flex-column ml-8 mb-8">
       <h2>Video demostrativo</h2>
     </div>
+    <ExercisePopup @ex-sumbit="sumbitEx"/>
   </div>
+
 </template>
 
 <script>
 import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
-
+import {mapActions} from "pinia";
+import {useExPopupStore} from "../stores/expopup";
+import ExercisePopup from "../components/ExercisePopup.vue"
 
 export default {
   components: {
-   GoBackButton
-
+   GoBackButton,
+    ExercisePopup
   },
   mounted() {
     this.$route.params.id;
@@ -86,9 +90,19 @@ export default {
         "Esta es la descripcion Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a nibh vitae nisi tincidunt vulputate vel nec risus. Fusce placerat sagittis nisl, quis ultricies quam scelerisque a. Nulla laoreet tellus a turpis hendrerit posuere. Curabitur in ante velit. Mauris eu dolor tortor. Curabitur nisl velit, tincidunt non orci id, rutrum sodales metus. Fusce vitae libero aliquet lorem mollis vestibulum nec non odio. Fusce placerat egestas dui at venenatis. Aliquam aliquet orci elit, ut aliquet justo mattis et. Curabitur vitae iaculis neque, ac eleifend nibh. Nam volutpat tortor sed leo sollicitudin, eget semper quam ultricies",
       type:'Ejercicio',
       images: [temp, temp, temp, temp, temp, temp, temp],
-      videos: []
+      videos: [],
+      exercise:null,
+      typeEx:null,
     };
   },
+  methods:{
+    ...mapActions(useExPopupStore, ["showExPopup"]),
+    sumbitEx(ExerciseSelected,ExerciseType){
+      console.log("LLego");
+      console.log(ExerciseSelected);
+      console.log(ExerciseType)
+    },
+  }
 };
 </script>
 

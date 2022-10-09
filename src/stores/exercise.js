@@ -26,13 +26,13 @@ export const useExerciseStore = defineStore("exercise",{
                 if(result !== ""){
                     this.exercises=result.content;
                 }
-            } catch (error) {
+            }catch (error) {
                 console.log("Oops!");
             }
             return this.exercises;
         }
     },
-    mounted:{
+    created:{
         ...mapActions(useProfileStore, ["getToken"]),
         setToken(){
             this.userToken=this.getToken();
