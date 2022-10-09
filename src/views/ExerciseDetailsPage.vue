@@ -15,7 +15,7 @@
       </div>
 
       <div class="mr-16 alignmentToTheRight">
-        <v-btn outlined class="rounded-pill" @click="showExPopup()">
+        <v-btn outlined class="rounded-pill">
           <v-icon left>mdi-pencil</v-icon>
           Editar Ejercicio
         </v-btn>
@@ -60,9 +60,17 @@
       </div>
     </div>
     <div class="d-flex flex-column ml-8 mb-8">
-      <h2>Video demostrativo</h2>
+      <h2 class="mb-2">Videos demostrativos</h2>
+<!--      <div v-for="url in videos" class="align-self-center mb-8" >-->
+<!--      <iframe-->
+<!--              width="560"-->
+<!--              height="315"-->
+<!--              :src="loadURL(url)"-->
+<!--              frameborder="0"-->
+<!--              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"-->
+<!--              allowfullscreen/>-->
+<!--      </div>-->
     </div>
-    <ExercisePopup @ex-sumbit="sumbitEx"/>
   </div>
 
 </template>
@@ -70,14 +78,10 @@
 <script>
 import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
-import {mapActions} from "pinia";
-import {useExPopupStore} from "../stores/expopup";
-import ExercisePopup from "../components/ExercisePopup.vue"
 
 export default {
   components: {
    GoBackButton,
-    ExercisePopup
   },
   mounted() {
     this.$route.params.id;
@@ -90,18 +94,25 @@ export default {
         "Esta es la descripcion Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a nibh vitae nisi tincidunt vulputate vel nec risus. Fusce placerat sagittis nisl, quis ultricies quam scelerisque a. Nulla laoreet tellus a turpis hendrerit posuere. Curabitur in ante velit. Mauris eu dolor tortor. Curabitur nisl velit, tincidunt non orci id, rutrum sodales metus. Fusce vitae libero aliquet lorem mollis vestibulum nec non odio. Fusce placerat egestas dui at venenatis. Aliquam aliquet orci elit, ut aliquet justo mattis et. Curabitur vitae iaculis neque, ac eleifend nibh. Nam volutpat tortor sed leo sollicitudin, eget semper quam ultricies",
       type:'Ejercicio',
       images: [temp, temp, temp, temp, temp, temp, temp],
-      videos: [],
-      exercise:null,
-      typeEx:null,
+      videos: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ','https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
     };
   },
-  methods:{
-    ...mapActions(useExPopupStore, ["showExPopup"]),
-    sumbitEx(ExerciseSelected,ExerciseType){
-      console.log("LLego");
-      console.log(ExerciseSelected);
-      console.log(ExerciseType)
-    },
+  methods: {
+    loadURL(youtubeURL) {
+      const youtubeEmbedTemplate = 'https://www.youtube-nocookie.com/embed/'
+      const url = youtubeURL.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/)
+      // console.log("url", url)
+      const YId = undefined !== url[2] ? url[2].split(/[^0-9a-z_/\\-]/i)[0] : url[0]
+      // console.log("YId", YId)
+      // if (YId === url[0]) {
+      //   console.log("not a youtube link")
+      // } else {
+      //   console.log("it's  a youtube video")
+      // }
+      const topOfQueue = youtubeEmbedTemplate.concat(YId)
+      console.log("topOfQueue", topOfQueue)
+      return topOfQueue;
+    }
   }
 };
 </script>
