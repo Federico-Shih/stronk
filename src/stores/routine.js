@@ -1,6 +1,5 @@
-import { defineStore } from "pinia";
-import { cycle1 } from "@/models/routine.model";
-import { useProfileStore } from "./profile";
+import {defineStore} from "pinia";
+import {useProfileStore} from "./profile";
 
 export const CycleTypes = {
   WARMUP: "warmup",
@@ -22,10 +21,11 @@ export const useSaveRoutine = defineStore("editroutine", {
     getRoutine(id) {
       console.log(id, "obtained routine");
     },
-    async postRoutine(routineBody, routineId) {
-      const profileStore = useProfileStore();
-      if (routineId) {
+    async createRoutine(routineBody) {
+      try {
+        const profileStore = useProfileStore();
         await fetch(`http://localhost:8080/api/routines`, {
+          method: "POST",
           body: JSON.stringify(routineBody),
           headers: {
             "Content-Type": "application/json",
@@ -33,28 +33,90 @@ export const useSaveRoutine = defineStore("editroutine", {
           }
         });
       }
+      catch (errors) {
+        console.log("Oops!" + errors);
+      }
+    },
+    async modifyRoutine(routineBody, routineId) {
+      try {
+        const profileStore = useProfileStore();
+        if (routineId) {
+          await fetch(`http://localhost:8080/api/routines/${routineId}`, {
+            method: "PUT",
+            body: JSON.stringify(routineBody),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${profileStore.getToken}`
+            }
+          });
+        }
+      }
+      catch (errors) {
+        console.log("Oops!" + errors);
+      }
     },
   },
 });
 
-export const useCycles = defineStore("cyclelist", {
-  state: () => ({
-    cycles: {}
-  }),
+export const useCycles = defineStore("cycle", {
   actions: {
-    async callCycleById(id) {
-      if (!this.cycles[id]) {
-        this.cycles[id] = cycle1;
+    async getCyclesFromRoutine(routine_id) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/routines/${routine_id}/cycles`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `bearer ${useProfileStore().getToken()}`,
+          },
+        });
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
+      } catch (error) {
+        console.log("Oops!" + errors);
       }
-    }
+    },
+    async getCycleExercises(cycle_id) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/cycles/${cycle_id}/exercises`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `bearer ${useProfileStore().getToken()}`,
+          },
+        });
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
+      } catch (errors) {
+        console.log("Oops!" + errors);
+      }
+    },
+    async createCycle(routine_id, cycleBody) { //devuelve el id del cycle creado
+      try {
+        const profileStore = useProfileStore();
+        const response = await fetch(`http://localhost:8080/api/routines/${routine_id}/cycles`, {
+          method: "POST",
+          body: JSON.stringify(cycleBody),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${profileStore.getToken}`
+          }
+        });
+        const text = await response.text();
+        const obj = text ? JSON.parse(text) : null;
+        if(obj!=null)
+          return obj.id;
+        else
+          throw new Error();
+      } catch (errors) {
+        console.log("Oops!" + errors);
+      }
+    },
+    /*
+    * TODO: es una paja porque hay que ver que cambió y hacer POST PUT o DELETE segun corresponda con cada
+    *  cyclo y/o sus sub-ejercicios
+    * */
   },
-  getters: {
-    getCycleById: (state) => {
-      return (id) => {
-        return state.cycles[id];
-      };
-    }
-  }
+
 });
 
 // export const routine = {

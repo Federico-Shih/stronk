@@ -95,7 +95,9 @@
 import EditCycle from "@/components/editroutine/EditCycle.vue";
 import GoBackButton from "@/components/GoBackButton.vue";
 import Vue from "vue";
-import { CycleTypes } from "../stores/routine";
+import {CycleTypes, useCycles} from "../stores/routine";
+import {mapActions} from "pinia";
+import {useExPopupStore} from "@/stores/expopup";
 
 export default {
   name: "RoutineEditCreationPage",
@@ -121,7 +123,8 @@ export default {
   },
   created() {
     if (this.$route.params.id) {
-      console.log(this.$route.params.id);
+      let apiAns = getCyclesFromRoutine(this.$route.params.id);
+      console.log(apiAns);
     } else {
       this.cycles = this.cycles.concat(
         { "cycle-type": CycleTypes.WARMUP, order: 1, internalId: 0 },
@@ -132,6 +135,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useCycles, ["getCyclesFromRoutine"]),
     addCycle(order) {
       const newCycles = [];
       this.cycles.forEach((cycle) => {
