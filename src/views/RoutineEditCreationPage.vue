@@ -43,9 +43,8 @@
             column
             active-class="primary--text"
           >
-            <v-chip v-for="index in difficulty.length" class="pa-5">{{
-                difficulty[index - 1]
-              }}
+            <v-chip v-for="index in difficulty.length" class="pa-5"
+            >{{ difficulty[index - 1] }}
             </v-chip>
           </v-chip-group>
         </div>
@@ -59,13 +58,9 @@
             column
             active-class="primary--text"
           >
-            <v-chip
-              v-for="index in category.length"
-              :key="index"
-              class="pa-5"
+            <v-chip v-for="index in category.length" :key="index" class="pa-5"
             >{{ category[index - 1] }}
-            </v-chip
-            >
+            </v-chip>
           </v-chip-group>
         </div>
       </div>
@@ -91,8 +86,7 @@
       >
         <v-icon>mdi-plus</v-icon>
         Agregar ciclo
-      </v-btn
-      >
+      </v-btn>
     </div>
   </div>
 </template>
@@ -152,8 +146,8 @@ export default {
       });
       console.log(newCycles);
       this.cycles = newCycles;
-    }
-  }
+    },
+  },
 };
 </script>
 

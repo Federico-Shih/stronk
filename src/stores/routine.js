@@ -33,8 +33,8 @@ export const useSaveRoutine = defineStore("editroutine", {
           }
         });
       }
-    }
-  }
+    },
+  },
 });
 
 export const useCycles = defineStore("cyclelist", {

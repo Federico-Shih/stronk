@@ -52,36 +52,49 @@ export default {
   <div class="d-flex flex-row">
     <div class="d-flex flex-column">
       <h3 class="font-weight-bold text-decoration-none mb-2">
-        {{ value.name }}
+        {{ name }}
       </h3>
-      <div class="d-flex flex-row justify-space-between">
+      <div class="d-flex flex-row justify-space-between align-start">
         <div class="d-flex flex-row align-center">
           <v-img
-              class="flex-grow-0 ml-auto mr-4"
-              width="10em"
-              height="7em"
-              :src="value.img_url"
+            class="flex-grow-0 ml-auto mr-4"
+            width="10em"
+            height="7em"
+            :src="img_url"
           ></v-img>
-          <v-text-field class="mr-2" v-model="value.repetitions" outlined dense label="Repeticiones"/>
-          <v-text-field v-model="value.duration" outlined dense label="Tiempo (segs)" />
+          <v-text-field
+            class="mr-2"
+            v-model="repetitionsModel"
+            outlined
+            dense
+            label="Repeticiones"
+            type="number"
+          />
+          <v-text-field
+            v-model="durationModel"
+            outlined
+            dense
+            label="Tiempo (segs)"
+            type="number"
+          />
+        </div>
+        <div class="d-flex flex-row justify-end align-center">
+          <v-btn icon @click="remove()">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+          <v-btn icon>
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+          <div class="d-flex flex-column">
+            <v-btn icon :disabled="index === 0" @click="moveUp()">
+              <v-icon>mdi-arrow-up-bold</v-icon>
+            </v-btn>
+            <v-btn icon :disabled="last" @click="moveDown()">
+              <v-icon>mdi-arrow-down-bold</v-icon>
+            </v-btn>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: "EditExercise",
-  props: ['value'],
-  methods: {
-    handleInput (e) {
-      this.$emit('input', this.value)
-    }
-  }
-}
-</script>
-
-<style scoped>
-
-</style>
