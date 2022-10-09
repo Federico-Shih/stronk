@@ -43,7 +43,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useExerciseStore, ["getExercises"]),
+    ...mapActions(useExerciseStore, ["getExerciseById"]),
     ...mapActions(useExPopupStore,["hideExPopup"]),
     onSumbit(){
       this.$emit('ex-sumbit',this.exerciseSelected,this.exerciseType, this.index);
@@ -52,9 +52,9 @@ export default {
 
   },
   mounted() {
-    // retrieveExercises(){
-    //   this.exercises=this.getExercises();
-    // }
+     // retrieveExercises(){
+     //  this.exercises=this.getExercises();
+     // }
   }
 };
 

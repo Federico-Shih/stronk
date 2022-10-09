@@ -52,14 +52,16 @@
 
 <script>
 import GoBackButton from "../components/GoBackButton.vue";
-
+import { useExerciseStore} from "../stores/exercise";
+import {mapActions} from "pinia";
+import {useProfileStore} from "../stores/profile";
 export default {
   components: {
     GoBackButton,
   },
+
   data(){
     return{
-      edit:false,
       name:'',
       description:'',
       type:['Ejercicio','Descanso'],
@@ -70,7 +72,14 @@ export default {
       videos:[],
     }
   },
+  computed:{
+    edit:(!this.$route.params.id),
+    exId:(this.$route.params.id)? this.$route.params.id:0,
+    authorId: this.getId(),
+  },
   methods:{
+    ...mapActions(useExerciseStore, ["getExerciseById"]),
+    ...mapActions(useProfileStore,["getId"]),
     loadImage(){
       if(this.imageurl!== '') {
         this.images.push(this.imageurl);
@@ -93,7 +102,17 @@ export default {
         return value !== vid
       });
     }
-  }
+  },
+  mounted(){
+    if(this.edit){
+      const exercise=this.getExerciseById(this.exId);
+      this.name=exercise.name;
+      this.description=exercise.detail;
+      this.typeSelected=(exercise.type==='exercise')? 0:1;
+      this.images=exercise.images;
+      this.videos=exercise.videos;
+    }
+  },
 };
 
 </script>

@@ -82,14 +82,19 @@ const router = new VueRouter({
       beforeEnter: tokenGuard
     },
     {
-      path: "/exercises/data",
-      name: "exercise_details",
+      path: "/exercises/create",
+      name: "exercise_create",
       component: () => import("../views/ExerciseDetailsPage.vue"),
       beforeEnter: tokenGuard
     },
     {
-      path: "/exercises/data/edit",
-      name: "exercises_edit_create",
+      path: "/exercises/:id",
+      name: "exercise_details",
+      component: () => import("../views/ExerciseDetailsPage.vue"),
+    },
+    {
+      path: "/exercises/:id/edit",
+      name: "exercises_edit",
       component: () => import("../views/ExerciseEditCreationPage.vue"),
       beforeEnter: tokenGuard
     },
