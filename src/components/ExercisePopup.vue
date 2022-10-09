@@ -35,7 +35,7 @@ export default {
     };
   },
   computed:{
-    ...mapState(useExPopupStore, ["show"]),
+    ...mapState(useExPopupStore, ["show", "index"]),
   },
   watch: {
     show(){
@@ -46,7 +46,7 @@ export default {
     ...mapActions(useExerciseStore, ["getExercises"]),
     ...mapActions(useExPopupStore,["hideExPopup"]),
     onSumbit(){
-      this.$emit('ex-sumbit',this.exerciseSelected,this.exerciseType);
+      this.$emit('ex-sumbit',this.exerciseSelected,this.exerciseType, this.index);
       this.hideExPopup();
     },
 

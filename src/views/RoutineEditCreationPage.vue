@@ -69,7 +69,7 @@
     <h2 class="mt-4 ml-8">Ciclos de Ejercicios</h2>
     <div
       v-for="cycle in cycles"
-      :key="cycle.id"
+      :key="cycle.internalId"
       class="d-flex flex-column align-center flex-grow-0"
     >
       <EditCycle
@@ -124,9 +124,9 @@ export default {
       console.log(this.$route.params.id);
     } else {
       this.cycles = this.cycles.concat(
-        { "cycle-type": CycleTypes.WARMUP, order: 1, id: 0 },
-        { "cycle-type": CycleTypes.EXERCISE, order: 2, id: 1 },
-        { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: 2 }
+        { "cycle-type": CycleTypes.WARMUP, order: 1, internalId: 0 },
+        { "cycle-type": CycleTypes.EXERCISE, order: 2, internalId: 1 },
+        { "cycle-type": CycleTypes.COOLDOWN, order: 3, internalId: 2 }
       );
       this.maxId = 3;
     }
