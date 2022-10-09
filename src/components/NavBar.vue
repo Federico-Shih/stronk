@@ -10,19 +10,20 @@ export default {
   name: "NavBar",
   computed: {
     ...mapState(useProfileStore, ["profile"]),
-    ...mapState(useProfileStore, ["hasProfile"]),
+    ...mapState(useProfileStore, ["getHasProfile"]),
     ownedLinks() {
       return this.links.filter((link) =>
-        link.protected ? this.hasProfile : true
+        link.protected ? this.getHasProfile : true
       );
     },
     LogoClicked() {
-      return this.hasProfile ? "/home" : "/";
+      return this.getHasProfile ? "/home" : "/";
     },
   },
   data() {
     return {
       logo: logotype,
+      firstname: "asd",
       links: [
         { label: "Explorar", link: "/explore" },
         { label: "Comunidad", link: "/community" },
@@ -53,9 +54,14 @@ export default {
     },
     ...mapActions(usePopupStore, ["showPopup"]),
     ...mapActions(useProfileStore, ["logout"]),
+    ...mapActions(useProfileStore, [
+      "getFirstname",
+      "getLastname",
+      "loadCurrentNames",
+    ]),
   },
   watch: {
-    hasProfile(curr) {
+    getHasProfile(curr) {
       if (curr) {
         this.expanded = false;
       }
@@ -78,7 +84,7 @@ export default {
       >{{ label }}</router-link
     >
     <v-spacer></v-spacer>
-    <div v-if="!this.hasProfile">
+    <div v-if="!this.getHasProfile">
       <v-btn
         class="mx-5"
         elevation="1"
@@ -108,7 +114,7 @@ export default {
               v-on="on"
               @click="setExpanded(!expanded)"
             >
-              Bienvenido, Cristiano
+              Bienvenido
               <v-img class="ml-2" :src="temp" max-width="30" />
               <v-icon class="text--black ml-3">
                 {{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}

@@ -5,10 +5,35 @@ export const useProfileStore = defineStore({
   state: () => ({
     token: "",
     username: "",
+    firstname: "",
+    lastname: "",
     validated: false,
     correctEmailVerification: false,
   }), //headers solo con put y post
   actions: {
+    async loadCurrentNames() {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/users/current",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken()}`,
+            },
+          }
+        );
+        const text = await response.text();
+        const result = text ? JSON.parse(text) : "";
+        if (result !== "") {
+          this.firstname = result.firstname;
+          this.lastname = result.lastname;
+        }
+      } catch (error) {
+        console.log(error);
+        console.log("Error cargando nombres");
+      }
+    },
     async login(username, password) {
       if (this.validated) return this.token;
       try {
@@ -71,11 +96,27 @@ export const useProfileStore = defineStore({
             }),
           }
         );
+        console.log(response);
         if (response.ok) {
           this.correctEmailVerification = true;
         }
       } catch (error) {
         console.log("Invalid Verification!");
+      }
+    },
+    async resend_verification(email) {
+      try {
+        await fetch("http://localhost:8080/api/users/resend_verification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+          }),
+        });
+      } catch (error) {
+        console.log(error);
       }
     },
     logout() {
@@ -84,7 +125,7 @@ export const useProfileStore = defineStore({
     },
   },
   getters: {
-    hasProfile() {
+    getHasProfile() {
       return this.validated;
     },
     getToken() {
@@ -92,6 +133,12 @@ export const useProfileStore = defineStore({
     },
     getCorrectVerification() {
       return this.correctEmailVerification;
+    },
+    getFistname() {
+      return this.firstname;
+    },
+    getLastname() {
+      return this.lastname;
     },
   },
 });

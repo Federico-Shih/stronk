@@ -67,22 +67,25 @@ export default {
   }),
   methods: {
     ...mapActions(useProfileStore, [
-      "hasProfile",
       "login",
       "createNewProfile",
-      "getToken",
       "verify_email",
+      "resend_verification",
+    ]),
+    ...mapState(useProfileStore, [
+      "getToken",
+      "getHasProfile",
       "getCorrectVerification",
     ]),
     ...mapActions(usePopupStore, ["hidePopup"]),
-    onSubmit() {
+    async onSubmit() {
       this.$refs.form.validate();
       if (this.valid) {
         if (this.isRegister) {
           if (this.onAuthRoute !== this.$route.path) {
-            this.$router.push(this.onAuthRoute);
+            await this.$router.push(this.onAuthRoute);
           }
-          this.createNewProfile(
+          await this.createNewProfile(
             this.username,
             this.password,
             this.email,
@@ -92,26 +95,25 @@ export default {
           this.isRegister = false;
           this.isVerification = true;
         } else {
-          this.login(this.username, this.password);
-          const token = this.getToken();
-          if (token !== "") {
+          await this.login(this.username, this.password);
+          if (this.getHasProfile()) {
             this.setStartingConditionsAndClose();
           }
         }
       }
     },
-    verify() {
-      this.verify_email(this.email, this.verificationCode);
+    async verify() {
+      await this.verify_email(this.email, this.verificationCode);
       const valid = this.getCorrectVerification();
       if (valid) {
-        this.login(this.username, this.password);
+        await this.login(this.username, this.password);
         this.setStartingConditionsAndClose();
       } else {
         this.verificationMessage = "Lo sentimos, ese código es incorrecto...";
       }
     },
     resendVerification() {
-      // llamado a la API
+      this.resend_verification(this.email);
       this.verificationMessage = "Revise su Email. Código Reenviado.";
     },
     setStartingConditionsAndClose() {
@@ -202,7 +204,8 @@ export default {
             v-if="isVerification"
             label="Validación"
             required
-            :key="4"
+            hint="ABC123"
+            :key="25"
             v-model="verificationCode"
           ></v-text-field>
           <v-expand-transition>
@@ -223,12 +226,7 @@ export default {
             <v-btn v-if="!isVerification" type="submit" color="primary">{{
               isRegister ? "Registrarse" : "Iniciar Sesión"
             }}</v-btn>
-            <v-btn
-              v-if="isVerification"
-              @click="verify()"
-              color="primary"
-              v-model="verificationCode"
-            >
+            <v-btn v-if="isVerification" @click="verify()" color="primary">
               Verifique su correo electrónico
             </v-btn>
             <v-btn
