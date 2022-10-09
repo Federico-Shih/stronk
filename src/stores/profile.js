@@ -5,8 +5,8 @@ export const useProfileStore = defineStore({
   state: () => ({
     token: "",
     username: "",
-    firstname: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     validated: false,
     correctEmailVerification: false,
   }), //headers solo con put y post
@@ -26,8 +26,9 @@ export const useProfileStore = defineStore({
         console.log(response);
         const res = await response.json();
         if (response.status === 200) {
-          this.firstname = res.firstName;
-          this.lastname = res.lastName;
+          this.username = res.username;
+          this.firstName = res.firstName;
+          this.lastName = res.lastName;
         }
       } catch (error) {
         console.log(error);
@@ -60,7 +61,7 @@ export const useProfileStore = defineStore({
         console.log(error);
       }
     },
-    async createNewProfile(username, password, email, firstname, lastname) {
+    async createNewProfile(username, password, email, firstName, lastName) {
       try {
         const response = await fetch("http://localhost:8080/api/users", {
           method: "POST",
@@ -72,8 +73,8 @@ export const useProfileStore = defineStore({
             username,
             password,
             email,
-            firstname,
-            lastname,
+            firstName,
+            lastName,
           }),
         });
         return response.json();
@@ -147,10 +148,10 @@ export const useProfileStore = defineStore({
       return this.correctEmailVerification;
     },
     getFirstname() {
-      return this.firstname;
+      return this.firstName;
     },
     getLastname() {
-      return this.lastname;
+      return this.lastName;
     },
   },
 });

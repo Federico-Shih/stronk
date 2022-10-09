@@ -56,8 +56,8 @@ export default {
     email: "",
     password: "",
     confirmPassword: "",
-    firstname: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     emailRules: [
       (v) => !!v || "Tiene que ingresar correo electrónico",
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -111,8 +111,8 @@ export default {
             this.username,
             this.password,
             this.email,
-            this.firstname,
-            this.lastname
+            this.firstName,
+            this.lastName
           );
           // 'UNIQUE constraint failed: User.email' 'UNIQUE constraint failed: User.username'
           if (res.code === 2) {
@@ -147,6 +147,7 @@ export default {
       const valid = this.getCorrectVerification();
       if (valid) {
         await this.login(this.username, this.password);
+        await this.loadCurrentNames();
         this.setStartingConditionsAndClose();
       } else {
         this.verificationMessage = "Lo sentimos, ese código es incorrecto...";
@@ -208,7 +209,7 @@ export default {
             ></v-text-field>
           </v-expand-transition>
           <v-text-field
-            v-model="firstname"
+            v-model="firstName"
             label="Primer Nombre"
             :counter="MAX_USERLENGTH"
             :rules="nameRules"
@@ -217,7 +218,7 @@ export default {
             required
           ></v-text-field>
           <v-text-field
-            v-model="lastname"
+            v-model="lastName"
             label="Apellido"
             :counter="MAX_USERLENGTH"
             :rules="nameRules"

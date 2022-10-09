@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       logo: logotype,
-      firstname: "asd",
+      firstname: "",
       links: [
         { label: "Explorar", link: "/explore" },
         { label: "Comunidad", link: "/community" },
