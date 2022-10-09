@@ -12,6 +12,17 @@ export default {
         "Las contraseñas tienen que ser idénticas"
       );
     },
+    usernameNotFoundRule() {
+      return (
+        !this.usernameNotFound || "Nombre de usuario o contraseña inválida"
+      );
+    },
+    usernameTakenRule() {
+      return !this.usernameAlreadyTaken || "Nombre de usuario ya existe";
+    },
+    emailTakenRule() {
+      return !this.emailAlreadyTaken || "Email ya existe";
+    }
   },
   watch: {
     show(curr) {
@@ -24,9 +35,22 @@ export default {
         this.$refs.form.resetValidation();
       }
     },
+    email() {
+      this.emailAlreadyTaken = false;
+    },
+    username() {
+      this.usernameNotFound = false;
+      this.usernameAlreadyTaken = false;
+    },
+    password() {
+      this.usernameNotFound = false;
+    }
   },
   data: () => ({
     MAX_USERLENGTH: 20,
+    usernameNotFound: false,
+    usernameAlreadyTaken: false,
+    emailAlreadyTaken: false,
     valid: false,
     username: "",
     email: "",
@@ -36,7 +60,7 @@ export default {
     lastname: "",
     emailRules: [
       (v) => !!v || "Tiene que ingresar correo electrónico",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid"
     ],
     passwordRules: [
       (v) => !!v || "Tiene que ingresar contraseña",
@@ -82,23 +106,37 @@ export default {
       this.$refs.form.validate();
       if (this.valid) {
         if (this.isRegister) {
-          if (this.onAuthRoute !== this.$route.path) {
-            await this.$router.push(this.onAuthRoute);
-          }
-          await this.createNewProfile(
+          const res = await this.createNewProfile(
             this.username,
             this.password,
             this.email,
             this.firstname,
             this.lastname
           );
+          // 'UNIQUE constraint failed: User.email' 'UNIQUE constraint failed: User.username'
+          if (res.code === 2) {
+            if (res.details[0] === "UNIQUE constraint failed: User.username") {
+              this.usernameAlreadyTaken = true;
+            } else if (
+              res.details[0] === "UNIQUE constraint failed: User.email"
+            ) {
+              this.emailAlreadyTaken = true;
+            }
+            return;
+          }
           this.isRegister = false;
           this.isVerification = true;
         } else {
           await this.login(this.username, this.password);
           if (this.getHasProfile()) {
             this.setStartingConditionsAndClose();
+          } else {
+            this.usernameNotFound = true;
+            return;
           }
+        }
+        if (this.onAuthRoute !== this.$route.path) {
+          await this.$router.push(this.onAuthRoute);
         }
       }
     },
@@ -157,7 +195,11 @@ export default {
               v-model="username"
               label="Nombre de Usuario"
               :counter="MAX_USERLENGTH"
-              :rules="usernameRules"
+              :rules="[
+                ...usernameRules,
+                usernameTakenRule,
+                usernameNotFoundRule,
+              ]"
               v-if="isRegister || !isVerification"
               :key="1"
               required
@@ -183,14 +225,14 @@ export default {
           ></v-text-field>
           <v-text-field
             v-model="email"
-            :rules="emailRules"
+            :rules="[...emailRules, emailTakenRule]"
             label="Correo Electrónico"
             v-if="isRegister"
             required
             :key="2"
           ></v-text-field>
           <v-text-field
-            :rules="passwordRules"
+            :rules="[...passwordRules]"
             label="Contraseña"
             :type="hidePass ? 'password' : 'text'"
             v-if="!isVerification"

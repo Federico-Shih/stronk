@@ -40,32 +40,32 @@ export const useProfileStore = defineStore({
         const response = await fetch("http://localhost:8080/api/users/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
             // "Authorization": `bearer ${this.getToken()}`,
           },
           //tiene que ser un string si o si
           body: JSON.stringify({
             username,
-            password,
-          }),
+            password
+          })
         });
-        const text = await response.text();
-        const result = text ? JSON.parse(text) : "";
-        if (result !== "") {
-          this.token = result.token;
-          this.username = username;
+        const res = await response.json();
+        if (response.status === 200) {
+          this.token = res.token;
           this.validated = true;
+        } else {
+          return res;
         }
       } catch (error) {
-        console.log("Oops!");
+        console.log(error);
       }
     },
     async createNewProfile(username, password, email, firstname, lastname) {
       try {
-        await fetch("http://localhost:8080/api/users", {
+        const response = await fetch("http://localhost:8080/api/users", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
             // "Authorization": `bearer ${this.getToken()}`,
           },
           body: JSON.stringify({
@@ -76,6 +76,7 @@ export const useProfileStore = defineStore({
             lastname,
           }),
         });
+        return response.json();
       } catch (error) {
         console.log(error);
       }
@@ -126,6 +127,7 @@ export const useProfileStore = defineStore({
   },
   getters: {
     getHasProfile() {
+      console.log(this.validated);
       return this.validated;
     },
     getToken() {
