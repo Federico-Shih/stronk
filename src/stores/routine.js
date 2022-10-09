@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import {cycle1} from "@/models/routine.model";
+import { cycle1 } from "@/models/routine.model";
+import { useProfileStore } from "./profile";
 
 export const CycleTypes = {
   WARMUP: "warmup",
@@ -7,7 +8,7 @@ export const CycleTypes = {
   COOLDOWN: "cooldown"
 };
 
-export const useEditRoutine = defineStore("editroutine", {
+export const useSaveRoutine = defineStore("editroutine", {
   state: () => ({
     title: "",
     description: "",
@@ -20,14 +21,25 @@ export const useEditRoutine = defineStore("editroutine", {
   actions: {
     getRoutine(id) {
       console.log(id, "obtained routine");
+    },
+    async postRoutine(routineBody, routineId) {
+      const profileStore = useProfileStore();
+      if (routineId) {
+        await fetch(`http://localhost:8080/api/routines`, {
+          body: JSON.stringify(routineBody),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${profileStore.getToken}`
+          }
+        });
+      }
     }
   }
 });
 
 export const useCycles = defineStore("cyclelist", {
   state: () => ({
-    cycles: {
-    },
+    cycles: {}
   }),
   actions: {
     async callCycleById(id) {
@@ -40,11 +52,10 @@ export const useCycles = defineStore("cyclelist", {
     getCycleById: (state) => {
       return (id) => {
         return state.cycles[id];
-      }
+      };
     }
   }
 });
-
 
 // export const routine = {
 //   title: "Abdominales en 15 minutos",

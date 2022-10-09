@@ -26,22 +26,27 @@ const router = new VueRouter({
     {
       path: "/community",
       name: "community",
-      component: () => import("../views/CommunityPage.vue"),
+      component: () => import("../views/CommunityPage.vue")
     },
     {
       path: "/routines",
       name: "routines",
-      component: () => import("../views/MisRutinas.vue"),
+      component: () => import("../views/MisRutinas.vue")
+    },
+    {
+      path: "/routines/create",
+      name: "create_routine",
+      component: () => import("../views/RoutineEditCreationPage.vue")
     },
     {
       path: "/routines/:id",
       name: "routine",
-      component: () => import("../views/RoutineDetailsPage.vue"),
+      component: () => import("../views/RoutineDetailsPage.vue")
     },
     {
       path: "/routines/:id/edit",
       name: "routine_edit",
-      component: () => import("../views/RoutineEditCreationPage.vue"),
+      component: () => import("../views/RoutineEditCreationPage.vue")
     },
     {
       path: "/profile/:id",

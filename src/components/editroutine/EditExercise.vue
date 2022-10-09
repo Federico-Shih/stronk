@@ -1,3 +1,53 @@
+<script>
+export default {
+  name: "EditExercise",
+  props: {
+    index: Number,
+    last: Boolean,
+    name: String,
+    img_url: String,
+    repetitions: Number,
+    duration: Number
+  },
+  methods: {
+    remove() {
+      this.$emit("remove");
+    },
+    moveUp() {
+      this.$emit("moveup");
+    },
+    moveDown() {
+      this.$emit("movedown");
+    }
+  },
+  computed: {
+    durationModel: {
+      get() {
+        return this.duration;
+      },
+      set(value) {
+        if (!isNaN(+value)) {
+          this.$emit("update:duration", parseInt(value));
+        }
+      }
+    },
+    repetitionsModel: {
+      get() {
+        return this.repetitions;
+      },
+      set(value) {
+        console.log(typeof value);
+        if (!isNaN(+value)) {
+          this.$emit("update:repetitions", parseInt(value));
+        }
+      }
+    }
+  },
+  mounted() {
+  }
+};
+</script>
+
 <template>
   <div class="d-flex flex-row">
     <div class="d-flex flex-column">
