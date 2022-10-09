@@ -43,7 +43,7 @@
             column
             active-class="primary--text"
           >
-            <v-chip v-for="index in difficulty.length" class="pa-5"
+            <v-chip v-for="index in difficulty.length" :key="index" class="pa-5"
             >{{ difficulty[index - 1] }}
             </v-chip>
           </v-chip-group>
@@ -68,8 +68,8 @@
     <v-divider></v-divider>
     <h2 class="mt-4 ml-8">Ciclos de Ejercicios</h2>
     <div
-      v-for="(cycle, index) in cycles"
-      :key="index"
+      v-for="cycle in cycles"
+      :key="cycle.id"
       class="d-flex flex-column align-center flex-grow-0"
     >
       <EditCycle
@@ -110,7 +110,8 @@ export default {
       difficulty: ["Principiante", "Intermedio", "Avanzado"],
       difficultySelected: 0,
       bus: new Vue({}),
-      cycles: []
+      cycles: [],
+      maxId: 0
     };
   },
   computed: {
@@ -123,10 +124,11 @@ export default {
       console.log(this.$route.params.id);
     } else {
       this.cycles = this.cycles.concat(
-        { "cycle-type": CycleTypes.WARMUP, order: 1 },
-        { "cycle-type": CycleTypes.EXERCISE, order: 2 },
-        { "cycle-type": CycleTypes.COOLDOWN, order: 3 }
+        { "cycle-type": CycleTypes.WARMUP, order: 1, id: 0 },
+        { "cycle-type": CycleTypes.EXERCISE, order: 2, id: 1 },
+        { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: 2 }
       );
+      this.maxId = 3;
     }
   },
   methods: {
@@ -139,13 +141,14 @@ export default {
             "cycle-type": CycleTypes.EXERCISE
           });
         } else if (cycle.order > order) {
-          newCycles.push({ ...cycle, order: cycle.order + 1 });
+          newCycles.push({ ...cycle, order: cycle.order + 1, id: this.maxId });
         } else {
           newCycles.push(cycle);
         }
       });
       console.log(newCycles);
       this.cycles = newCycles;
+      this.maxId += 1;
     },
   },
 };
