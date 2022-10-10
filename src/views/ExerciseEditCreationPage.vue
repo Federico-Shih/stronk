@@ -75,7 +75,7 @@ export default {
   computed:{
     edit:(!this.$route.params.id),
     exId:(this.$route.params.id)? this.$route.params.id:0,
-    authorId: this.getId(),
+    creatorid: this.getId(),
   },
   methods:{
     ...mapActions(useExerciseStore, ["getExerciseById"]),

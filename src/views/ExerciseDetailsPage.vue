@@ -27,7 +27,7 @@
         <v-btn icon class="mx-4">
           <v-img
             class="rounded-circle"
-            :src="temp"
+            :src="creatorimage"
             height="50px"
             width="50px"
           />
@@ -78,26 +78,31 @@
 <script>
 import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
-
+import {useExerciseStore} from "../stores/exercise";
+import {useProfileStore} from "../stores/profile";
+import {mapActions} from "pinia";
 export default {
   components: {
    GoBackButton,
   },
-  mounted() {
-    this.$route.params.id;
+  computed: {
+    exId:this.$route.params.id,
   },
   data() {
     return {
-      temp,
-      creatorname: "Arnold Schwarzenegger",
       description:
         "Esta es la descripcion Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a nibh vitae nisi tincidunt vulputate vel nec risus. Fusce placerat sagittis nisl, quis ultricies quam scelerisque a. Nulla laoreet tellus a turpis hendrerit posuere. Curabitur in ante velit. Mauris eu dolor tortor. Curabitur nisl velit, tincidunt non orci id, rutrum sodales metus. Fusce vitae libero aliquet lorem mollis vestibulum nec non odio. Fusce placerat egestas dui at venenatis. Aliquam aliquet orci elit, ut aliquet justo mattis et. Curabitur vitae iaculis neque, ac eleifend nibh. Nam volutpat tortor sed leo sollicitudin, eget semper quam ultricies",
       type:'Ejercicio',
       images: [temp, temp, temp, temp, temp, temp, temp],
       videos: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ','https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
+      creatorid:null,
+      creatorname: "Arnold Schwarzenegger",
+      creatorimage:temp,
+
     };
   },
   methods: {
+    ...mapActions(useExerciseStore, ["getExerciseById"]),
     loadURL(youtubeURL) {
       const youtubeEmbedTemplate = 'https://www.youtube-nocookie.com/embed/'
       const url = youtubeURL.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/)
@@ -112,8 +117,18 @@ export default {
       const topOfQueue = youtubeEmbedTemplate.concat(YId)
       console.log("topOfQueue", topOfQueue)
       return topOfQueue;
-    }
+    },
+  },
+  mounted() {
+    let exercise=this.getExerciseById(this.exId);
+    this.creatorid=exercise.metadata.creatorid;
+    this.description=exercise.detail;
+    this.type=(exercise.type==='exercise')? "Ejercicio":"Descanso";
+    this.images=exercise.images;
+    this.videos=exercise.videos;
+    
   }
+
 };
 </script>
 
