@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useProfileStore } from "./profile";
+import { mapState } from "pinia/dist/pinia";
 
 export const CycleTypes = {
   WARMUP: "warmup",
@@ -13,18 +14,19 @@ export const useMyRoutines = defineStore("myroutines", {
     routines: [],
     isLastPage: false
   }),
+  getters: {
+    ...mapState(useProfileStore, ["getToken"])
+  },
   actions: {
     async getNextPage(pageSize) {
       try {
-        const profileStore = useProfileStore();
-
         const res = await fetch(
           "http://localhost:8080/api/users/current/routines?" +
           new URLSearchParams({ page: this.page, size: pageSize }),
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${profileStore.getToken}`
+              Authorization: `Bearer ${this.getToken}`
             }
           }
         );
@@ -48,15 +50,13 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
   actions: {
     async getNextPage(pageSize) {
       try {
-        const profileStore = useProfileStore();
-
         const res = await fetch(
           "http://localhost:8080/api/favourites?" +
           new URLSearchParams({ page: this.page, size: pageSize }),
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${profileStore.getToken}`
+              Authorization: `Bearer ${this.getToken}`
             }
           }
         );
@@ -68,8 +68,8 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
       } catch (err) {
         console.log(err);
       }
-    }
-  }
+    },
+  },
 });
 
 export const useSaveRoutine = defineStore("editroutine", {
@@ -88,35 +88,31 @@ export const useSaveRoutine = defineStore("editroutine", {
     },
     async createRoutine(routineBody) {
       try {
-        const profileStore = useProfileStore();
         await fetch(`http://localhost:8080/api/routines`, {
           method: "POST",
           body: JSON.stringify(routineBody),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${profileStore.getToken}`
+            Authorization: `Bearer ${this.getToken}`
           }
         });
-      }
-      catch (errors) {
+      } catch (errors) {
         console.log("Oops!" + errors);
       }
     },
     async modifyRoutine(routineBody, routineId) {
       try {
-        const profileStore = useProfileStore();
         if (routineId) {
           await fetch(`http://localhost:8080/api/routines/${routineId}`, {
             method: "PUT",
             body: JSON.stringify(routineBody),
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${profileStore.getToken}`
+              Authorization: `Bearer ${this.getToken}`
             }
           });
         }
-      }
-      catch (errors) {
+      } catch (errors) {
         console.log("Oops!" + errors);
       }
     },
@@ -127,61 +123,67 @@ export const useCycles = defineStore("cycle", {
   actions: {
     async getCyclesFromRoutine(routine_id) {
       try {
-        const response = await fetch(`http://localhost:8080/api/routines/${routine_id}/cycles`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `bearer ${useProfileStore().getToken()}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8080/api/routines/${routine_id}/cycles`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`
+            }
+          }
+        );
         const text = await response.text();
         return text ? JSON.parse(text) : null;
       } catch (error) {
-        console.log("Oops!" + errors);
+        console.log("Oops!" + error);
       }
     },
     async getCycleExercises(cycle_id) {
       try {
-        const response = await fetch(`http://localhost:8080/api/cycles/${cycle_id}/exercises`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `bearer ${useProfileStore().getToken()}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8080/api/cycles/${cycle_id}/exercises`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`
+            }
+          }
+        );
         const text = await response.text();
         return text ? JSON.parse(text) : null;
       } catch (errors) {
         console.log("Oops!" + errors);
       }
     },
-    async createCycle(routine_id, cycleBody) { //devuelve el id del cycle creado
+    async createCycle(routine_id, cycleBody) {
+      //devuelve el id del cycle creado
       try {
-        const profileStore = useProfileStore();
-        const response = await fetch(`http://localhost:8080/api/routines/${routine_id}/cycles`, {
-          method: "POST",
-          body: JSON.stringify(cycleBody),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${profileStore.getToken}`
+        const response = await fetch(
+          `http://localhost:8080/api/routines/${routine_id}/cycles`,
+          {
+            method: "POST",
+            body: JSON.stringify(cycleBody),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.getToken}`
+            }
           }
-        });
+        );
         const text = await response.text();
         const obj = text ? JSON.parse(text) : null;
-        if(obj!=null)
-          return obj.id;
-        else
-          throw new Error();
+        if (obj != null) return obj.id;
+        return null;
       } catch (errors) {
         console.log("Oops!" + errors);
       }
     },
     /*
-    * TODO: es una paja porque hay que ver que cambió y hacer POST PUT o DELETE segun corresponda con cada
-    *  cyclo y/o sus sub-ejercicios
-    * */
+     * TODO: es una paja porque hay que ver que cambió y hacer POST PUT o DELETE segun corresponda con cada
+     *  cyclo y/o sus sub-ejercicios
+     * */
   },
-
 });
 
 // export const routine = {

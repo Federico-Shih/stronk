@@ -84,13 +84,14 @@ const router = new VueRouter({
     {
       path: "/exercises/create",
       name: "exercise_create",
-      component: () => import("../views/ExerciseDetailsPage.vue"),
+      component: () => import("../views/ExerciseEditCreationPage.vue"),
       beforeEnter: tokenGuard
     },
     {
       path: "/exercises/:id",
       name: "exercise_details",
       component: () => import("../views/ExerciseDetailsPage.vue"),
+      beforeEnter: tokenGuard
     },
     {
       path: "/exercises/:id/edit",

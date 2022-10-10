@@ -37,8 +37,7 @@
         </div>
         <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
         >mdi-chevron-double-down
-        </v-icon
-        >
+        </v-icon>
         <router-link to="/routines/create">
           <h2 v-if="myRoutineList.length === 0" class="text--black">
             No tienes rutinas, empezá creando tu primera!
@@ -83,8 +82,7 @@
         </div>
         <v-icon v-if="favShowArrow" @click="increaseCounterFav"
         >mdi-chevron-double-down
-        </v-icon
-        >
+        </v-icon>
         <h2 v-if="myRoutineList.length === 0" class="text--black">
           No tienes favoritos, explorá las rutinas de la comunidad!
         </h2>

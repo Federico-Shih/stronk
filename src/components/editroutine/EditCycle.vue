@@ -1,20 +1,28 @@
 <template>
   <v-card outlined class="d-flex flex-row">
     <div
-        style="
-        border: 6px solid;
-        width: 136px;
-      "
-        :style="{ borderColor: this.$vuetify.theme.themes.light.primary }"
-        class="text-h5 pa-3 ml-6 my-5 d-flex flex-column justify-end rounded-xl"
+      style="border: 6px solid; width: 136px"
+      :style="{ borderColor: this.$vuetify.theme.themes.light.primary }"
+      class="text-h5 pa-3 ml-6 my-5 d-flex flex-column justify-end rounded-xl"
     >
       <div style="width: 80px">
-        <v-text-field outlined class="" suffix="reps." v-model="cycleRepetitions"/>
+        <v-text-field
+          outlined
+          class=""
+          suffix="reps."
+          v-model="cycleRepetitions"
+        />
       </div>
     </div>
-    <div style="padding-bottom: 40px; min-width: 600px;" class="ml-5" >
-      <v-text-field v-if="cycleType === CycleTypes.EXERCISE" outlined class="mt-4" label="Nombre del ciclo" v-model="cycleName"/>
-      <h3 v-else class="mt-4">{{cycleName}}</h3>
+    <div style="padding-bottom: 40px; min-width: 600px" class="ml-5">
+      <v-text-field
+        v-if="cycleType === CycleTypes.EXERCISE"
+        outlined
+        class="mt-4"
+        label="Nombre del ciclo"
+        v-model="cycleName"
+      />
+      <h3 v-else class="mt-4">{{ cycleName }}</h3>
       <v-card-text>
         <div class="d-flex flex-row justify-center">
           <v-btn icon @click="addExercise(0)">
@@ -22,7 +30,11 @@
           </v-btn>
         </div>
         <v-divider></v-divider>
-        <div v-for="(exercise, index) in exercises" :key="index" class="mt-3 d-flex flex-column">
+        <div
+          v-for="(exercise, index) in exercises"
+          :key="index"
+          class="mt-3 d-flex flex-column"
+        >
           <v-icon
             style="position: absolute; transform: translate(-54px)"
             color="primary"
@@ -52,37 +64,34 @@
             v-on:remove="remove(index)"
             v-on:duplicate="duplicate(index)"
           ></EditExercise>
-          <v-divider
-            class="mt-3"
-          ></v-divider>
+          <v-divider class="mt-3"></v-divider>
           <div class="d-flex flex-row justify-center">
-            <v-btn icon @click="addExercise(index+1)">
+            <v-btn icon @click="addExercise(index + 1)">
               <v-icon>mdi-plus-circle</v-icon>
             </v-btn>
           </div>
           <v-divider
-              v-if="index !== exercises.length - 1"
-              class="mt-3"
+            v-if="index !== exercises.length - 1"
+            class="mt-3"
           ></v-divider>
         </div>
-
       </v-card-text>
     </div>
-    <ExercisePopup v-if="showPopup" @ex-sumbit="sumbitEx"/>
+    <ExercisePopup v-if="showPopup" @ex-sumbit="sumbitEx" />
   </v-card>
 </template>
 
 <script>
 import EditExercise from "@/components/editroutine/EditExercise.vue";
-import abspic from "@/assets/abdominales.jpg";
 import { CycleTypes } from "@/stores/routine";
 import ExercisePopup from "@/components/ExercisePopup.vue";
-import {mapActions} from "pinia";
-import {useExPopupStore} from "@/stores/expopup";
+import { mapActions } from "pinia";
+import { useExPopupStore } from "@/stores/expopup";
+import { useCycles } from "../../stores/routine";
 
 export default {
   name: "EditCycle",
-  components: {ExercisePopup, EditExercise },
+  components: { ExercisePopup, EditExercise },
   props: {
     routineId: {
       type: Number,
@@ -105,14 +114,14 @@ export default {
       default: null
     }
   },
-  mounted() {
+  async mounted() {
     if (this.cycleType === CycleTypes.WARMUP) {
       this.cycleName = "Ciclo de Entrada en Calor";
     } else if (this.cycleType === CycleTypes.COOLDOWN) {
       this.cycleName = "Ciclo de Enfriamiento";
     }
     if (this.cycleId !== undefined && this.cycleId !== null) {
-      let cycle = undefined; //= store.getCycle(this.cycleId)
+      let cycle = await useCycles().getCycleExercises(this.cycleId);
       this.cycleName = cycle.name;
       this.exercises = cycle.exercises; //o como sea para agarrar los ejs
       this.cycleRepetitions = cycle.repetitions;
@@ -121,14 +130,13 @@ export default {
   data: () => ({
     cycleName: "Nuevo Ciclo",
     showPopup: false,
-    exercises: [
-    ],
+    exercises: [],
     cycleRepetitions: 1,
     CycleTypes
   }),
   methods: {
     ...mapActions(useExPopupStore, ["showExPopup"]),
-    sumbitEx (ExerciseSelected , ExerciseType, index) {
+    sumbitEx(ExerciseSelected, ExerciseType, index) {
       this.exercises.splice(index, 0, {
         id: ExerciseSelected.id,
         type: ExerciseType,

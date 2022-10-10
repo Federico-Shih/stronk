@@ -9,6 +9,7 @@ export const useProfileStore = defineStore({
     lastName: "",
     validated: false,
     correctEmailVerification: false,
+    profile: {}
   }), //headers solo con put y post
   actions: {
     async loadCurrentNames() {
@@ -29,6 +30,7 @@ export const useProfileStore = defineStore({
           this.username = res.username;
           this.firstName = res.firstName;
           this.lastName = res.lastName;
+          this.profile = res;
         }
       } catch (error) {
         console.log(error);
@@ -167,5 +169,9 @@ export const useProfileStore = defineStore({
     getLastname() {
       return this.lastName;
     },
+    getId() {
+      console.log(this.profile.id);
+      return this.profile.id;
+    }
   },
 });

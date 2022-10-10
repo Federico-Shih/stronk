@@ -95,9 +95,9 @@
 import EditCycle from "@/components/editroutine/EditCycle.vue";
 import GoBackButton from "@/components/GoBackButton.vue";
 import Vue from "vue";
-import {CycleTypes, useCycles} from "../stores/routine";
-import {mapActions} from "pinia";
-import {useExPopupStore} from "@/stores/expopup";
+import { CycleTypes, useCycles } from "../stores/routine";
+import { mapActions } from "pinia";
+import { useExPopupStore } from "@/stores/expopup";
 
 export default {
   name: "RoutineEditCreationPage",
@@ -121,10 +121,17 @@ export default {
       return this.routineId !== null;
     }
   },
-  created() {
+  async created() {
     if (this.$route.params.id) {
-      let apiAns = getCyclesFromRoutine(this.$route.params.id);
-      console.log(apiAns);
+      let apiAns = await useCycles().getCyclesFromRoutine(
+        this.$route.params.id
+      );
+      // GUARDA TODO EL CICLO, HAY QUE PASARLE A EDITCYCLE EL CICLO EN CASO DE QUE YA EXISTA
+      this.cycles = apiAns.map((cycle, index) => ({
+        ...cycle,
+        "cycle-type": cycle.type,
+        internalId: index
+      }));
     } else {
       this.cycles = this.cycles.concat(
         { "cycle-type": CycleTypes.WARMUP, order: 1, internalId: 0 },

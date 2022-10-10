@@ -11,7 +11,7 @@
           <ExerciseDepiction
             @refreshevent="refreshOwnExercises"
             variant="large"
-            :picture="exer.images"
+            :picture="exer.images.length > 0 ? exer.images[0] : abdominales"
             :exercise-name="exer.name"
             :category="exer.detail"
             :id="exer.id"
@@ -27,7 +27,7 @@
           <ExerciseDepiction
             @refreshevent="refreshOwnExercises"
             variant="small"
-            :picture="exer.images"
+            :picture="exer.images.length > 0 ? exer.images[0] : abdominales"
             :exercise-name="exer.name"
             :category="exer.detail"
             :id="exer.id"
@@ -36,6 +36,7 @@
         </div>
       </v-col>
     </v-row>
+    <router-link to="/exercises/create">CREA TU EJERCICIO TEMP</router-link>
   </v-main>
 </template>
 
