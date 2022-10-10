@@ -7,12 +7,14 @@
           <search-bar title="Busca una rutina en particular..."></search-bar>
           <v-icon class="ml-6 mb-8">mdi-filter</v-icon>
         </div>
-        <div v-for="i in 7" :key="i">
+        <div v-for="exer in allExercises" :key="exer.id">
           <ExerciseDepiction
+            @refreshevent="refreshOwnExercises"
             variant="large"
-            :picture="abdominales"
-            exercise-name="Short Abs"
-            category="Abdominales"
+            :picture="exer.images"
+            :exercise-name="exer.name"
+            :category="exer.detail"
+            :id="exer.id"
             class="mt-0"
           />
         </div>
@@ -21,12 +23,15 @@
       <v-divider vertical></v-divider>
       <v-col class="mr-16 alignmentToTheRight" :style="{ height: '10px' }">
         <h2 class="align-self-start mb-2 mt-2">Mis Ejercicios</h2>
-        <div v-for="n in 7" :key="n">
+        <div v-for="exer in exercises" :key="exer.id">
           <ExerciseDepiction
+            @refreshevent="refreshOwnExercises"
             variant="small"
-            :picture="abdominales"
-            exercise-name="Short Abs"
-            category="Abdominales"
+            :picture="exer.images"
+            :exercise-name="exer.name"
+            :category="exer.detail"
+            :id="exer.id"
+            class="mt-0"
           />
         </div>
       </v-col>
@@ -38,13 +43,34 @@
 import ExerciseDepiction from "@/components/ExerciseDepiction.vue";
 import abspic from "../assets/abdominales.jpg";
 import SearchBar from "../components/SearchBar.vue";
+import { mapActions } from "pinia";
+import { useExerciseStore } from "@/stores/exercise";
 export default {
   name: "ExercisePage.vue",
   components: { ExerciseDepiction, SearchBar },
   data() {
     return {
       abdominales: abspic,
+      exercises: [],
+      allExercises: [],
     };
+  },
+  methods: {
+    ...mapActions(useExerciseStore, [
+      "getOwnExercisesData",
+      "getExerciseData",
+      "getOwnExercises",
+    ]),
+    async refreshOwnExercises() {
+      this.exercises = await this.getOwnExercises();
+      // habría que cambiarlo a getAllExercisese o algo así
+      this.allExercises = await this.getOwnExercisesData();
+    },
+  },
+  async mounted() {
+    this.exercises = await this.getOwnExercisesData();
+    // habría que cambiarlo a getAllExercisese o algo así
+    this.allExercises = await this.getOwnExercisesData();
   },
 };
 </script>
