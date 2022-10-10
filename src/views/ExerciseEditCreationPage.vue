@@ -6,11 +6,11 @@
         <h1 class="pl-4">{{ (edit)? 'Editar':'Crear' }} un Ejercicio</h1>
       </div>
       <div class="d-flex flex-row mr-8">
-        <v-btn outlined  class="rounded-pill mr-4">
+        <v-btn outlined  class="rounded-pill mr-4" @click="$router.back()">
           <v-icon left>mdi-close</v-icon>
           Descartar {{ edit? " Cambios": " Ejercicio"}}
         </v-btn>
-        <v-btn outlined class="rounded-pill">
+        <v-btn outlined class="rounded-pill" @click="">
           <v-icon left>mdi-content-save</v-icon>
           Guardar {{ edit? " Cambios": " Ejercicio"}}
         </v-btn>
@@ -78,7 +78,7 @@ export default {
     creatorid: this.getId(),
   },
   methods:{
-    ...mapActions(useExerciseStore, ["getExerciseById"]),
+    ...mapActions(useExerciseStore, ["getExerciseById","saveExercise","putExercise"]),
     ...mapActions(useProfileStore,["getId"]),
     loadImage(){
       if(this.imageurl!== '') {
@@ -101,7 +101,20 @@ export default {
       this.videos=this.videos.filter((value)=>{
         return value !== vid
       });
-    }
+    },
+    async sumbitExercise(){
+      let exercise={
+        name:this.name,
+        detail:this.description,
+        type:(this.type==='Ejercicio')? 'exercise':'rest',
+        metadata:{creatorid: this.creatorid}
+      }
+      if(this.edit){
+        await this.saveExercise(exercise,this.images,this.videos,this.exId);
+      }else{
+        await this.putExercise(exercise,this.images,this.videos);
+      }
+    },
   },
   mounted(){
     if(this.edit){

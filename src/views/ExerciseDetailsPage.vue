@@ -126,7 +126,7 @@ export default {
     this.type=(exercise.type==='exercise')? "Ejercicio":"Descanso";
     this.images=exercise.images;
     this.videos=exercise.videos;
-    
+
   }
 
 };
