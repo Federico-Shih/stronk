@@ -135,6 +135,20 @@ export const useProfileStore = defineStore({
         console.log(error);
       }
     },
+    async generateAllUsers() {
+      try {
+        const res = await fetch("http://localhost:8080/api/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `bearer ${this.token}`,
+          },
+        });
+        return await res.json();
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   getters: {
     getHasProfile() {

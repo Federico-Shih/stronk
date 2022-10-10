@@ -4,15 +4,20 @@
       <v-col class="mr-16">
         <h1>Comunidad</h1>
         <search-bar title="¿Buscás a alguien en particular?"></search-bar>
-        <div v-for="i in 3" :key="i">
+        <div v-for="person in this.allUsers.content" :key="person.id">
           <!--hay que poner bien que el key sea el id, y que el id esté en data-->
-          <router-link style="text-decoration: none; color: inherit;" to="/profile/1">
+          <router-link
+            style="text-decoration: none; color: inherit"
+            to="/profile/1"
+          >
+            <!-- :to=`/profile/${id}` -->
             <CommunityProfileButton
               variant="large"
-              display-name="Arnold Schwarzenegger"
+              :display-name="person.username"
               description="Body Builder"
               profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
             />
+            <!-- :profile-pic="person.avatarUrl" -->
           </router-link>
         </div>
       </v-col>
@@ -26,7 +31,10 @@
           :profile-pic="Abdos"
         />
         <div v-for="i in 3" :key="i">
-          <router-link style="text-decoration: none; color: inherit;" to="/profile/1">
+          <router-link
+            style="text-decoration: none; color: inherit"
+            to="/profile/1"
+          >
             <CommunityProfileButton
               variant="small"
               display-name="Arnold Schwarzenegger"
@@ -43,6 +51,8 @@
 import CommunityProfileButton from "../components/CommunityProfileButton.vue";
 import abdos from "../assets/abdominallateral.jpg";
 import SearchBar from "../components/SearchBar.vue";
+import { mapActions } from "pinia";
+import { useProfileStore } from "@/stores/profile";
 export default {
   components: {
     CommunityProfileButton,
@@ -51,7 +61,14 @@ export default {
   data() {
     return {
       Abdos: abdos,
+      allUsers: [],
     };
+  },
+  methods: {
+    ...mapActions(useProfileStore, ["generateAllUsers"]),
+  },
+  async mounted() {
+    this.allUsers = await this.generateAllUsers();
   },
 };
 </script>
