@@ -121,9 +121,18 @@ export default {
       this.cycleName = "Ciclo de Enfriamiento";
     }
     if (this.cycleId !== undefined && this.cycleId !== null) {
-      let cycle = await useCycles().getCycleExercises(this.cycleId);
+      let cycle = await useCycles().getCycleWithExercises(this.routineId, this.cycleId);
       this.cycleName = cycle.name;
-      this.exercises = cycle.exercises; //o como sea para agarrar los ejs
+      cycle.exercises.sort((a,b) => a.order-b.order).forEach((ex) => {
+        this.exercises.push({
+          id: ex['exercise'].id,
+          name: ex['exercise'].name,
+          type: ex['exercise'].type,
+          duration: ex.duration,
+          img_url: ex.img_url,
+          repetitions: ex.repetitions,
+        });
+      })
       this.cycleRepetitions = cycle.repetitions;
     }
   },
@@ -180,6 +189,30 @@ export default {
     addExercise(index) {
       this.showPopup = true;
       this.showExPopup(index);
+    },
+    saveCycle() {
+      let exercisesArray = [];
+      for(let ex of this.exercises)
+      {
+        exercisesArray.push({
+          id: ex.id,
+          body: {
+            order: this.exercises.indexOf(ex) + 1,
+            duration: ex.duration,
+            repetitions: ex.repetitions,
+          }
+        });
+      }
+      useCycles().postCycle(this.routineId,
+          {
+        name: this.cycleName,
+        detail: '',
+        type: this.cycleType,
+        order: this.order,
+        repetitions: this.cycleRepetitions,
+        metadata: null
+      },
+          exercisesArray);
     }
   },
 };

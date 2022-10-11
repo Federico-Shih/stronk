@@ -118,20 +118,21 @@ export default {
   },
   computed: {
     edit() {
-      return this.routineId !== null;
+      return this.$route.params.id !== null;
     }
   },
   async created() {
     if (this.$route.params.id) {
+      this.routineId = this.$route.params.id;
       let apiAns = await useCycles().getCyclesFromRoutine(
-        this.$route.params.id
+          this.routineId
       );
-      // GUARDA TODO EL CICLO, HAY QUE PASARLE A EDITCYCLE EL CICLO EN CASO DE QUE YA EXISTA
       this.cycles = apiAns.map((cycle, index) => ({
         ...cycle,
         "cycle-type": cycle.type,
         internalId: index
       }));
+      this.maxId = this.cycles.length;
     } else {
       this.cycles = this.cycles.concat(
         { "cycle-type": CycleTypes.WARMUP, order: 1, internalId: 0 },
@@ -162,6 +163,7 @@ export default {
       this.maxId += 1;
     },
   },
+  //TODO saveRoutine, si está en modo edit primero tiene q hacer clearCycles
 };
 </script>
 

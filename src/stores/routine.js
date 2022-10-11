@@ -73,19 +73,40 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
 });
 
 export const useSaveRoutine = defineStore("editroutine", {
-  state: () => ({
-    title: "",
-    description: "",
-    category: null,
-    id: null
-  }),
-  getters: {
-    hasRoutine: () => !!this.id
-  },
   actions: {
-    getRoutine(id) {
-      console.log(id, "obtained routine");
+    async getRoutine(routine_id) {
+      try {
+        const response = await fetch(
+            `http://localhost:8080/api/routines/${routine_id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`
+              }
+            }
+        );
+        const text = await response.text();
+        let ans = text ? JSON.parse(text) : null;
+        if(ans === null)
+          throw new Error("Error in getting routine");
+        return ans;
+      } catch (error) {
+        console.log("Oops!" + error);
+      }
     },
+    /*
+    * routineBody = {
+    *   "name": "7 x 4 Challenge",
+    *   "detail": "Full Body 7 x 4 Challenge",
+    *   "isPublic": true,
+    *   "difficulty": "rookie",
+    *   "category": {
+    *     "id": 1
+    *   },
+    *   "metadata": null
+    * }
+    * */
     async createRoutine(routineBody) {
       try {
         await fetch(`http://localhost:8080/api/routines`, {
@@ -134,31 +155,91 @@ export const useCycles = defineStore("cycle", {
           }
         );
         const text = await response.text();
-        return text ? JSON.parse(text) : null;
+        let cycles = text ? JSON.parse(text) : null;
+        if(cycles === null)
+          throw new Error("Error in getting cycles");
+        return cycles.content;
       } catch (error) {
         console.log("Oops!" + error);
       }
     },
-    async getCycleExercises(cycle_id) {
+    async getCycleWithExercises(routine_id, cycle_id) {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/cycles/${cycle_id}/exercises`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`
+            `http://localhost:8080/api/routines/${routine_id}/cycles/${cycle_id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`
+              }
             }
-          }
         );
         const text = await response.text();
-        return text ? JSON.parse(text) : null;
-      } catch (errors) {
-        console.log("Oops!" + errors);
+        let cycle = text ? JSON.parse(text) : null;
+        if(cycle === null)
+          throw new Error("Error in getting cycle");
+        const response2 = await fetch(
+            `http://localhost:8080/api/cycles/${cycle_id}/exercises`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`
+              }
+            }
+        );
+        const text2 = await response2.text();
+        let exercises = text2 ? JSON.parse(text2) : null;
+        if(exercises === null)
+          throw new Error("Error in getting exercises");
+        let out = {...cycle, exercises: []};
+        for(let ex of exercises)
+        {
+          const response3 = await fetch(
+              `http://localhost:8080/api/exercises/${ex['exercise'].id}/images`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `bearer ${this.getToken}`
+                }
+              }
+          );
+          const text3 = await response3.text();
+          let images = text3 ? JSON.parse(text3) : null;
+          if(images === null)
+            throw new Error("Error in getting exercises images");
+          let url = images.content.length > 0 ? images.content[0].url : "";
+          out.exercises.push({...ex, img_url: url});
+        }
+        return out;
+      } catch (error) {
+        console.log("Oops! " + error);
       }
+
     },
-    async createCycle(routine_id, cycleBody) {
-      //devuelve el id del cycle creado
+    /*
+    * cycleBody = {
+    *   "name": "Fast Warmup",
+    *   "detail": "Fast Warmup",
+    *   "type": "warmup",
+    *   "order": 1,
+    *   "repetitions": 1,
+    *   "metadata": null
+    *   }
+    * exercisesIdsAndBodies = [
+    *   {
+    *       "id": 1,
+    *       "body": {
+    *           "order": 1,
+    *           "duration": 30,
+    *           "repetitions": 0
+    *       }
+    *   }, ...
+    * ]
+    * */
+    async postCycle(routine_id, cycleBody, exercisesIdsAndBodies) {
       try {
         const response = await fetch(
           `http://localhost:8080/api/routines/${routine_id}/cycles`,
@@ -173,33 +254,60 @@ export const useCycles = defineStore("cycle", {
         );
         const text = await response.text();
         const obj = text ? JSON.parse(text) : null;
-        if (obj != null) return obj.id;
-        return null;
+        let cycleId = obj !== null ? obj.id : null;
+        if (cycleId === null)
+          throw new Error("Error in posting cycle");
+        for(let exercise of exercisesIdsAndBodies)
+        {
+          await fetch(
+              `http://localhost:8080/api/cycles/${cycleId}/exercises/${exercise.id}`,
+              {
+                method: "POST",
+                body: JSON.stringify(exercise.body),
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${this.getToken}`
+                }
+              }
+          );
+        }
       } catch (errors) {
         console.log("Oops!" + errors);
       }
     },
-    /*
-     * TODO: es una paja porque hay que ver que cambió y hacer POST PUT o DELETE segun corresponda con cada
-     *  cyclo y/o sus sub-ejercicios
-     * */
+    async cleanCyclesFromRoutine(routine_id) {
+      try {
+        const response = await fetch(
+            `http://localhost:8080/api/routines/${routine_id}/cycles`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`
+              }
+            }
+        );
+        const text = await response.text();
+        let cycles = text ? JSON.parse(text) : null;
+        if(cycles === null)
+          throw new Error("Error in getting cycles");
+        for(const cycle of cycles.content)
+        {
+          await fetch(
+              `http://localhost:8080/api/routines/${routine_id}/cycles/${cycle.id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `bearer ${this.getToken}`
+                }
+              }
+          );
+        }
+      } catch (error) {
+        console.log("Oops!" + error);
+      }
+    },
   },
 });
 
-// export const routine = {
-//   title: "Abdominales en 15 minutos",
-//   description:
-//     "Con esta rutinar abdominales en sólo 15 minutoara el fulbo, Con esta rutina podrás entrenar abdominales en sólo 15 minutos! Perfecto para el fulbo, Con esta rutina podrás entrenar abdominales en sólo 15 minutos! Perfecto para el fulbo, Con esta rutina podrás entales en sólo 15 minutos! Perfecto para el fulbo",
-//   author: {
-//     img: abdominales,
-//     name: "Lionel Messi",
-//     username: "lionel-messi",
-//   },
-//   categories: [
-//     { name: "Core", id: "core" },
-//     { name: "Principiante", id: "noob" },
-//   ],
-//   cycles: [cycle1, cycle2, cycle1],
-//   rating: 4.3,
-//   liked: true,
-// };
