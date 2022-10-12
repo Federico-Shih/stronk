@@ -39,9 +39,6 @@
           <v-btn icon @click="remove()">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="duplicate()">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
           <div class="d-flex flex-column">
             <v-btn icon :disabled="index === 0" @click="moveUp()">
               <v-icon>mdi-arrow-up-bold</v-icon>

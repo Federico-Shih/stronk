@@ -75,18 +75,19 @@
       <EditCycle
         :bus="bus"
         :order="cycle.order"
-        :routine-id="routineId"
         :cycle-type="cycle['cycle-type']"
         :cycleId="cycle.id"
+        :routine-id="parseInt(routineId)"
       />
       <v-btn
-        v-if="cycle.order !== cycles.length"
+        v-if="cycle.order !== cycles.length && cycle.order !== 1"
         @click="() => addCycle(cycle.order)"
         class="mb-7 mt-5"
       >
         <v-icon>mdi-plus</v-icon>
         Agregar ciclo
       </v-btn>
+      <div v-else class="mt-4"></div>
     </div>
   </div>
 </template>
@@ -96,8 +97,7 @@ import EditCycle from "@/components/editroutine/EditCycle.vue";
 import GoBackButton from "@/components/GoBackButton.vue";
 import Vue from "vue";
 import {CycleTypes, useCycles, useSaveRoutine} from "../stores/routine";
-import { mapActions } from "pinia";
-import { useExPopupStore } from "@/stores/expopup";
+import {mapActions} from "pinia";
 
 const difficultyApiNames = ["beginner", "intermediate", "advanced"];
 
@@ -122,16 +122,19 @@ export default {
   },
   computed: {
     edit() {
-      return this.$route.params.id !== null;
+      return this.$route.params.id !== undefined;
     }
   },
   async created() {
+    this.bus.$on('removeCycle', (order) => {
+      this.removeCycle(order);
+    })
     if (this.$route.params.id) {
       this.routineId = this.$route.params.id;
       let apiAns = await useSaveRoutine().getRoutine(this.routineId);
       this.name = apiAns.name;
       this.detail = apiAns.detail;
-      this.difficulty = difficultyApiNames.indexOf(apiAns.difficulty);
+      this.difficultySelected = difficultyApiNames.indexOf(apiAns.difficulty);
       //todo categories y author
       apiAns = await useCycles().getCyclesFromRoutine(
           this.routineId
@@ -141,12 +144,13 @@ export default {
         "cycle-type": cycle.type,
         internalId: index
       }));
+      this.cycles.sort((a,b) => a.order-b.order);
       this.maxId = this.cycles.length;
     } else {
       this.cycles = this.cycles.concat(
-        { "cycle-type": CycleTypes.WARMUP, order: 1, internalId: 0 },
-        { "cycle-type": CycleTypes.EXERCISE, order: 2, internalId: 1 },
-        { "cycle-type": CycleTypes.COOLDOWN, order: 3, internalId: 2 }
+        { "cycle-type": CycleTypes.WARMUP, order: 1, id: null, internalId: 0 },
+        { "cycle-type": CycleTypes.EXERCISE, order: 2, id: null, internalId: 1 },
+        { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: null, internalId: 2 }
       );
       this.maxId = 3;
     }
@@ -159,17 +163,30 @@ export default {
         if (cycle.order === order) {
           newCycles.push(cycle, {
             order: order + 1,
-            "cycle-type": CycleTypes.EXERCISE
+            "cycle-type": CycleTypes.EXERCISE,
+            internalId: this.maxId,
           });
         } else if (cycle.order > order) {
-          newCycles.push({ ...cycle, order: cycle.order + 1, id: this.maxId });
+          newCycles.push({ ...cycle, order: cycle.order + 1 });
         } else {
           newCycles.push(cycle);
         }
       });
-      console.log(newCycles);
       this.cycles = newCycles;
       this.maxId += 1;
+    },
+    removeCycle(order) {
+      const newCycles = [];
+      let i = 1;
+      this.cycles.forEach((cycle) => {
+        if (cycle.order !== order) {
+          newCycles.push({
+            ...cycle,
+            order: i++,
+          });
+        }
+      });
+      this.cycles = newCycles;
     },
     async saveRoutine() {
       const routineBody = {
@@ -187,9 +204,9 @@ export default {
       }
       else
       {
-        await useSaveRoutine().createRoutine(routineBody);
+        this.routineId = await useSaveRoutine().createRoutine(routineBody);
       }
-      this.bus.$emit('saveCycle');
+      this.bus.$emit('saveCycle', this.routineId);
     }
   },
 };

@@ -47,6 +47,9 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
     favorites: [],
     isLastFavorite: false,
   }),
+  getters: {
+    ...mapState(useProfileStore, ["getToken"])
+  },
   actions: {
     async getNextPage(pageSize) {
       try {
@@ -108,7 +111,7 @@ export const useSaveRoutine = defineStore("editroutine", {
      * */
     async createRoutine(routineBody) {
       try {
-        await fetch(`http://localhost:8080/api/routines`, {
+        const response = await fetch(`http://localhost:8080/api/routines`, {
           method: "POST",
           body: JSON.stringify(routineBody),
           headers: {
@@ -117,6 +120,11 @@ export const useSaveRoutine = defineStore("editroutine", {
           },
         });
         console.log("creating routine: " + routineBody);
+        const text = await response.text();
+        let ans = text ? JSON.parse(text) : null;
+        if(ans === null)
+          throw new Error("Error in creating routine");
+        return ans.id;
       } catch (errors) {
         console.log("Oops!" + errors);
       }
@@ -138,6 +146,9 @@ export const useSaveRoutine = defineStore("editroutine", {
         console.log("Oops!" + errors);
       }
     },
+  },
+  getters: {
+    ...mapState(useProfileStore, ["getToken"])
   },
 });
 
@@ -207,6 +218,7 @@ export const useCycles = defineStore("cycle", {
           let images = text3 ? JSON.parse(text3) : null;
           if (images === null)
             throw new Error("Error in getting exercises images");
+          console.log(`Getting cycle exercise ${ex['exercise'].id} image: ${text3}`);
           let url = images.content.length > 0 ? images.content[0].url : "";
           out.exercises.push({ ...ex, img_url: url });
         }
@@ -265,7 +277,7 @@ export const useCycles = defineStore("cycle", {
               },
             }
           );
-          console.log("Posting exercise: " + exercise);
+          console.log("Posting exercise: " + JSON.stringify(exercise));
         }
       } catch (errors) {
         console.log("Oops!" + errors);
@@ -302,5 +314,8 @@ export const useCycles = defineStore("cycle", {
         console.log("Oops!" + error);
       }
     },
+  },
+  getters: {
+    ...mapState(useProfileStore, ["getToken"])
   },
 });

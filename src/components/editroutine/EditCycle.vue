@@ -15,14 +15,23 @@
       </div>
     </div>
     <div style="padding-bottom: 40px; min-width: 600px" class="ml-5">
-      <v-text-field
-        v-if="cycleType === CycleTypes.EXERCISE"
-        outlined
-        class="mt-4"
-        label="Nombre del ciclo"
-        v-model="cycleName"
-      />
-      <h3 v-else class="mt-4">{{ cycleName }}</h3>
+      <div class="d-flex flex-row justify-space-between align-baseline">
+        <v-text-field
+            v-if="cycleType === CycleTypes.EXERCISE"
+            outlined
+            dense
+            class="mt-4"
+            label="Nombre del ciclo"
+            v-model="cycleName"
+        />
+        <h3 v-else class="mt-4">{{ cycleName }}</h3>
+        <v-btn class="mx-2" icon
+               :disabled="this.cycleType !== CycleTypes.EXERCISE || this.order === 2"
+               @click="removeCycle()">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </div>
+      <v-divider></v-divider>
       <v-card-text>
         <div class="d-flex flex-row justify-center">
           <v-btn icon @click="addExercise(0)">
@@ -62,7 +71,6 @@
             v-on:moveup="moveUp(index)"
             v-on:movedown="moveDown(index)"
             v-on:remove="remove(index)"
-            v-on:duplicate="duplicate(index)"
           ></EditExercise>
           <v-divider class="mt-3"></v-divider>
           <div class="d-flex flex-row justify-center">
@@ -93,13 +101,12 @@ export default {
   name: "EditCycle",
   components: { ExercisePopup, EditExercise },
   props: {
-    routineId: {
-      type: Number,
-      required: false
-    },
     order: {
       type: Number,
       required: true
+    },
+    routineId: {
+      type: Number
     },
     bus: {
       type: Object,
@@ -127,18 +134,18 @@ export default {
         this.exercises.push({
           id: ex['exercise'].id,
           name: ex['exercise'].name,
-          type: ex['exercise'].type,
           duration: ex.duration,
           img_url: ex.img_url,
           repetitions: ex.repetitions,
+          type: ex.duration === 999 ? "Repeticiones" : ex.repetitions === 999 ? "Tiempo" : "Ambos",
         });
       })
       this.cycleRepetitions = cycle.repetitions;
     }
   },
   created() {
-    this.bus.$on('saveCycle', () => {
-      this.saveCycle();
+    this.bus.$on('saveCycle', (routine_id) => {
+      this.saveCycle(routine_id);
     })
   },
   data: () => ({
@@ -155,8 +162,8 @@ export default {
         id: ExerciseSelected.id,
         type: ExerciseType,
         name: ExerciseSelected.name,
-        duration: 0,
-        repetitions: 0
+        duration: ExerciseType === "Repeticiones" ? 999 : 0,
+        repetitions: ExerciseType === "Tiempo" ? 999 : 0
       });
       this.showPopup = false;
     },
@@ -188,37 +195,39 @@ export default {
       }
       this.exercises.splice(this.exercises.length - 1, 1);
     },
-    duplicate(index) {
-      this.exercises.splice(index, 0, this.exercises[index]);
-    },
     addExercise(index) {
       this.showPopup = true;
       this.showExPopup(index);
     },
-    saveCycle() {
+    saveCycle(routine_id) {
       let exercisesArray = [];
+      let i = 1;
       for(let ex of this.exercises)
       {
         exercisesArray.push({
           id: ex.id,
           body: {
-            order: this.exercises.indexOf(ex) + 1,
-            duration: ex.duration,
-            repetitions: ex.repetitions,
+            order: i++,
+            duration: parseInt(ex.duration),
+            repetitions: parseInt(ex.repetitions),
           }
         });
       }
-      useCycles().postCycle(this.routineId,
+
+      useCycles().postCycle(routine_id,
           {
         name: this.cycleName,
         detail: '',
         type: this.cycleType,
         order: this.order,
-        repetitions: this.cycleRepetitions,
+        repetitions: parseInt(this.cycleRepetitions),
         metadata: null
       },
           exercisesArray);
-    }
+    },
+    removeCycle() {
+      this.bus.$emit('removeCycle', this.order);
+    },
   },
 };
 </script>
