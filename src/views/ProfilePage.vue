@@ -40,12 +40,23 @@
     </div>
     <div class="">
       <RoutineSlideGroup
+        v-if="hasRoutines"
         :title="`Rutinas Creadas por ${this.userInfo.username}`"
         size-variant="small"
         :routines="userRoutines"
       />
+      <v-card v-else
+        ><v-card-title class="justify-center">
+          <div class="align-to-center">
+            <v-icon large left> mdi-clipboard-alert </v-icon>
+            <div class="text-h6 font-weight-light align-self-center">
+              ¡Este Usuario no cuenta con ninguna rutina!
+            </div>
+          </div>
+        </v-card-title></v-card
+      >
     </div>
- <!--   <div class="">
+    <!--   <div class="">
       <RoutineSlideGroup
         title="Rutinas Favoritas de Arnold"
         size-variant="small"
@@ -74,6 +85,7 @@ export default {
       showPic: false,
       temp,
       avatar: "",
+      hasRoutines: true,
       userRoutines: [],
     };
   },
@@ -93,9 +105,17 @@ export default {
     console.log(this.userRoutines);
     if (this.userRoutines.totalCount === 0) {
       this.userRoutines = [];
+      this.hasRoutines = false;
     } else {
       this.userRoutines = this.userRoutines.content;
     }
   },
 };
 </script>
+
+<style>
+.align-to-center {
+  align-items: center;
+  display: flex;
+}
+</style>

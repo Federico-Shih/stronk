@@ -23,11 +23,6 @@
       <v-divider vertical></v-divider>
       <v-col class="mr-16 alignmentToTheRight">
         <h2 class="align-self-start">Recomendados</h2>
-        <CommunityProfileButton
-          variant="small"
-          display-name="Arnold Schwarzenegger"
-          :profile-pic="Abdos"
-        />
         <div v-for="i in 3" :key="i">
           <router-link
             style="text-decoration: none; color: inherit"

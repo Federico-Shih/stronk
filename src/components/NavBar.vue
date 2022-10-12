@@ -49,6 +49,7 @@ export default {
         },
       ],
       temp,
+      image: "",
       expanded: false,
     };
   },
@@ -58,7 +59,7 @@ export default {
     },
     ...mapActions(usePopupStore, ["showPopup"]),
     ...mapActions(useProfileStore, ["logout"]),
-    ...mapState(useProfileStore, ["getId"]),
+    ...mapState(useProfileStore, ["getId", "getPic"]),
   },
   watch: {
     getHasProfile(curr) {
@@ -70,6 +71,8 @@ export default {
       this.firstname = curr;
       this.id = this.getId();
       this.links[4].link = `/profile/${this.id}`;
+      this.image = this.getPic();
+      this.image = this.image ? this.image : this.temp;
     },
   },
 };
@@ -120,7 +123,7 @@ export default {
               @click="setExpanded(!expanded)"
             >
               Bienvenido, {{ firstname }}
-              <v-img class="ml-2" :src="temp" max-width="30" />
+              <v-img class="ml-2" :src="image" max-width="30" />
               <v-icon class="text--black ml-3">
                 {{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
               </v-icon>

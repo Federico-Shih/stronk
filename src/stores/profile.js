@@ -213,5 +213,8 @@ export const useProfileStore = defineStore({
       console.log(this.profile.id);
       return this.profile.id;
     },
+    getPic() {
+      return this.profile.avatarUrl;
+    },
   },
 });
