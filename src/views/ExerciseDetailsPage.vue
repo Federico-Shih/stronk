@@ -11,7 +11,7 @@
     <div class="mb-2 ml-6 d-flex flex-row justify-space-between">
       <div class="d-flex flex-row justify-start">
         <GoBackButton/>
-        <h1 class="pl-4">Nombre del Ejercicio</h1>
+        <h1 class="pl-4">{{this.title}}</h1>
       </div>
 
       <div class="mr-16 alignmentToTheRight">
@@ -52,7 +52,9 @@
       <div class="d-flex flex-wrap align-start" style="width: 80%">
         <v-img
           v-for="img in images"
-          :src="img"
+          :src="img.url"
+          :alt="img.url"
+          :id="img.id"
           class="mr-4 mb-4 flex-grow-0"
           style="width: 150px"
         >
@@ -61,11 +63,11 @@
     </div>
     <div class="d-flex flex-column ml-8 mb-8">
       <h2 class="mb-2">Videos demostrativos</h2>
-<!--      <div v-for="url in videos" class="align-self-center mb-8" >-->
+<!--      <div v-for="vid in videos" :id="vid.id" class="align-self-center mb-8" >-->
 <!--      <iframe-->
 <!--              width="560"-->
 <!--              height="315"-->
-<!--              :src="loadURL(url)"-->
+<!--              :src="loadURL(vid.url)"-->
 <!--              frameborder="0"-->
 <!--              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"-->
 <!--              allowfullscreen/>-->
@@ -85,10 +87,10 @@ export default {
    GoBackButton,
   },
   computed: {
-    exId:this.$route.params.id,
   },
   data() {
     return {
+      exId:null,
       description:
         "Esta es la descripcion Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a nibh vitae nisi tincidunt vulputate vel nec risus. Fusce placerat sagittis nisl, quis ultricies quam scelerisque a. Nulla laoreet tellus a turpis hendrerit posuere. Curabitur in ante velit. Mauris eu dolor tortor. Curabitur nisl velit, tincidunt non orci id, rutrum sodales metus. Fusce vitae libero aliquet lorem mollis vestibulum nec non odio. Fusce placerat egestas dui at venenatis. Aliquam aliquet orci elit, ut aliquet justo mattis et. Curabitur vitae iaculis neque, ac eleifend nibh. Nam volutpat tortor sed leo sollicitudin, eget semper quam ultricies",
       type:'Ejercicio',
@@ -97,6 +99,7 @@ export default {
       creatorid:null,
       creatorname: "Arnold Schwarzenegger",
       creatorimage:temp,
+      title:null,
 
     };
   },
@@ -118,14 +121,15 @@ export default {
       return topOfQueue;
     },
   },
-  mounted() {
-    let exercise=this.getExerciseById(this.exId);
-    this.creatorid=exercise.metadata.creatorid;
+  async mounted() {
+    this.exId= this.$route.params.id;
+    let exercise= await this.getExerciseById(this.exId);
+    this.title=exercise.name;
     this.description=exercise.detail;
     this.type=(exercise.type==='exercise')? "Ejercicio":"Descanso";
     this.images=exercise.images;
     this.videos=exercise.videos;
-
+    console.log(exercise);
   }
 
 };

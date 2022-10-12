@@ -43,7 +43,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useExerciseStore, ["getExerciseById","getOwnExercises"]),
+    ...mapActions(useExerciseStore, ["getOwnExercises"]),
     ...mapActions(useExPopupStore,["hideExPopup"]),
     onSumbit(){
       this.$emit('ex-sumbit',this.exerciseSelected,this.exerciseType, this.index);

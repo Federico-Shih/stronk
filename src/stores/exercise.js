@@ -174,7 +174,7 @@ export const useExerciseStore = defineStore("exercise", {
       if (result) {
         return result;
       }
-      return this.getExerciseData(id);
+      return await this.getExerciseData(id);
     },
     async saveExercise(exercise, images, videos, id) {
       try {
