@@ -203,7 +203,7 @@ export const useCycles = defineStore("cycle", {
         let exercises = text2 ? JSON.parse(text2) : null;
         if (exercises === null) throw new Error("Error in getting exercises");
         let out = { ...cycle, exercises: [] };
-        for (let ex of exercises) {
+        for (let ex of exercises.content) {
           const response3 = await fetch(
             `http://localhost:8080/api/exercises/${ex["exercise"].id}/images`,
             {
