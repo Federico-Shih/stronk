@@ -5,12 +5,10 @@
         <h1>Comunidad</h1>
         <search-bar title="¿Buscás a alguien en particular?"></search-bar>
         <div v-for="person in this.allUsers.content" :key="person.id">
-          <!--hay que poner bien que el key sea el id, y que el id esté en data-->
           <router-link
             style="text-decoration: none; color: inherit"
-            to="/profile/1"
+            :to="{ name: 'profile', params: { id: `${person.id}` } }"
           >
-            <!-- :to=`/profile/${id}` -->
             <CommunityProfileButton
               variant="large"
               :display-name="person.username"

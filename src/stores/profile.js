@@ -153,6 +153,43 @@ export const useProfileStore = defineStore({
         console.log(error);
       }
     },
+    async generateUser(id) {
+      try {
+        const res = await fetch(`http://localhost:8080/api/users/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `bearer ${this.token}`,
+          },
+        });
+        const ret = await res.json();
+        console.log(`Loading user ${id}`);
+        console.log(ret);
+        return ret;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getRoutinesFrom(id) {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/api/users/${id}/routines`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.token}`,
+            },
+          }
+        );
+        const ret = await res.json();
+        console.log(`Loading routines from user ${id}`);
+        console.log(ret);
+        return ret;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   getters: {
     getHasProfile() {
@@ -172,6 +209,7 @@ export const useProfileStore = defineStore({
       return this.lastName;
     },
     getId() {
+      console.log("El id");
       console.log(this.profile.id);
       return this.profile.id;
     },

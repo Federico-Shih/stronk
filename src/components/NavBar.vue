@@ -25,6 +25,7 @@ export default {
   },
   data() {
     return {
+      id: "",
       logo: logotype,
       firstname: "",
       links: [
@@ -32,7 +33,7 @@ export default {
         { label: "Comunidad", link: "/community" },
         { label: "Mis rutinas", link: "/routines", protected: true },
         { label: "Mis ejercicios", link: "/exercises", protected: true },
-        { label: "Mi perfil", link: "/profile/1", protected: true },
+        { label: "Mi perfil", link: `/profile/${this.id}`, protected: true },
       ],
       dropdownItems: [
         { label: "Configuración de cuenta", link: "", click: () => {} },
@@ -57,6 +58,7 @@ export default {
     },
     ...mapActions(usePopupStore, ["showPopup"]),
     ...mapActions(useProfileStore, ["logout"]),
+    ...mapState(useProfileStore, ["getId"]),
   },
   watch: {
     getHasProfile(curr) {
@@ -66,6 +68,8 @@ export default {
     },
     getFirstname(curr) {
       this.firstname = curr;
+      this.id = this.getId();
+      this.links[4].link = `/profile/${this.id}`;
     },
   },
 };

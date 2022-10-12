@@ -8,8 +8,8 @@
       <v-slide-item v-for="(routine, idx) in routines" :key="idx">
         <RoutineButton
           :variant="sizeVariant"
-          :title="routine.title"
-          :image="routine.image"
+          :title="routine.name"
+          :image="routine.metadata"
         />
       </v-slide-item>
     </v-slide-group>
