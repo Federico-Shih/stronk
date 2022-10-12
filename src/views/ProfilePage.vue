@@ -2,30 +2,37 @@
   <v-main>
     <div class="d-flex flex-row justify-space-between mb-8">
       <div class="d-flex flex-row mx-8">
-        <div class="d-flex flex-column justify-start">
+        <div class="d-flex flex-column mr-4 justify-start">
           <GoBackButton />
         </div>
         <v-img
+          v-if="showPic"
           class="mx-8 rounded-circle"
-          :src="temp"
+          :src="avatar"
+          alt="No picture Available"
           height="150px"
           width="150px"
         />
         <div class="d-flex flex-column justify-center">
           <div class="d-flex flex-row justify-start align-baseline">
-            <h1 class="mr-4">Arnold Schwarzenegger</h1>
+            <h1 class="mr-4">{{ this.userInfo.username }}</h1>
             <h4>75 años</h4>
           </div>
           <h4>
             Body builder, philanthropist, playboy, ex-governor of California
           </h4>
-          <v-btn outlined class="mt-2 rounded-pill" max-width="200px">
+          <v-btn
+            v-if="!ownUser"
+            outlined
+            class="mt-2 rounded-pill"
+            max-width="200px"
+          >
             Seguir
           </v-btn>
         </div>
       </div>
       <div class="mx-16">
-        <v-btn outlined class="rounded-pill">
+        <v-btn v-if="ownUser" outlined class="rounded-pill">
           <v-icon class="mr-1">mdi-pencil</v-icon>
           <span>Editar Perfil</span>
         </v-btn>
@@ -33,18 +40,18 @@
     </div>
     <div class="">
       <RoutineSlideGroup
-        title="Rutinas Creadas por Arnold"
+        :title="`Rutinas Creadas por ${this.userInfo.username}`"
         size-variant="small"
-        :routines="routines"
+        :routines="userRoutines"
       />
     </div>
-    <div class="">
+ <!--   <div class="">
       <RoutineSlideGroup
         title="Rutinas Favoritas de Arnold"
         size-variant="small"
         :routines="routines"
       />
-    </div>
+    </div> -->
   </v-main>
 </template>
 
@@ -52,6 +59,8 @@
 import temp from "../assets/arnold.png";
 import RoutineSlideGroup from "../components/RoutineSlideGroup.vue";
 import GoBackButton from "../components/GoBackButton.vue";
+import { mapActions, mapState } from "pinia";
+import { useProfileStore } from "@/stores/profile";
 
 export default {
   components: {
@@ -60,45 +69,33 @@ export default {
   },
   data() {
     return {
+      ownUser: false,
+      userInfo: "",
+      showPic: false,
       temp,
-      routines: [
-        {
-          title: "Abdominales en 15 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 30 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 45 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 30 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 45 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 30 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 45 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-      ],
+      avatar: "",
+      userRoutines: [],
     };
+  },
+  methods: {
+    ...mapActions(useProfileStore, ["generateUser", "getRoutinesFrom"]),
+    ...mapState(useProfileStore, ["getId"]),
+  },
+  async mounted() {
+    this.userInfo = await this.generateUser(`${this.$route.params.id}`);
+    this.ownUser =
+      (await this.getId()) === parseInt(`${this.$route.params.id}`);
+    this.avatar = this.userInfo.avatarUrl ? this.userInfo.avatarUrl : this.temp;
+    console.log(this.avatar);
+    this.showPic = this.avatar.length !== 0;
+    this.userRoutines = await this.getRoutinesFrom(`${this.$route.params.id}`);
+    console.log("Rutina:");
+    console.log(this.userRoutines);
+    if (this.userRoutines.totalCount === 0) {
+      this.userRoutines = [];
+    } else {
+      this.userRoutines = this.userRoutines.content;
+    }
   },
 };
 </script>
