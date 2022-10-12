@@ -79,7 +79,6 @@
 import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
 import {useExerciseStore} from "../stores/exercise";
-import {useProfileStore} from "../stores/profile";
 import {mapActions} from "pinia";
 export default {
   components: {

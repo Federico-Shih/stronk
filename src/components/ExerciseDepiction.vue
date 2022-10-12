@@ -15,7 +15,7 @@
             :to="`/exercises/${this.id}`"
             style="text-decoration: none; color: inherit"
           >
-            <img
+            <v-img
               :src="this.picture"
               :alt="this.picture"
               width="170px"

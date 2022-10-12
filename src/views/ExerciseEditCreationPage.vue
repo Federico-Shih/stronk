@@ -65,71 +65,66 @@
               column
               active-class="primary--text"
             >
-              <v-chip v-for="index in type.length" :key="index" class="pa-5">{{
-                  type[index - 1]
-                }}
+              <v-chip v-for="index in type.length" :key="index" class="pa-5"
+                >{{ type[index - 1] }}
               </v-chip>
             </v-chip-group>
           </div>
           <v-simple-table v-if="images.length > 0">
             <template v-slot:default>
               <thead class="mb-2">
-              <tr>
-                <th class="text-left">Imagenes agregadas</th>
-                <th class="text-left">Acciones</th>
-              </tr>
+                <tr>
+                  <th class="text-left">Imagenes agregadas</th>
+                  <th class="text-left">Acciones</th>
+                </tr>
               </thead>
               <tbody>
-              <tr v-for="(img, index) in images" :key="index">
-                <td>
+                <tr v-for="(img, index) in images" :key="index">
+                  <td>
                     <span
                       style="
                         width: 300px;
                         text-overflow: ellipsis;
                         overflow: hidden;
                       "
-                    >{{ img }}</span
+                      >{{ img }}</span
                     >
-                </td>
-                <td>
-                  <v-btn icon @click="removeImage(img)"
-                  >
-                    <v-icon>mdi-close-box-outline</v-icon>
-                  </v-btn
-                  >
-                </td>
-              </tr>
+                  </td>
+                  <td>
+                    <v-btn icon @click="removeImage(img)">
+                      <v-icon>mdi-close-box-outline</v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
               </tbody>
             </template>
           </v-simple-table>
           <v-simple-table v-if="videos.length > 0">
             <template v-slot:default>
               <thead class="mb-2">
-              <tr>
-                <th class="text-left">Videos agregados</th>
-                <th class="text-left">Acciones</th>
-              </tr>
+                <tr>
+                  <th class="text-left">Videos agregados</th>
+                  <th class="text-left">Acciones</th>
+                </tr>
               </thead>
               <tbody>
-              <tr v-for="(vid, index) in videos" :key="index">
-                <td>
+                <tr v-for="(vid, index) in videos" :key="index">
+                  <td>
                     <span
                       style="
                         width: 300px;
                         text-overflow: ellipsis;
                         overflow: hidden;
                       "
-                    >{{ vid }}</span
+                      >{{ vid }}</span
                     >
-                </td>
-                <td>
-                  <v-btn icon @click="removeVideo(vid)"
-                  >
-                    <v-icon>mdi-close-box-outline</v-icon>
-                  </v-btn
-                  >
-                </td>
-              </tr>
+                  </td>
+                  <td>
+                    <v-btn icon @click="removeVideo(vid)">
+                      <v-icon>mdi-close-box-outline</v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
               </tbody>
             </template>
           </v-simple-table>
@@ -155,7 +150,7 @@ import { useProfileStore } from "../stores/profile";
 
 export default {
   components: {
-    GoBackButton
+    GoBackButton,
   },
 
   data() {
@@ -170,23 +165,23 @@ export default {
       images: [],
       videos: [],
       notEmptyRules: [(v) => !!v || "Campo de nombre no puede quedar vacío"],
-      loading: false
+      loading: false,
     };
   },
   computed: {
-    edit: function() {
+    edit: function () {
       return !!this.$route.params.id;
     },
-    exId: function() {
+    exId: function () {
       return this.$route.params.id ? this.$route.params.id : 0;
     },
-    ...mapState(useProfileStore, ["getId"])
+    ...mapState(useProfileStore, ["getId"]),
   },
   methods: {
     ...mapActions(useExerciseStore, [
       "getExerciseById",
       "saveExercise",
-      "putExercise"
+      "putExercise",
     ]),
     loadImage() {
       if (this.imageurl !== "") {
@@ -218,7 +213,7 @@ export default {
           name: this.name,
           detail: this.description,
           type: this.typeSelected === 0 ? "exercise" : "rest",
-          metadata: { creatorid: this.getId }
+          metadata: { creatorid: this.getId },
         };
         this.loading = true;
         if (this.edit) {
@@ -233,7 +228,7 @@ export default {
         }
         this.loading = false;
       }
-    }
+    },
   },
   async created() {
     if (this.edit) {
@@ -244,6 +239,6 @@ export default {
       this.images = exercise.images;
       this.videos = exercise.videos;
     }
-  }
+  },
 };
 </script>

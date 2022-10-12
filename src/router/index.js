@@ -22,7 +22,7 @@ const router = new VueRouter({
     {
       path: "/",
       name: "landing",
-      component: Landing
+      component: Landing,
     },
     {
       path: "/home",
@@ -37,78 +37,78 @@ const router = new VueRouter({
     {
       path: "/community",
       name: "community",
-      component: () => import("../views/CommunityPage.vue")
+      component: () => import("../views/CommunityPage.vue"),
     },
     {
       path: "/routines",
       name: "routines",
       component: () => import("../views/MisRutinas.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/routines/create",
       name: "create_routine",
       component: () => import("../views/RoutineEditCreationPage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/routines/:id",
       name: "routine",
       component: () => import("../views/RoutineDetailsPage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/routines/:id/edit",
       name: "routine_edit",
       component: () => import("../views/RoutineEditCreationPage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/profile/:id",
       name: "profile",
       component: () => import("../views/ProfilePage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/profile/:id/edit",
       name: "profile_edit",
       component: () => import("../views/EditProfilePage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/exercises",
       name: "exercises",
       component: () => import("../views/ExercisePage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/exercises/create",
       name: "exercise_create",
       component: () => import("../views/ExerciseEditCreationPage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/exercises/:id",
       name: "exercise_details",
       component: () => import("../views/ExerciseDetailsPage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/exercises/:id/edit",
       name: "exercises_edit",
       component: () => import("../views/ExerciseEditCreationPage.vue"),
-      beforeEnter: tokenGuard
+      beforeEnter: tokenGuard,
     },
     {
       path: "/auth",
       name: "auth",
-      component: () => import("../views/AuthPage.vue")
+      component: () => import("../views/AuthPage.vue"),
     },
     {
       path: "*",
       name: "404",
-      component: () => import("../views/ErrorFourOFour.vue")
-    }
+      component: () => import("../views/ErrorFourOFour.vue"),
+    },
   ],
   scrollBehavior() {
     return { x: 0, y: 0 };

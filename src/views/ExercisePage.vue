@@ -11,7 +11,7 @@
           <ExerciseDepiction
             @refreshevent="refreshOwnExercises"
             variant="large"
-            :picture="exer.images.length > 0 ? exer.images[0] : abdominales"
+            :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
             :exercise-name="exer.name"
             :category="exer.detail"
             :id="exer.id"
@@ -23,11 +23,16 @@
       <v-divider vertical></v-divider>
       <v-col class="mr-16 alignmentToTheRight" :style="{ height: '10px' }">
         <h2 class="align-self-start mb-2 mt-2">Mis Ejercicios</h2>
+        <router-link class="align-self-center" style="text-decoration: none; color: inherit;" :to="{ name: 'exercise_create' }"
+          ><v-icon class="align-self-center mt-0 mb-2" x-large
+            >mdi-plus-circle-outline</v-icon
+          ></router-link
+        >
         <div v-for="exer in exercises" :key="exer.id">
           <ExerciseDepiction
             @refreshevent="refreshOwnExercises"
             variant="small"
-            :picture="exer.images.length > 0 ? exer.images[0] : abdominales"
+            :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
             :exercise-name="exer.name"
             :category="exer.detail"
             :id="exer.id"
@@ -36,7 +41,6 @@
         </div>
       </v-col>
     </v-row>
-    <router-link to="/exercises/create">CREA TU EJERCICIO TEMP</router-link>
   </v-main>
 </template>
 
@@ -63,9 +67,8 @@ export default {
       "getOwnExercises",
     ]),
     async refreshOwnExercises() {
-      this.exercises = await this.getOwnExercises();
-      // habría que cambiarlo a getAllExercisese o algo así
       this.allExercises = await this.getOwnExercisesData();
+      this.exercises = await this.getOwnExercises();
     },
   },
   async mounted() {

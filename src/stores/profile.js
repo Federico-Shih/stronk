@@ -9,7 +9,7 @@ export const useProfileStore = defineStore({
     lastName: "",
     validated: false,
     correctEmailVerification: false,
-    profile: {}
+    profile: {},
   }), //headers solo con put y post
   actions: {
     async loadCurrentNames() {
@@ -146,7 +146,9 @@ export const useProfileStore = defineStore({
             Authorization: `bearer ${this.token}`,
           },
         });
-        return await res.json();
+        const ret = await res.json();
+        console.log(ret);
+        return ret;
       } catch (error) {
         console.log(error);
       }
@@ -172,6 +174,6 @@ export const useProfileStore = defineStore({
     getId() {
       console.log(this.profile.id);
       return this.profile.id;
-    }
+    },
   },
 });

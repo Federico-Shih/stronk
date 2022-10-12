@@ -2,31 +2,31 @@ import { defineStore, mapState } from "pinia";
 import { useProfileStore } from "./profile";
 
 export const useExerciseStore = defineStore("exercise", {
-    state: () => ({
-        Ownexercises: [],
-        Otherexercises: [],
-        userToken: ""
-    }),
-    getters: {
-        ...mapState(useProfileStore, ["getToken"])
+  state: () => ({
+    Ownexercises: [],
+    Otherexercises: [],
+    userToken: "",
+  }),
+  getters: {
+    ...mapState(useProfileStore, ["getToken"]),
+  },
+  actions: {
+    async storeRefresh() {
+      return await this.getOwnExercisesData();
     },
-    actions: {
-        async storeRefresh() {
-            return await this.getOwnExercisesData();
-        },
-        async getOwnExercises() {
-            if (this.Ownexercises.length === 0) {
-                return await this.getOwnExercisesData();
-            }
-            return this.Ownexercises;
-        },
+    async getOwnExercises() {
+      if (this.Ownexercises.length === 0) {
+        return await this.getOwnExercisesData();
+      }
+      return this.Ownexercises;
+    },
     async getOwnExercisesData() {
       try {
         const response = await fetch("http://localhost:8080/api/exercises", {
           method: "GET",
           headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`
+            "Content-Type": "application/json",
+            Authorization: `bearer ${this.getToken}`,
           },
         });
         const text = await response.text();
@@ -48,20 +48,21 @@ export const useExerciseStore = defineStore("exercise", {
           response = await fetch(
             `http://localhost:8080/api/exercises/${this.Ownexercises[i].id}/images`,
             {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `bearer ${this.getToken}`
-                }
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`,
+              },
             }
           );
-            text = await response.text();
-            result = text ? JSON.parse(text) : "";
-            if (result !== "") {
-                images = result.content;
-            } else {
-                images = [];
-            }
+          text = await response.text();
+          result = text ? JSON.parse(text) : "";
+          if (result !== "") {
+            console.log(result.content);
+            images = result.content;
+          } else {
+            images = [];
+          }
         } catch (error) {
           console.log(`Oops! ${error}`);
           return null;
@@ -71,20 +72,20 @@ export const useExerciseStore = defineStore("exercise", {
           response = await fetch(
             `http://localhost:8080/api/exercises/${this.Ownexercises[i].id}/videos`,
             {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `bearer ${this.getToken}`
-                }
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`,
+              },
             }
           );
-            text = await response.text();
-            result = text ? JSON.parse(text) : "";
-            if (result !== "") {
-                videos = result.content;
-            } else {
-                videos = [];
-            }
+          text = await response.text();
+          result = text ? JSON.parse(text) : "";
+          if (result !== "") {
+            videos = result.content;
+          } else {
+            videos = [];
+          }
         } catch (error) {
           console.log(`Oops! ${error}`);
           return null;
@@ -104,8 +105,8 @@ export const useExerciseStore = defineStore("exercise", {
         response = await fetch(`http://localhost:8080/api/exercises/${id}`, {
           method: "GET",
           headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`
+            "Content-Type": "application/json",
+            Authorization: `bearer ${this.getToken}`,
           },
         });
         text = await response.text();
@@ -124,8 +125,8 @@ export const useExerciseStore = defineStore("exercise", {
             {
               method: "GET",
               headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `bearer ${this.getToken}`
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`,
               },
             }
           );
@@ -147,8 +148,8 @@ export const useExerciseStore = defineStore("exercise", {
             {
               method: "GET",
               headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `bearer ${this.getToken}`
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`,
               },
             }
           );
@@ -169,11 +170,11 @@ export const useExerciseStore = defineStore("exercise", {
       return exercise;
     },
     async getExerciseById(id) {
-        const result = this.Ownexercises.find((exercise) => exercise.id === id);
-        if (result) {
-            return result;
-        }
-        return this.getExerciseData(id);
+      const result = this.Ownexercises.find((exercise) => exercise.id === id);
+      if (result) {
+        return result;
+      }
+      return this.getExerciseData(id);
     },
     async saveExercise(exercise, images, videos, id) {
       try {
@@ -203,30 +204,30 @@ export const useExerciseStore = defineStore("exercise", {
           {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`,
             },
-              body: JSON.stringify(exercise)
+            body: JSON.stringify(exercise),
           }
         );
-          if (putExercise.status !== 200) {
-              console.log("Put exercise failed");
-              return;
-          }
-          const putImageRequests = images.map((image, index) =>
-            this.putExerciseImage(putExercise.id, image, index + 1)
-          );
-          const putVideoRequests = videos.map((video, index) =>
-            this.putExerciseVideo(putExercise.id, video, index + 1)
-          );
-          const imageAndVideoRequests = await Promise.all([
-              ...putImageRequests,
-              ...putVideoRequests
-          ]);
-          putExercise.images = imageAndVideoRequests.slice(
-            0,
-            putImageRequests.length
-          );
+        if (putExercise.status !== 200) {
+          console.log("Put exercise failed");
+          return;
+        }
+        const putImageRequests = images.map((image, index) =>
+          this.putExerciseImage(putExercise.id, image, index + 1)
+        );
+        const putVideoRequests = videos.map((video, index) =>
+          this.putExerciseVideo(putExercise.id, video, index + 1)
+        );
+        const imageAndVideoRequests = await Promise.all([
+          ...putImageRequests,
+          ...putVideoRequests,
+        ]);
+        putExercise.images = imageAndVideoRequests.slice(
+          0,
+          putImageRequests.length
+        );
         putExercise.videos = imageAndVideoRequests.slice(
           putImageRequests.length
         );
@@ -236,17 +237,17 @@ export const useExerciseStore = defineStore("exercise", {
         console.log(err);
       }
     },
-        async putExercise(exercise, images, videos) {
-            let newExercise;
-            try {
-                const response = await fetch(`http://localhost:8080/api/exercises`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `bearer ${this.getToken}`
-                    },
-                    body: JSON.stringify(exercise)
-                });
+    async putExercise(exercise, images, videos) {
+      let newExercise;
+      try {
+        const response = await fetch(`http://localhost:8080/api/exercises`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `bearer ${this.getToken}`,
+          },
+          body: JSON.stringify(exercise),
+        });
         const text = await response.text();
         const result = text ? JSON.parse(text) : "";
         if (result !== "") {
@@ -256,16 +257,16 @@ export const useExerciseStore = defineStore("exercise", {
         console.log(`Oops! ${error}`);
         return null;
       }
-            const putImageRequests = images.map((image, index) =>
-              this.putExerciseImage(newExercise.id, image, index + 1)
-            );
-            const putVideoRequests = videos.map((video, index) =>
-              this.putExerciseVideo(newExercise.id, video, index + 1)
-            );
-            const imageAndVideoRequests = await Promise.all([
-                ...putImageRequests,
-                ...putVideoRequests
-            ]);
+      const putImageRequests = images.map((image, index) =>
+        this.putExerciseImage(newExercise.id, image, index + 1)
+      );
+      const putVideoRequests = videos.map((video, index) =>
+        this.putExerciseVideo(newExercise.id, video, index + 1)
+      );
+      const imageAndVideoRequests = await Promise.all([
+        ...putImageRequests,
+        ...putVideoRequests,
+      ]);
       newExercise.images = imageAndVideoRequests.slice(
         0,
         putImageRequests.length
@@ -281,7 +282,7 @@ export const useExerciseStore = defineStore("exercise", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-                // Authorization: `bearer ${this.getToken}`,
+              // Authorization: `bearer ${this.getToken}`,
             },
             body: JSON.stringify({ number: num, url: image }),
           }
@@ -300,8 +301,8 @@ export const useExerciseStore = defineStore("exercise", {
           {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`,
             },
             body: JSON.stringify({ number: num, url: video }),
           }
@@ -320,8 +321,8 @@ export const useExerciseStore = defineStore("exercise", {
           {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`,
             },
           }
         );
@@ -337,32 +338,32 @@ export const useExerciseStore = defineStore("exercise", {
           {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`,
             },
           }
         );
-          console.log(response);
+        console.log(response);
       } catch (err) {
-          console.log(`Oops~ ${err}`);
+        console.log(`Oops~ ${err}`);
       }
     },
-        async deleteExercise(exerciseId) {
-            try {
-                const response = await fetch(
-                  `http://localhost:8080/api/exercises/${exerciseId}`,
-                  {
-                      method: "DELETE",
-                      headers: {
-                          "Content-Type": "application/json",
-                          Authorization: `bearer ${this.getToken}`
-                      }
-                  }
-                );
-                console.log(response);
-            } catch (err) {
-                console.log(`Oops~ ${err}`);
-            }
-        }
+    async deleteExercise(exerciseId) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/exercises/${exerciseId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.getToken}`,
+            },
+          }
+        );
+        console.log(response);
+      } catch (err) {
+        console.log(`Oops~ ${err}`);
+      }
     },
+  },
 });
