@@ -15,7 +15,7 @@
             :disabled="loading"
             outlined
             class="rounded-pill"
-            type="submit"
+            @click="submitExercise"
           >
             <v-icon left>mdi-content-save</v-icon>
             Guardar {{ edit ? " Cambios" : " Ejercicio" }}
@@ -173,7 +173,7 @@ export default {
       return !!this.$route.params.id;
     },
     exId: function () {
-      return this.$route.params.id ? this.$route.params.id : 0;
+      return this.$route.params.id ? parseInt(this.$route.params.id) : 0;
     },
     ...mapState(useProfileStore, ["getId"]),
   },
@@ -196,13 +196,22 @@ export default {
       }
     },
     removeImage(img) {
+      let found=false;
       this.images = this.images.filter((value) => {
-        return value !== img;
+        if (value === img && !found) {
+          found=true;
+          return false;
+        }
+        return true;
       });
     },
     removeVideo(vid) {
+      let found=false;
       this.videos = this.videos.filter((value) => {
-        return value !== vid;
+        if (value === vid && !found) {
+          found=true;
+          return false;
+        }
       });
     },
     async submitExercise() {
@@ -236,8 +245,8 @@ export default {
       this.name = exercise.name;
       this.description = exercise.detail;
       this.typeSelected = exercise.type === "exercise" ? 0 : 1;
-      this.images = exercise.images;
-      this.videos = exercise.videos;
+      this.images = exercise.images.map((img) => img.url);
+      this.videos = exercise.videos.map((vid) => vid.url);
     }
   },
 };

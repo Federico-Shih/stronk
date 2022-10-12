@@ -170,6 +170,9 @@ export const useExerciseStore = defineStore("exercise", {
       return exercise;
     },
     async getExerciseById(id) {
+      if(this.Ownexercises.length === 0){
+        await this.getOwnExercisesData();
+      }
       const result = this.Ownexercises.find((exercise) => exercise.id === id);
       if (result) {
         return result;
@@ -179,6 +182,8 @@ export const useExerciseStore = defineStore("exercise", {
     async saveExercise(exercise, images, videos, id) {
       try {
         let prevIndex;
+        console.log(id);
+        console.log(this.Ownexercises);
         const prevExercise = this.Ownexercises.find((exercise, index) => {
           if (exercise.id === id) {
             prevIndex = index;
@@ -186,6 +191,7 @@ export const useExerciseStore = defineStore("exercise", {
           }
           return false;
         });
+        console.log(prevIndex);
         if (!prevExercise) {
           console.log("previous exercise not found");
           return;
@@ -198,8 +204,8 @@ export const useExerciseStore = defineStore("exercise", {
           this.removeExerciseVideos(prevExercise.id, id)
         );
         await Promise.all([...removeImagesRequests, ...removeVideosRequests]);
-
-        const putExercise = await fetch(
+        let putExercise;
+        const response = await fetch(
           `http://localhost:8080/api/exercises/${id}`,
           {
             method: "PUT",
@@ -210,15 +216,20 @@ export const useExerciseStore = defineStore("exercise", {
             body: JSON.stringify(exercise),
           }
         );
-        if (putExercise.status !== 200) {
+        if (response.status !== 200) {
           console.log("Put exercise failed");
           return;
         }
+        const text = await response.text();
+        const result = text ? JSON.parse(text) : "";
+        if (result !== "") {
+          putExercise = result;
+        }
         const putImageRequests = images.map((image, index) =>
-          this.putExerciseImage(putExercise.id, image, index + 1)
+          this.putExerciseImage(id, image, index + 1)
         );
         const putVideoRequests = videos.map((video, index) =>
-          this.putExerciseVideo(putExercise.id, video, index + 1)
+          this.putExerciseVideo(id, video, index + 1)
         );
         const imageAndVideoRequests = await Promise.all([
           ...putImageRequests,
@@ -282,7 +293,7 @@ export const useExerciseStore = defineStore("exercise", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              // Authorization: `bearer ${this.getToken}`,
+              Authorization: `bearer ${this.getToken}`,
             },
             body: JSON.stringify({ number: num, url: image }),
           }

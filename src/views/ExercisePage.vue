@@ -72,7 +72,7 @@ export default {
     },
   },
   async mounted() {
-    this.exercises = await this.getOwnExercisesData();
+    this.exercises = await this.getOwnExercises();
     // habría que cambiarlo a getAllExercisese o algo así
     this.allExercises = await this.getOwnExercisesData();
   },

@@ -15,10 +15,12 @@
       </div>
 
       <div class="mr-16 alignmentToTheRight">
-        <v-btn outlined class="rounded-pill">
-          <v-icon left>mdi-pencil</v-icon>
-          Editar Ejercicio
-        </v-btn>
+        <router-link :to="{name: 'exercises_edit', params:{id: `${this.exId}` }  }" style="text-decoration: none;color: inherit">
+          <v-btn outlined class="rounded-pill">
+            <v-icon left>mdi-pencil</v-icon>
+            Editar Ejercicio
+          </v-btn>
+        </router-link>
       </div>
     </div>
 
@@ -122,14 +124,13 @@ export default {
     },
   },
   async mounted() {
-    this.exId= this.$route.params.id;
+    this.exId= parseInt(this.$route.params.id);
     let exercise= await this.getExerciseById(this.exId);
     this.title=exercise.name;
     this.description=exercise.detail;
     this.type=(exercise.type==='exercise')? "Ejercicio":"Descanso";
     this.images=exercise.images;
     this.videos=exercise.videos;
-    console.log(exercise);
   }
 
 };
