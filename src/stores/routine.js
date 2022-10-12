@@ -117,11 +117,12 @@ export const useSaveRoutine = defineStore("editroutine", {
             Authorization: `Bearer ${this.getToken}`
           }
         });
+        console.log("creating routine: " + routineBody);
       } catch (errors) {
         console.log("Oops!" + errors);
       }
     },
-    async modifyRoutine(routineBody, routineId) {
+    async modifyRoutine(routineId, routineBody) {
       try {
         if (routineId) {
           await fetch(`http://localhost:8080/api/routines/${routineId}`, {
@@ -132,6 +133,7 @@ export const useSaveRoutine = defineStore("editroutine", {
               Authorization: `Bearer ${this.getToken}`
             }
           });
+          console.log("modifying routine: " + routineId + " : " + routineBody);
         }
       } catch (errors) {
         console.log("Oops!" + errors);
@@ -257,6 +259,7 @@ export const useCycles = defineStore("cycle", {
         let cycleId = obj !== null ? obj.id : null;
         if (cycleId === null)
           throw new Error("Error in posting cycle");
+        console.log("Posting cycle: " + cycleBody);
         for(let exercise of exercisesIdsAndBodies)
         {
           await fetch(
@@ -270,6 +273,7 @@ export const useCycles = defineStore("cycle", {
                 }
               }
           );
+          console.log("Posting exercise: " + exercise);
         }
       } catch (errors) {
         console.log("Oops!" + errors);

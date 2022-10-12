@@ -136,6 +136,11 @@ export default {
       this.cycleRepetitions = cycle.repetitions;
     }
   },
+  created() {
+    this.bus.$on('saveCycle', () => {
+      this.saveCycle();
+    })
+  },
   data: () => ({
     cycleName: "Nuevo Ciclo",
     showPopup: false,

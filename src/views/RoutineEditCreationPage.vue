@@ -10,7 +10,7 @@
           <v-icon left>mdi-close</v-icon>
           Descartar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
-        <v-btn outlined class="rounded-pill">
+        <v-btn outlined class="rounded-pill" @click="saveRoutine()">
           <v-icon left>mdi-content-save</v-icon>
           Guardar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
@@ -95,9 +95,13 @@
 import EditCycle from "@/components/editroutine/EditCycle.vue";
 import GoBackButton from "@/components/GoBackButton.vue";
 import Vue from "vue";
-import { CycleTypes, useCycles } from "../stores/routine";
+import {CycleTypes, useCycles, useSaveRoutine} from "../stores/routine";
 import { mapActions } from "pinia";
 import { useExPopupStore } from "@/stores/expopup";
+
+const difficultyApiNames = ["beginner", "intermediate", "advanced"];
+
+
 
 export default {
   name: "RoutineEditCreationPage",
@@ -124,7 +128,12 @@ export default {
   async created() {
     if (this.$route.params.id) {
       this.routineId = this.$route.params.id;
-      let apiAns = await useCycles().getCyclesFromRoutine(
+      let apiAns = await useSaveRoutine().getRoutine(this.routineId);
+      this.name = apiAns.name;
+      this.detail = apiAns.detail;
+      this.difficulty = difficultyApiNames.indexOf(apiAns.difficulty);
+      //todo categories y author
+      apiAns = await useCycles().getCyclesFromRoutine(
           this.routineId
       );
       this.cycles = apiAns.map((cycle, index) => ({
@@ -162,8 +171,27 @@ export default {
       this.cycles = newCycles;
       this.maxId += 1;
     },
+    async saveRoutine() {
+      const routineBody = {
+        "name": this.name,
+        "detail": this.detail,
+        "isPublic": true,
+        "difficulty": difficultyApiNames[this.difficultySelected],
+        "metadata": null
+        //todo categories y author
+      };
+      if(this.edit)
+      {
+        await useSaveRoutine().modifyRoutine(this.routineId, routineBody);
+        await useCycles().cleanCyclesFromRoutine(this.routineId);
+      }
+      else
+      {
+        await useSaveRoutine().createRoutine(routineBody);
+      }
+      this.bus.$emit('saveCycle');
+    }
   },
-  //TODO saveRoutine, si está en modo edit primero tiene q hacer clearCycles
 };
 </script>
 
