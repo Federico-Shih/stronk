@@ -31,7 +31,7 @@
           <h3 v-else class="mt-4">{{ cycleName }}</h3>
           <v-btn class="mx-2" icon
                  :disabled="this.cycleType !== CycleTypes.EXERCISE || this.order === 2"
-                 @click="removeCycle()">
+                 @click="deleteDialog = true">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </div>
@@ -92,6 +92,15 @@
         </v-card-text>
       </div>
       <ExercisePopup :used-exercises="this.exercises" v-if="showPopup" @ex-sumbit="sumbitEx" />
+      <DeleteConfirmationDialog
+          :dialog="deleteDialog"
+          title="¿Está seguro que desea eliminar el ciclo?"
+          body-text="Se eliminará de forma permanente junto con sus ejercicios."
+          agree-button-text="Sí"
+          disagree-button-text="No"
+          v-on:agree="deleteDialog = false; removeCycle();"
+          v-on:disagree="deleteDialog = false"
+      />
     </v-card>
   </v-form>
 </template>
@@ -103,10 +112,11 @@ import ExercisePopup from "@/components/ExercisePopup.vue";
 import { mapActions } from "pinia";
 import { useExPopupStore } from "@/stores/expopup";
 import { useCycles } from "../../stores/routine";
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 
 export default {
   name: "EditCycle",
-  components: { ExercisePopup, EditExercise },
+  components: {DeleteConfirmationDialog, ExercisePopup, EditExercise },
   props: {
     order: {
       type: Number,
@@ -177,6 +187,7 @@ export default {
     CycleTypes,
     valid: true,
     exercisesValidations: 0,
+    deleteDialog: false,
     rules: {
       required: value => !!value || 'Requerido',
       moreThan(n){ return value => value > n || `Mayor a ${n}` },

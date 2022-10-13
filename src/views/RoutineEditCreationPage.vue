@@ -129,7 +129,7 @@ export default {
       name: "Nueva Rutina",
       detail: "",
       category: [],
-      categorySelected: 1,
+      categorySelected: 0,
       difficulty: ["Principiante", "Intermedio", "Avanzado"],
       difficultySelected: 0,
       bus: new Vue({}),
@@ -166,7 +166,7 @@ export default {
       this.name = apiAns.name;
       this.detail = apiAns.detail;
       this.difficultySelected = difficultyApiNames.indexOf(apiAns.difficulty);
-      //todo categories y author
+      this.categorySelected = apiAns.category.id - 1;
       apiAns = await useCycles().getCyclesFromRoutine(
           this.routineId
       );
@@ -244,8 +244,10 @@ export default {
         "detail": this.detail,
         "isPublic": true,
         "difficulty": difficultyApiNames[this.difficultySelected],
-        "metadata": null
-        //todo categories y author
+        "metadata": null,
+        "category": {
+          "id": this.categorySelected + 1,
+        }
       };
       if(this.edit)
       {

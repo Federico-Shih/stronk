@@ -40,7 +40,7 @@
           </div>
         </v-form>
         <div class="d-flex flex-row justify-end align-center">
-          <v-btn icon @click="remove()">
+          <v-btn icon @click="deleteDialog = true">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
           <div class="d-flex flex-column">
@@ -54,14 +54,25 @@
         </div>
       </div>
     </div>
+    <DeleteConfirmationDialog
+        :dialog="deleteDialog"
+        title="¿Está seguro que desea eliminar el ejercicio?"
+        agree-button-text="Sí"
+        disagree-button-text="No"
+        v-on:agree="deleteDialog = false; remove();"
+        v-on:disagree="deleteDialog = false"
+    />
   </div>
 </template>
 
 <script>
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 export default {
   name: "EditExercise",
+  components: {DeleteConfirmationDialog},
   data: () => ({
     valid: true,
+    deleteDialog: false,
     rules: {
       required: value => !!value || 'Requerido',
       moreThan(n){ return value => value > n || `Mayor a ${n}` },
