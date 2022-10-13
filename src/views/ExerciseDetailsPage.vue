@@ -50,14 +50,6 @@
       <h2 class="mb-2">Descripcion del Ejercicio</h2>
       <p>{{ description }}</p>
     </div>
-    <div class="d-flex justify-center">
-      <v-progress-circular
-          v-show="loading"
-          indeterminate
-          color="primary"
-          :size="100"
-      />
-    </div>
     <div class="d-flex flex-column ml-8 mb-8">
       <h2 class="mb-2">Imagenes demostrativas</h2>
       <div class="d-flex flex-wrap align-start" style="width: 80%">
@@ -84,6 +76,13 @@
 <!--              allowfullscreen/>-->
 <!--      </div>-->
     </div>
+    <LoadingFetchDialog
+        :dialog-state="loadingDialogState"
+        loading-text="Por favor, espere..."
+        not-found-text="¡Oops! El ejercicio no se ha encontrado."
+        ok-not-found-button-text="OK"
+        v-on:oknotfound="$router.back()"
+    />
   </div>
 
 </template>
@@ -94,9 +93,11 @@ import GoBackButton from "../components/GoBackButton.vue";
 import {useExerciseStore} from "../stores/exercise";
 import {mapActions} from "pinia";
 import {useProfileStore} from "../stores/profile";
+import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
 export default {
   components: {
    GoBackButton,
+    LoadingFetchDialog,
   },
   computed: {
   },
@@ -112,7 +113,7 @@ export default {
       creatorname:null,
       creatorimage:null,
       title:null,
-      loading:true,
+      loadingDialogState: 'loading',
     };
   },
   methods: {
@@ -136,20 +137,24 @@ export default {
   },
   async mounted() {
     this.exId= parseInt(this.$route.params.id);
-    let exercise= await this.getExerciseById(this.exId);
-    this.creatorid=exercise.metadata.creatorid
-    this.title=exercise.name;
-    this.description=exercise.detail;
-    this.type=(exercise.type==='exercise')? "Ejercicio":"Descanso";
-    this.images=exercise.images;
-    this.videos=exercise.videos;
-    console.log(`creatorid: ${this.creatorid}`);
-    let creator=await this.generateUser(this.creatorid);
-    this.creatorname=creator.username;
-    this.creatorimage=creator.avatarUrl ? creator.avatarUrl : this.temp;
-    this.loading=false;
-
-
+    try {
+      let exercise = await this.getExerciseById(this.exId);
+      this.creatorid = exercise.metadata.creatorid
+      this.title = exercise.name;
+      this.description = exercise.detail;
+      this.type = (exercise.type === 'exercise') ? "Ejercicio" : "Descanso";
+      this.images = exercise.images;
+      this.videos = exercise.videos;
+      console.log(`creatorid: ${this.creatorid}`);
+      let creator = await this.generateUser(this.creatorid);
+      this.creatorname = creator.username;
+      this.creatorimage = creator.avatarUrl ? creator.avatarUrl : this.temp;
+    } catch (e) {
+      this.loadingDialogState = 'notFound';
+    }
+    if(this.loadingDialogState==='loading'){
+      this.loadingDialogState = 'ok';
+    }
 
   }
 

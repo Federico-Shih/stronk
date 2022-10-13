@@ -12,10 +12,11 @@
             Descartar {{ edit ? " Cambios" : " Ejercicio" }}
           </v-btn>
           <v-btn
-            :disabled="loading"
+            :disabled="!valid"
             outlined
             class="rounded-pill"
             @click="submitExercise"
+            :loading="savingExerciseButton"
           >
             <v-icon left>mdi-content-save</v-icon>
             Guardar {{ edit ? " Cambios" : " Ejercicio" }}
@@ -131,30 +132,34 @@
         </div>
       </div>
     </v-form>
-    <div class="d-flex justify-center">
-      <v-progress-circular
-        v-show="loading"
-        indeterminate
-        color="primary"
-        :size="100"
-      />
-    </div>
-    <v-snackbar v-model="snackbar" :timeout="timeout">
-      El ejercicio se ha {{edit? 'guardado':'creado'}} correctamente
+    <v-snackbar v-model="saveSnackbar" color="green">
+      Ejercicio guardada con éxito!
       <template v-slot:action="{ attrs }">
         <v-btn
-            color="primary"
+            color="white"
             text
             v-bind="attrs"
-            @click="
-            snackbar = false;
-            timeout = 2000;
-          "
+            @click="saveSnackbar = false;"
         >
-          Cerrar
+          Seguir Editando
+        </v-btn>
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="saveSnackbar = false; $router.back()"
+        >
+          Salir
         </v-btn>
       </template>
     </v-snackbar>
+    <LoadingFetchDialog
+        :dialog-state="loadingDialogState"
+        loading-text="Por favor, espere..."
+        not-found-text="¡Oops! El ejercicio no se ha encontrado."
+        ok-not-found-button-text="OK"
+        v-on:oknotfound="$router.back()"
+    />
   </div>
 </template>
 
@@ -163,10 +168,11 @@ import GoBackButton from "../components/GoBackButton.vue";
 import { useExerciseStore } from "../stores/exercise";
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "../stores/profile";
-
+import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
 export default {
   components: {
     GoBackButton,
+    LoadingFetchDialog,
   },
 
   data() {
@@ -181,8 +187,9 @@ export default {
       images: [],
       videos: [],
       notEmptyRules: [(v) => !!v || "Campo de nombre no puede quedar vacío"],
-      loading: false,
-      snackbar:false,
+      savingExerciseButton:false,
+      loadingDialogState: 'loading',
+      saveSnackbar:false,
       timeout:2000,
     };
   },
@@ -242,7 +249,7 @@ export default {
           type: this.typeSelected === 0 ? "exercise" : "rest",
           metadata: { creatorid: this.getId },
         };
-        this.loading = true;
+        this.savingExerciseButton=true;
         if (this.edit) {
           await this.saveExercise(
             exercise,
@@ -253,23 +260,27 @@ export default {
         } else {
           await this.putExercise(exercise, this.images, this.videos);
         }
-        this.loading = false;
-        this.snackbar=true;
-        setTimeout(() => {
-          this.$router.push({ name: "exercises" });
-        },2000);
+        this.savingExerciseButton=false;
+        this.saveSnackbar=true;
       }
     },
   },
   async created() {
     if (this.edit) {
-      const exercise = await this.getExerciseById(this.exId);
-      this.name = exercise.name;
-      this.description = exercise.detail;
-      this.typeSelected = exercise.type === "exercise" ? 0 : 1;
-      this.images = exercise.images.map((img) => img.url);
-      this.videos = exercise.videos.map((vid) => vid.url);
+      try {
+        const exercise = await this.getExerciseById(this.exId);
+        this.name = exercise.name;
+        this.description = exercise.detail;
+        this.typeSelected = exercise.type === "exercise" ? 0 : 1;
+        this.images = exercise.images.map((img) => img.url);
+        this.videos = exercise.videos.map((vid) => vid.url);
+      } catch (e) {
+        this.loadingDialogState = 'notFound';
+      }
     }
-  },
+    if(this.loadingDialogState === 'loading'){
+      this.loadingDialogState = 'ok';
+    }
+  }
 };
 </script>
