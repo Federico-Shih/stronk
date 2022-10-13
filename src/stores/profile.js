@@ -44,7 +44,7 @@ export const useProfileStore = defineStore({
         const response = await fetch("http://localhost:8080/api/users/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
             // "Authorization": `bearer ${this.getToken()}`,
           },
           //tiene que ser un string si o si
@@ -139,8 +139,8 @@ export const useProfileStore = defineStore({
         await fetch("http://localhost:8080/api/users/logout", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         });
       } catch (error) {
         console.log(error);
@@ -155,9 +155,7 @@ export const useProfileStore = defineStore({
             Authorization: `bearer ${this.token}`,
           },
         });
-        const ret = await res.json();
-        console.log(ret);
-        return ret;
+        return await res.json();
       } catch (error) {
         console.log(error);
       }

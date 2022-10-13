@@ -42,7 +42,7 @@
       <v-col class="mr-16 alignmentToTheRight">
         <h2 class="align-self-start">Recomendados</h2>
         <div v-if="hasProf">
-          <div v-for="person in this.recommendedUsers.content" :key="person.id">
+          <div v-for="person in this.recommendedUsers" :key="person.id">
             <router-link
               style="text-decoration: none; color: inherit"
               :to="{ name: 'profile', params: { id: `${person.id}` } }"
@@ -112,6 +112,7 @@ export default {
       hasProf: false,
       allUsers: [],
       snackbar: false,
+      recommendedUsers: [],
       timeout: 1000,
       text: "Inicie sesión para ver perfiles.",
       defaultUsers: [
@@ -158,22 +159,22 @@ export default {
   methods: {
     ...mapActions(useProfileStore, ["generateAllUsers"]),
     ...mapState(useProfileStore, ["getHasProfile"]),
+    loadRecommendedUsers() {
+      this.recommendedUsers = this.hasProf
+        ? this.allUsers.content.slice(
+            this.allUsers.content.length - 6,
+            this.allUsers.content.length - 2
+          )
+        : this.defaultUsers.slice(0, 3);
+    },
   },
   async mounted() {
     this.hasProf = this.getHasProfile();
     if (this.hasProf) {
+      console.log("asdfasdf");
       this.allUsers = await this.generateAllUsers();
     }
-  },
-  computed: {
-    recommendedUsers() {
-      return this.hasProf
-        ? this.allUsers.slice(
-            this.allUsers.length - 4,
-            this.allUsers.length - 1
-          )
-        : this.defaultUsers.slice(0, 3);
-    },
+    this.loadRecommendedUsers();
   },
 };
 </script>
