@@ -30,6 +30,7 @@
           <v-img
             class="rounded-circle"
             :src="creatorimage"
+            :alt="this.temp"
             height="50px"
             width="50px"
           />
@@ -48,6 +49,14 @@
     <div class="d-flex flex-column ml-8 mb-8" style="width: 70%">
       <h2 class="mb-2">Descripcion del Ejercicio</h2>
       <p>{{ description }}</p>
+    </div>
+    <div class="d-flex justify-center">
+      <v-progress-circular
+          v-show="loading"
+          indeterminate
+          color="primary"
+          :size="100"
+      />
     </div>
     <div class="d-flex flex-column ml-8 mb-8">
       <h2 class="mb-2">Imagenes demostrativas</h2>
@@ -84,6 +93,7 @@ import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
 import {useExerciseStore} from "../stores/exercise";
 import {mapActions} from "pinia";
+import {useProfileStore} from "../stores/profile";
 export default {
   components: {
    GoBackButton,
@@ -92,21 +102,22 @@ export default {
   },
   data() {
     return {
+      temp: temp,
       exId:null,
-      description:
-        "Esta es la descripcion Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a nibh vitae nisi tincidunt vulputate vel nec risus. Fusce placerat sagittis nisl, quis ultricies quam scelerisque a. Nulla laoreet tellus a turpis hendrerit posuere. Curabitur in ante velit. Mauris eu dolor tortor. Curabitur nisl velit, tincidunt non orci id, rutrum sodales metus. Fusce vitae libero aliquet lorem mollis vestibulum nec non odio. Fusce placerat egestas dui at venenatis. Aliquam aliquet orci elit, ut aliquet justo mattis et. Curabitur vitae iaculis neque, ac eleifend nibh. Nam volutpat tortor sed leo sollicitudin, eget semper quam ultricies",
-      type:'Ejercicio',
-      images: [temp, temp, temp, temp, temp, temp, temp],
-      videos: ['https://www.youtube.com/watch?v=dQw4w9WgXcQ','https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
+      description:null,
+      type:null,
+      images:null,
+      videos:null,
       creatorid:null,
-      creatorname: "Arnold Schwarzenegger",
-      creatorimage:temp,
+      creatorname:null,
+      creatorimage:null,
       title:null,
-
+      loading:true,
     };
   },
   methods: {
     ...mapActions(useExerciseStore, ["getExerciseById"]),
+    ...mapActions(useProfileStore, ["generateUser"]),
     loadURL(youtubeURL) {
       const youtubeEmbedTemplate = 'https://www.youtube-nocookie.com/embed/'
       const url = youtubeURL.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/)
@@ -126,11 +137,20 @@ export default {
   async mounted() {
     this.exId= parseInt(this.$route.params.id);
     let exercise= await this.getExerciseById(this.exId);
+    this.creatorid=exercise.metadata.creatorid
     this.title=exercise.name;
     this.description=exercise.detail;
     this.type=(exercise.type==='exercise')? "Ejercicio":"Descanso";
     this.images=exercise.images;
     this.videos=exercise.videos;
+    console.log(`creatorid: ${this.creatorid}`);
+    let creator=await this.generateUser(this.creatorid);
+    this.creatorname=creator.username;
+    this.creatorimage=creator.avatarUrl ? creator.avatarUrl : this.temp;
+    this.loading=false;
+
+
+
   }
 
 };
