@@ -58,7 +58,6 @@ export const useExerciseStore = defineStore("exercise", {
           text = await response.text();
           result = text ? JSON.parse(text) : "";
           if (result !== "") {
-            console.log(result.content);
             images = result.content;
           } else {
             images = [];
@@ -375,6 +374,9 @@ export const useExerciseStore = defineStore("exercise", {
       } catch (err) {
         console.log(`Oops~ ${err}`);
       }
+      this.Ownexercises = this.Ownexercises.filter((exercise)=> {
+        return exercise.id !== exerciseId;
+      });
     },
   },
 });

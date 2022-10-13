@@ -183,7 +183,7 @@ export default {
       notEmptyRules: [(v) => !!v || "Campo de nombre no puede quedar vacío"],
       loading: false,
       snackbar:false,
-      timeout:3000,
+      timeout:2000,
     };
   },
   computed: {
@@ -257,7 +257,7 @@ export default {
         this.snackbar=true;
         setTimeout(() => {
           this.$router.push({ name: "exercises" });
-        }, 3000);
+        },2000);
       }
     },
   },

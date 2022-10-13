@@ -32,6 +32,7 @@
                 {{ this.exerciseName }}
               </v-list-item-title>
               <v-list-item-subtitle style="
+                max-width: 300px;
                         text-overflow: ellipsis;
                         overflow: hidden;
                       ">
@@ -41,7 +42,7 @@
           </router-link>
           <v-spacer></v-spacer>
           <div class="d-flex align-items-end flex-column">
-            <button @click="deleteThisExercise">
+            <button @click="deleteDialog=true">
               <v-icon
                 ><!--mdi-dots-vertical-->
                 mdi-close</v-icon
@@ -51,14 +52,28 @@
         </div>
       </v-list-item-content>
     </v-list-item>
+    <DeleteConfirmationDialog
+        :dialog="deleteDialog"
+        title="¿Está seguro que desea eliminar el ciclo?"
+        body-text="Se eliminará de forma permanente junto con sus ejercicios."
+        agree-button-text="Sí"
+        disagree-button-text="No"
+        v-on:agree="deleteDialog = false; deleteThisExercise();"
+        v-on:disagree="deleteDialog = false"
+    />
   </v-card>
 </template>
 
 <script>
 import { mapActions } from "pinia";
 import { useExerciseStore } from "@/stores/exercise";
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 export default {
+
   name: "ExerciseDepiction",
+  components:{
+    DeleteConfirmationDialog,
+  },
   props: {
     variant: String,
     exerciseName: String,
@@ -69,6 +84,7 @@ export default {
   data() {
     return {
       hover: false,
+      deleteDialog: false,
       variants: {
         boxSizes: {
           large: "community-profile-button-large",
