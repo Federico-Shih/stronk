@@ -9,11 +9,13 @@
       >
         <v-icon>mdi-close</v-icon>
       </v-btn>
-      <v-select v-model="exerciseSelected" :items="exercises" item-value="id" item-text="name" label="Eliga un Ejercicio" return-object></v-select>
+      <v-form v-model="valid">
+        <v-select v-model="exerciseSelected" :items="exercises" item-value="id" item-text="name" label="Eliga un Ejercicio" :item-disabled="disableExercise" return-object :rules="[rules.required]"></v-select>
+        <v-spacer style="height: 50px"></v-spacer>
+        <v-select v-model="exerciseType"  :items="Type" label="Eliga el tipo de Ejercicio" :rules="[rules.required]"></v-select>
       <v-spacer style="height: 50px"></v-spacer>
-      <v-select v-model="exerciseType"  :items="Type" label="Eliga el tipo de Ejercicio"></v-select>
-      <v-spacer style="height: 50px"></v-spacer>
-      <v-btn @click="onSumbit" color="primary">Terminar</v-btn>
+      <v-btn @click="onSumbit" color="primary" :disabled="!valid">Terminar</v-btn>
+      </v-form>
     </v-card>
   </v-overlay>
 </template>
@@ -25,19 +27,30 @@ import {useExPopupStore} from "../stores/expopup";
 
 export default {
   name: "ExercisePopup",
+  props:{
+    usedExercises:{
+      type: Array,
+      required: true
+    },
+
+  },
   data()  {
     return{
       exerciseSelected:null,
       exerciseType:null,
       Type:['Tiempo','Repeticiones','Ambos'],
-      exercises:[ {id:1 ,name:"abdominales", detail:"abdos",type:"exercise",date:16000 ,metadata:null},
+      exercises:[{id:1 ,name:"abdominales", detail:"abdos",type:"exercise",date:16000 ,metadata:null},
           {id:2 ,name:"jumping jacks", detail:"core",type:"exercise",date:16000 ,metadata:null} ],
+      valid:false,
+      rules:{
+        required: value => !!value || 'Elija una opcion'
+      }
     };
   },
   computed:{
     ...mapState(useExPopupStore, ["show", "index"]),
   },
-  watch: {
+  watch:{
     show(){
 
     }
@@ -49,13 +62,15 @@ export default {
       this.$emit('ex-sumbit',this.exerciseSelected,this.exerciseType, this.index);
       this.hideExPopup();
     },
-    retrieveExercises(){
-      this.exercises=this.getOwnExercises();
+  async retrieveExercises(){
+      this.exercises=await this.getOwnExercises();
+    },
+    disableExercise(item){
+      return this.usedExercises.some((used) => used.id === item.id); //si no esta en el array de usados
     }
-
   },
   mounted(){
-
+    this.retrieveExercises();
   }
 };
 

@@ -85,7 +85,7 @@
         </div>
       </v-card-text>
     </div>
-    <ExercisePopup v-if="showPopup" @ex-sumbit="sumbitEx" />
+    <ExercisePopup :usedExercises="exercises" v-if="showPopup"  @ex-sumbit="sumbitEx" />
   </v-card>
 </template>
 
