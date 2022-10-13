@@ -5,36 +5,40 @@
         {{ this.$props.name }}
       </h3>
       <div class="d-flex flex-row justify-space-between align-start">
-        <div class="d-flex flex-row align-center">
-          <v-img
-            class="flex-grow-0 ml-auto mr-4"
-            width="10em"
-            height="7em"
-            :src="img_url"
-          ></v-img>
-          <div style="width: 120px">
-            <v-text-field
-                v-if="type === 'Repeticiones' || type === 'Ambos'"
-                class="mr-2"
-                v-model="repetitionsModel"
-                outlined
-                dense
-                label="Repeticiones"
-                type="number"
-            />
+        <v-form v-model="valid">
+          <div class="d-flex flex-row align-center">
+            <v-img
+                class="flex-grow-0 ml-auto mr-4"
+                width="10em"
+                height="7em"
+                :src="img_url"
+            ></v-img>
+            <div style="width: 120px">
+              <v-text-field
+                  v-if="type === 'Repeticiones' || type === 'Ambos'"
+                  class="mr-2"
+                  v-model="repetitionsModel"
+                  outlined
+                  dense
+                  label="Repeticiones"
+                  type="number"
+                  :rules="[rules.required, rules.moreThan(0), rules.lessThan(999)]"
+              />
+            </div>
+            <div style="width: 120px">
+              <v-text-field
+                  v-if="type === 'Tiempo' || type === 'Ambos'"
+                  class="mr-4"
+                  v-model="durationModel"
+                  outlined
+                  dense
+                  label="Tiempo (segs)"
+                  type="number"
+                  :rules="[rules.required, rules.moreThan(0), rules.lessThan(999)]"
+              />
+            </div>
           </div>
-          <div style="width: 120px">
-            <v-text-field
-              v-if="type === 'Tiempo' || type === 'Ambos'"
-              class="mr-4"
-              v-model="durationModel"
-              outlined
-              dense
-              label="Tiempo (segs)"
-              type="number"
-            />
-          </div>
-        </div>
+        </v-form>
         <div class="d-flex flex-row justify-end align-center">
           <v-btn icon @click="remove()">
             <v-icon>mdi-delete</v-icon>
@@ -56,6 +60,14 @@
 <script>
 export default {
   name: "EditExercise",
+  data: () => ({
+    valid: true,
+    rules: {
+      required: value => !!value || 'Requerido',
+      moreThan(n){ return value => value > n || `Mayor a ${n}` },
+      lessThan(n){ return value => value < n || `Menor a ${n}` },
+    }
+  }),
   props: {
     index: Number,
     last: Boolean,
@@ -63,7 +75,12 @@ export default {
     name: String,
     img_url: String,
     repetitions: Number,
-    duration: Number
+    duration: Number,
+    cycleOrder: Number,
+    bus: {
+      type: Object,
+      required: true
+    },
   },
   methods: {
     remove() {
@@ -75,9 +92,6 @@ export default {
     moveDown() {
       this.$emit("movedown");
     },
-    duplicate() {
-      this.$emit("duplicate");
-    }
   },
   computed: {
     durationModel: {
@@ -104,6 +118,12 @@ export default {
   },
   mounted() {
     console.log(this.name);
-  }
+  },
+  created() {
+    this.bus.$on('validate', () => {
+      if(this.valid)
+        this.bus.$emit('validatedEx', this.cycleOrder);
+    })
+  },
 };
 </script>

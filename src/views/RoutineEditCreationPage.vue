@@ -10,7 +10,7 @@
           <v-icon left>mdi-close</v-icon>
           Descartar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
-        <v-btn outlined class="rounded-pill" @click="saveRoutine()">
+        <v-btn outlined class="rounded-pill" @click="trySaveRoutine()" :loading="saveButtonLoading">
           <v-icon left>mdi-content-save</v-icon>
           Guardar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
@@ -18,13 +18,16 @@
     </div>
     <div class="ml-16 d-flex flex-row justify-space-between">
       <div class="d-flex flex-column justify-start pt-4" style="width: 40%">
-        <v-text-field
-          v-model="name"
-          label="Nombre de la Rutina"
-          dense
-          outlined
-          class="rounded-lg"
-        />
+        <v-form v-model="valid">
+          <v-text-field
+              v-model="name"
+              label="Nombre de la Rutina"
+              dense
+              outlined
+              class="rounded-lg"
+              :rules="[rules.required]"
+          />
+        </v-form>
         <v-textarea
           v-model="detail"
           label="Descripción de la Rutina"
@@ -49,11 +52,10 @@
           </v-chip-group>
         </div>
         <div class="d-flex flex-row justify-end align-center mr-8">
-          <h4 class="mr-4">Categorías:</h4>
+          <h4 class="mr-4">Categoría:</h4>
           <v-chip-group
-            v-model="categoriesSelected"
+            v-model="categorySelected"
             mandatory
-            multiple
             style="width: 60%"
             column
             active-class="primary--text"
@@ -89,6 +91,21 @@
       </v-btn>
       <div v-else class="mt-4"></div>
     </div>
+    <v-snackbar v-model="snackbar" :timeout="4000" color="red">
+      Error, existen campos incorrectos!
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="
+                  snackbar = false;
+                "
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -109,15 +126,22 @@ export default {
   data() {
     return {
       routineId: null,
-      name: "",
+      name: "Nueva Rutina",
       detail: "",
-      category: ["Pecho", "Espalda", "Piernas", "Abdominales", "Brazos"],
-      categoriesSelected: [],
+      category: [],
+      categorySelected: 1,
       difficulty: ["Principiante", "Intermedio", "Avanzado"],
       difficultySelected: 0,
       bus: new Vue({}),
       cycles: [],
-      maxId: 0
+      maxId: 0,
+      cycleValidations: 0,
+      valid: true,
+      snackbar: false,
+      rules: {
+        required: value => value.length > 0 || 'Requerido',
+      },
+      saveButtonLoading: false,
     };
   },
   computed: {
@@ -125,9 +149,16 @@ export default {
       return this.$route.params.id !== undefined;
     }
   },
+  async beforeCreate() {
+    this.category = await useSaveRoutine().getCategories();
+  },
   async created() {
     this.bus.$on('removeCycle', (order) => {
       this.removeCycle(order);
+    })
+    this.bus.$on('validatedCycle', () => {
+      console.log('validateCycle');
+      this.cycleValidations++;
     })
     if (this.$route.params.id) {
       this.routineId = this.$route.params.id;
@@ -187,6 +218,25 @@ export default {
         }
       });
       this.cycles = newCycles;
+    },
+    setButtonLoading(value) {
+      console.log('hola');
+      this.saveButtonLoading = value;
+    },
+    trySaveRoutine() {
+      this.cycleValidations = 0;
+      this.bus.$emit('validate');
+      this.setButtonLoading(true);
+      setTimeout(() => {
+        console.log(`Cycles validated ${this.cycleValidations} out of ${this.cycles.length}`);
+        if (this.cycleValidations === this.cycles.length && this.valid) {
+          this.saveRoutine();
+        }
+        else {
+          this.snackbar = true;
+        }
+        this.setButtonLoading(false);
+      }, 1000);
     },
     async saveRoutine() {
       const routineBody = {

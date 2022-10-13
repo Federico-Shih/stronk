@@ -76,7 +76,58 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
 });
 
 export const useSaveRoutine = defineStore("editroutine", {
+  state: () => ({
+    categoriesToPost: ["Full Body","Pecho", "Espalda", "Piernas", "Abdominales", "Brazos"],
+    categories: [],
+  }),
+  getters: {
+    ...mapState(useProfileStore, ["getToken"])
+  },
   actions: {
+    async getCategories() {
+      if(this.categories.length === 0) {
+        try {
+          let res = await fetch("http://localhost:8080/api/categories", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.getToken}`,
+            },
+          });
+          let text = await res.text();
+          let ans = text ? JSON.parse(text) : null;
+          if (ans === null) throw new Error("Error in getting categories");
+          if(ans.content.length === 0) {
+            for(let category of this.categoriesToPost) {
+              await fetch("http://localhost:8080/api/categories", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${this.getToken}`,
+                },
+                body: JSON.stringify({ name: category }),
+              });
+            }
+            res = await fetch("http://localhost:8080/api/categories", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.getToken}`,
+              },
+            });
+            text = await res.text();
+            ans = text ? JSON.parse(text) : null;
+            if (ans === null) throw new Error("Error in getting categories");
+          }
+          ans.content.sort((a, b) => a.id - b.id).forEach((category) => {
+            this.categories.push(category.name);
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      return this.categories;
+    },
     async getRoutine(routine_id) {
       try {
         const response = await fetch(
@@ -146,9 +197,6 @@ export const useSaveRoutine = defineStore("editroutine", {
       }
     },
   },
-  getters: {
-    ...mapState(useProfileStore, ["getToken"]),
-  },
 });
 
 export const useCycles = defineStore("cycle", {
@@ -217,9 +265,7 @@ export const useCycles = defineStore("cycle", {
           let images = text3 ? JSON.parse(text3) : null;
           if (images === null)
             throw new Error("Error in getting exercises images");
-          console.log(
-            `Getting cycle exercise ${ex["exercise"].id} image: ${text3}`
-          );
+          console.log(`Getting cycle exercise ${ex['exercise'].id} image: ${text3}`);
           let url = images.content.length > 0 ? images.content[0].url : "";
           out.exercises.push({ ...ex, img_url: url });
         }
