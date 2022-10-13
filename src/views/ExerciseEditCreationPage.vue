@@ -139,6 +139,22 @@
         :size="100"
       />
     </div>
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      El ejercicio se ha {{edit? 'guardado':'creado'}} correctamente
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="primary"
+            text
+            v-bind="attrs"
+            @click="
+            snackbar = false;
+            timeout = 2000;
+          "
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -166,6 +182,8 @@ export default {
       videos: [],
       notEmptyRules: [(v) => !!v || "Campo de nombre no puede quedar vacío"],
       loading: false,
+      snackbar:false,
+      timeout:3000,
     };
   },
   computed: {
@@ -236,6 +254,10 @@ export default {
           await this.putExercise(exercise, this.images, this.videos);
         }
         this.loading = false;
+        this.snackbar=true;
+        setTimeout(() => {
+          this.$router.push({ name: "exercises" });
+        }, 3000);
       }
     },
   },

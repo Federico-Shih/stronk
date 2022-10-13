@@ -31,13 +31,16 @@
               <v-list-item-title class="font-weight-bold mb-2">
                 {{ this.exerciseName }}
               </v-list-item-title>
-              <v-list-item-subtitle>
+              <v-list-item-subtitle style="
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                      ">
                 {{ this.category }}
               </v-list-item-subtitle>
             </div>
           </router-link>
           <v-spacer></v-spacer>
-          <div class="alignmentToTheRight">
+          <div class="d-flex align-items-end flex-column">
             <button @click="deleteThisExercise">
               <v-icon
                 ><!--mdi-dots-vertical-->
