@@ -161,23 +161,9 @@ export default {
     }
   },
   created() {
-    this.bus.$on('saveCycle', (routine_id) => {
-      this.saveCycle(routine_id);
-    })
-    this.bus.$on('validate', () => {
-      if(this.exercises.length === 0 && this.valid) {
-        console.log(`Validating cycle ${this.order}`);
-        this.bus.$emit('validatedCycle');
-      }
-    })
-    this.bus.$on('validatedEx', (order) => {
-      if (order === this.order && this.valid) {
-        if(++this.exercisesValidations === this.exercises.length) {
-          console.log(`Validating cycle ${order}`);
-          this.bus.$emit('validatedCycle');
-        }
-      }
-    })
+    this.bus.$on('saveCycle', this.saveCycle);
+    this.bus.$on('validate', this.validateSelf);
+    this.bus.$on('validatedEx', this.validateEx);
   },
   data: () => ({
     cycleName: "Nuevo Ciclo",
@@ -196,6 +182,20 @@ export default {
   }),
   methods: {
     ...mapActions(useExPopupStore, ["showExPopup"]),
+    validateSelf() {
+      if(this.exercises.length === 0 && this.valid) {
+        console.log(`Validating cycle ${this.order}`);
+        this.bus.$emit('validatedCycle');
+      }
+    },
+    validateEx(order) {
+      if (order === this.order && this.valid) {
+        if(++this.exercisesValidations === this.exercises.length) {
+          this.exercisesValidations = 0;
+          this.bus.$emit('validatedCycle');
+        }
+      }
+    },
     sumbitEx(ExerciseSelected, ExerciseType, index) {
       this.exercises.splice(index, 0, {
         id: ExerciseSelected.id,
@@ -238,7 +238,7 @@ export default {
       this.showPopup = true;
       this.showExPopup(index);
     },
-    saveCycle(routine_id) {
+    async saveCycle(routine_id) {
       let exercisesArray = [];
       let i = 1;
       for(let ex of this.exercises)
@@ -253,7 +253,7 @@ export default {
         });
       }
 
-      useCycles().postCycle(routine_id,
+      await useCycles().postCycle(routine_id,
           {
         name: this.cycleName,
         detail: '',
@@ -263,9 +263,15 @@ export default {
         metadata: null
       },
           exercisesArray);
+      this.bus.$emit('savedCycle');
     },
     removeCycle() {
       this.bus.$emit('removeCycle', this.order);
+      this.bus.$off('saveCycle', this.saveCycle);
+      this.bus.$off('validate', this.validateSelf);
+      this.bus.$off('validatedEx', this.validateEx);
+      this.$destroy();
+      this.$el.parentNode.removeChild(this.$el);
     },
   },
 };

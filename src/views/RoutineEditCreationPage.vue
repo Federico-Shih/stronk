@@ -6,7 +6,7 @@
         <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} una Rutina</h1>
       </div>
       <div class="d-flex flex-row mr-8">
-        <v-btn outlined class="rounded-pill mr-4">
+        <v-btn outlined class="rounded-pill mr-4" @click="$router.back()">
           <v-icon left>mdi-close</v-icon>
           Descartar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
@@ -106,6 +106,34 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar v-model="saveSnackbar" color="green">
+      Rutina guardada con éxito!
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="saveSnackbar = false;"
+        >
+          Seguir Editando
+        </v-btn>
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="saveSnackbar = false; $router.back()"
+        >
+          Salir
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <LoadingFetchDialog
+        :dialog-state="loadingDialogState"
+        loading-text="Por favor, espere..."
+        not-found-text="¡Oops! La rutina no se ha encontrado."
+        ok-not-found-button-text="OK"
+        v-on:oknotfound="$router.back()"
+    />
   </div>
 </template>
 
@@ -113,8 +141,9 @@
 import EditCycle from "@/components/editroutine/EditCycle.vue";
 import GoBackButton from "@/components/GoBackButton.vue";
 import Vue from "vue";
-import {CycleTypes, useCycles, useSaveRoutine} from "../stores/routine";
+import {CycleTypes, useCycles, useSaveRoutine} from "@/stores/routine";
 import {mapActions} from "pinia";
+import LoadingFetchDialog from "@/components/LoadingFetchDialog.vue";
 
 const difficultyApiNames = ["beginner", "intermediate", "advanced"];
 
@@ -122,7 +151,7 @@ const difficultyApiNames = ["beginner", "intermediate", "advanced"];
 
 export default {
   name: "RoutineEditCreationPage",
-  components: { GoBackButton, EditCycle },
+  components: {LoadingFetchDialog, GoBackButton, EditCycle },
   data() {
     return {
       routineId: null,
@@ -136,8 +165,11 @@ export default {
       cycles: [],
       maxId: 0,
       cycleValidations: 0,
+      cycleSaves: 0,
       valid: true,
       snackbar: false,
+      saveSnackbar: false,
+      loadingDialogState: 'loading',
       rules: {
         required: value => value.length > 0 || 'Requerido',
       },
@@ -160,23 +192,33 @@ export default {
       console.log('validateCycle');
       this.cycleValidations++;
     })
+    this.bus.$on('savedCycle', () => {
+      this.cycleSaves++;
+      if(this.cycleSaves === this.cycles.length)
+        this.finishSave();
+    })
     if (this.$route.params.id) {
-      this.routineId = this.$route.params.id;
-      let apiAns = await useSaveRoutine().getRoutine(this.routineId);
-      this.name = apiAns.name;
-      this.detail = apiAns.detail;
-      this.difficultySelected = difficultyApiNames.indexOf(apiAns.difficulty);
-      this.categorySelected = apiAns.category.id - 1;
-      apiAns = await useCycles().getCyclesFromRoutine(
-          this.routineId
-      );
-      this.cycles = apiAns.map((cycle, index) => ({
-        ...cycle,
-        "cycle-type": cycle.type,
-        internalId: index
-      }));
-      this.cycles.sort((a,b) => a.order-b.order);
-      this.maxId = this.cycles.length;
+      try{
+        this.routineId = this.$route.params.id;
+        let apiAns = await useSaveRoutine().getRoutine(this.routineId);
+        this.name = apiAns.name;
+        this.detail = apiAns.detail;
+        this.difficultySelected = difficultyApiNames.indexOf(apiAns.difficulty);
+        this.categorySelected = apiAns.category.id - 1;
+        apiAns = await useCycles().getCyclesFromRoutine(
+            this.routineId
+        );
+        this.cycles = apiAns.map((cycle, index) => ({
+          ...cycle,
+          "cycle-type": cycle.type,
+          internalId: index
+        }));
+        this.cycles.sort((a,b) => a.order-b.order);
+        this.maxId = this.cycles.length;
+      } catch (e) {
+        this.loadingDialogState = 'notFound';
+      }
+
     } else {
       this.cycles = this.cycles.concat(
         { "cycle-type": CycleTypes.WARMUP, order: 1, id: null, internalId: 0 },
@@ -184,6 +226,9 @@ export default {
         { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: null, internalId: 2 }
       );
       this.maxId = 3;
+    }
+    if(this.loadingDialogState === 'loading') {
+      this.loadingDialogState = 'ok';
     }
   },
   methods: {
@@ -234,8 +279,8 @@ export default {
         }
         else {
           this.snackbar = true;
+          this.setButtonLoading(false);
         }
-        this.setButtonLoading(false);
       }, 1000);
     },
     async saveRoutine() {
@@ -258,7 +303,12 @@ export default {
       {
         this.routineId = await useSaveRoutine().createRoutine(routineBody);
       }
+      this.cycleSaves = 0;
       this.bus.$emit('saveCycle', this.routineId);
+    },
+    finishSave() {
+      this.saveSnackbar = true;
+      this.setButtonLoading(false);
     }
   },
 };
