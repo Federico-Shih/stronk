@@ -8,11 +8,12 @@ import { usePopupStore } from "@/stores/auth";
 export default {
   name: "NavBar",
   computed: {
-    ...mapState(useProfileStore, ["profile"]),
     ...mapState(useProfileStore, [
       "getHasProfile",
       "getFirstname",
       "getLastname",
+      "getToken",
+      "profile"
     ]),
     ownedLinks() {
       return this.links.filter((link) =>
@@ -58,8 +59,8 @@ export default {
       this.expanded = value;
     },
     ...mapActions(usePopupStore, ["showPopup"]),
-    ...mapActions(useProfileStore, ["logout"]),
-    ...mapState(useProfileStore, ["getId", "getPic"]),
+    ...mapActions(useProfileStore, ["logout", "loadCurrentNames"]),
+    ...mapState(useProfileStore, ["getId", "getPic"])
   },
   watch: {
     getHasProfile(curr) {
@@ -73,8 +74,13 @@ export default {
       this.links[4].link = `/profile/${this.id}`;
       this.image = this.getPic();
       this.image = this.image ? this.image : this.temp;
-    },
+    }
   },
+  async created() {
+    if (!this.getHasProfile && this.getToken.length !== 0) {
+      await this.loadCurrentNames();
+    }
+  }
 };
 </script>
 

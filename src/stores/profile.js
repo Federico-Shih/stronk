@@ -31,19 +31,20 @@ export const useProfileStore = defineStore({
           this.firstName = res.firstName;
           this.lastName = res.lastName;
           this.profile = res;
+          return res;
         }
       } catch (error) {
         console.log(error);
         console.log("Error cargando nombres");
       }
     },
-    async login(username, password) {
-      if (this.validated) return this.token;
+    async login(username, password, recordar) {
+      if (this.validated) return this.getToken;
       try {
         const response = await fetch("http://localhost:8080/api/users/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
             // "Authorization": `bearer ${this.getToken()}`,
           },
           //tiene que ser un string si o si
@@ -56,6 +57,11 @@ export const useProfileStore = defineStore({
         if (response.status === 200) {
           this.token = res.token;
           this.validated = true;
+          if (recordar) {
+            localStorage.setItem("token", res.token);
+          } else {
+            sessionStorage.setItem("token", res.token);
+          }
         } else {
           return res;
         }
@@ -126,12 +132,15 @@ export const useProfileStore = defineStore({
     async logout() {
       this.validated = false;
       this.token = "";
+      this.profile = {};
+      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
       try {
         await fetch("http://localhost:8080/api/users/logout", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-          },
+            "Content-Type": "application/json"
+          }
         });
       } catch (error) {
         console.log(error);
@@ -193,10 +202,15 @@ export const useProfileStore = defineStore({
   },
   getters: {
     getHasProfile() {
-      console.log(this.validated);
-      return this.validated;
+      return Object.keys(this.profile).length !== 0;
     },
     getToken() {
+      if (this.token.length === 0) {
+        this.token =
+          sessionStorage.getItem("token") ||
+          localStorage.getItem("token") ||
+          "";
+      }
       return this.token;
     },
     getCorrectVerification() {

@@ -80,7 +80,7 @@ export default {
         !v ||
         v.length <= 14 ||
         "Utilice un nombre con, a lo sumo, 14 carácteres",
-      (v) => !!v || "Tiene que ingresar Nombre y Apellido",
+      (v) => !!v || "Tiene que ingresar Nombre y Apellido"
     ],
     hidePass: true,
     hideConfirm: true,
@@ -88,6 +88,7 @@ export default {
     isVerification: false,
     verificationCode: "",
     verificationMessage: "¡Ingrese el Código Enviado a su Email!",
+    rememberPassword: false
   }),
   methods: {
     ...mapActions(useProfileStore, [
@@ -128,8 +129,8 @@ export default {
           this.isRegister = false;
           this.isVerification = true;
         } else {
-          await this.login(this.username, this.password);
-          if (this.getHasProfile()) {
+          await this.login(this.username, this.password, this.rememberPassword);
+          if (this.getHasProfile) {
             await this.loadCurrentNames();
             this.setStartingConditionsAndClose();
           } else {
@@ -266,6 +267,11 @@ export default {
               :rules="[passwordConfirmRule]"
             >
             </v-text-field>
+            <v-checkbox
+              v-if="!isRegister && !isVerification"
+              label="Recordar contraseña"
+              v-model="rememberPassword"
+            />
           </v-expand-transition>
           <v-container class="width_full d-flex flex-column align-center">
             <v-btn v-if="!isVerification" type="submit" color="primary">{{
