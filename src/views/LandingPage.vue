@@ -3,16 +3,13 @@ import abs from "../assets/abdominales.jpg";
 import abslat from "../assets/abdominallateral.jpg";
 import fle from "../assets/flexiones.jpg";
 import estirar from "../assets/estirar.jpg";
-import facebook from "../assets/facebook.png";
-import twitter from "../assets/twitter.png";
-import instagram from "../assets/insta.png";
 import android from "../assets/android.png";
 
 export default {
   data() {
     return {
       exerciseImages: [abslat, abs, fle, estirar],
-      socialMediaIcons: [facebook, twitter, instagram, android],
+      android,
     };
   },
 };
@@ -64,21 +61,19 @@ export default {
       </v-row>
       <v-row>
         <v-col>
-          <img
-            :src="this.socialMediaIcons.at(0)"
-            alt="facebook"
-            height="50px"
-          />
-          <img :src="this.socialMediaIcons.at(1)" alt="twitter" height="50px" />
-          <img
-            :src="this.socialMediaIcons.at(2)"
-            alt="instagram"
-            height="50px"
-          />
+          <v-btn icon href="https://www.facebook.com/" class="mx-2">
+            <v-icon color="blue darken-3" size="100">mdi-facebook</v-icon>
+          </v-btn>
+          <v-btn icon href="https://www.twitter.com/" class="mx-16">
+            <v-icon color="blue" size="100">mdi-twitter</v-icon>
+          </v-btn>
+          <v-btn icon href="https://www.instagram.com/" class="mx-2">
+            <v-icon color="orange darken-4" size="100">mdi-instagram</v-icon>
+          </v-btn>
         </v-col>
         <v-spacer></v-spacer>
         <v-col>
-          <img :src="this.socialMediaIcons.at(3)" alt="android" height="35px" />
+          <img :src="android" alt="android" height="35px" />
         </v-col>
       </v-row>
     </v-container>

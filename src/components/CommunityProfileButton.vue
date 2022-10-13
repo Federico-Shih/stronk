@@ -15,7 +15,7 @@
         <v-card-title :class="variants.fontSizes[variant]">{{
           displayName
         }}</v-card-title>
-        <v-card-subtitle v-show="variant === 'large'">
+        <v-card-subtitle v-if="variant === 'large'">
           {{ description }}</v-card-subtitle
         >
       </div>

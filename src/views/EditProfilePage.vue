@@ -125,12 +125,10 @@
 
 <script>
 import temp from "../assets/arnold.png";
-import RoutineSlideGroup from "../components/RoutineSlideGroup.vue";
 import GoBackButton from "../components/GoBackButton.vue";
 export default {
   components: {
     GoBackButton,
-    RoutineSlideGroup,
   },
   watch: {
     menu(val) {

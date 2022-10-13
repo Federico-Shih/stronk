@@ -4,39 +4,93 @@
       <v-col class="mr-16">
         <h1>Comunidad</h1>
         <search-bar title="¿Buscás a alguien en particular?"></search-bar>
-        <div v-for="person in this.allUsers.content" :key="person.id">
-          <router-link
-            style="text-decoration: none; color: inherit"
-            :to="{ name: 'profile', params: { id: `${person.id}` } }"
+        <div v-if="hasProf">
+          <div v-for="person in this.allUsers.content" :key="person.id">
+            <router-link
+              style="text-decoration: none; color: inherit"
+              :to="{ name: 'profile', params: { id: `${person.id}` } }"
+            >
+              <CommunityProfileButton
+                variant="large"
+                :display-name="person.username"
+                description="Body Builder"
+                :profile-pic="person.avatarUrl"
+              />
+            </router-link>
+          </div>
+        </div>
+        <div v-else>
+          <div
+            @click="
+              snackbar = true;
+              timeout = timeout + 1000;
+            "
+            v-for="person in defaultUsers"
+            :key="person.id"
           >
             <CommunityProfileButton
               variant="large"
               :display-name="person.username"
-              description="Body Builder"
-              profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+              :profile-pic="person.avatarUrl"
+              :description="person.description"
             />
-            <!-- :profile-pic="person.avatarUrl" -->
-          </router-link>
+          </div>
         </div>
       </v-col>
       <v-spacer></v-spacer>
       <v-divider vertical></v-divider>
       <v-col class="mr-16 alignmentToTheRight">
         <h2 class="align-self-start">Recomendados</h2>
-        <div v-for="i in 3" :key="i">
-          <router-link
-            style="text-decoration: none; color: inherit"
-            to="/profile/1"
+        <div v-if="hasProf">
+          <div v-for="person in this.recommendedUsers.content" :key="person.id">
+            <router-link
+              style="text-decoration: none; color: inherit"
+              :to="{ name: 'profile', params: { id: `${person.id}` } }"
+            >
+              <CommunityProfileButton
+                variant="small"
+                :display-name="person.username"
+                description="Body Builder"
+                :profile-pic="person.avatarUrl"
+              />
+            </router-link>
+          </div>
+        </div>
+        <div v-else>
+          <div
+            @click="
+              snackbar = true;
+              timeout = timeout + 1000;
+            "
+            v-for="person in recommendedUsers"
+            :key="person.id"
           >
             <CommunityProfileButton
               variant="small"
-              display-name="Arnold Schwarzenegger"
-              profile-pic="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+              :display-name="person.username"
+              description="Body Builder"
+              :profile-pic="person.avatarUrl"
             />
-          </router-link>
+          </div>
         </div>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      {{ text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="primary"
+          text
+          v-bind="attrs"
+          @click="
+            snackbar = false;
+            timeout = 2000;
+          "
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-main>
 </template>
 
@@ -46,6 +100,7 @@ import abdos from "../assets/abdominallateral.jpg";
 import SearchBar from "../components/SearchBar.vue";
 import { mapActions } from "pinia";
 import { useProfileStore } from "@/stores/profile";
+import { mapState } from "pinia/dist/pinia";
 export default {
   components: {
     CommunityProfileButton,
@@ -54,14 +109,71 @@ export default {
   data() {
     return {
       Abdos: abdos,
+      hasProf: false,
       allUsers: [],
+      snackbar: false,
+      timeout: 1000,
+      text: "Inicie sesión para ver perfiles.",
+      defaultUsers: [
+        {
+          id: "1",
+          username: "The Arnold Schwarzenegger",
+          avatarUrl:
+            "https://media.ambito.com/p/175c80b523ca2cb374923d219f969e60/adjuntos/239/imagenes/038/108/0038108131/arnold-schwarzenegger.jpg",
+          description:
+            "Austrian-American actor, film producer, businessman, retired professional bodybuilder and politician.",
+        },
+        {
+          id: "2",
+          username: "The Terminator Guy",
+          avatarUrl:
+            "https://upload.wikimedia.org/wikipedia/commons/a/af/Arnold_Schwarzenegger_by_Gage_Skidmore_4.jpg",
+          description: "Mr Universe.",
+        },
+        {
+          id: "3",
+          username: "Arnold",
+          avatarUrl:
+            "https://tn.com.ar/resizer/z4vSOIFyoqVJdouo5QO_lFNne_k=/767x0/smart/cloudfront-us-east-1.images.arcpublishing.com/artear/QREUJ7GN7GLL2JJMK6BJYGME4E.jpg",
+          description: "American Actor and playboy.",
+        },
+        {
+          id: "4",
+          username: "Arn Schwarz",
+          avatarUrl:
+            "https://www.clarin.com/img/2019/10/30/arnold-en-la-primera-de___nhHQ72HK_720x0__1.jpg",
+          description: "Body Builder.",
+        },
+        {
+          id: "5",
+          username: "The Same Guy",
+          avatarUrl:
+            "https://media.ambito.com/p/5e2a346f9de355d551193e0fcc962ab5/adjuntos/239/imagenes/039/609/0039609224/arnold-schwarzenegger-choque-1.jpg",
+          description:
+            "Known as the Styrian Oak, or Austrian Oak, in the bodybuilding world.",
+        },
+      ],
     };
   },
   methods: {
     ...mapActions(useProfileStore, ["generateAllUsers"]),
+    ...mapState(useProfileStore, ["getHasProfile"]),
   },
   async mounted() {
-    this.allUsers = await this.generateAllUsers();
+    this.hasProf = this.getHasProfile();
+    if (this.hasProf) {
+      this.allUsers = await this.generateAllUsers();
+    }
+  },
+  computed: {
+    recommendedUsers() {
+      return this.hasProf
+        ? this.allUsers.slice(
+            this.allUsers.length - 4,
+            this.allUsers.length - 1
+          )
+        : this.defaultUsers.slice(0, 3);
+    },
   },
 };
 </script>
