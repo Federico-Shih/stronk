@@ -2,10 +2,19 @@
 import abdominales from "../assets/abdominales.jpg";
 import CycleCard from "../components/rutine/CycleCard.vue";
 import LoadingFetchDialog from "@/components/LoadingFetchDialog.vue";
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 import {CycleTypes, useCycles, useSaveRoutine} from "@/stores/routine";
+import {useProfileStore} from "@/stores/profile";
+import {mapState} from "pinia";
+
+const difficultyNamesToSpanish = {
+  "beginner": "Principiante",
+  "intermediate": "Intermedio",
+  "advanced": "Avanzado"
+}
 
 export default {
-  components: {LoadingFetchDialog, CycleCard },
+  components: {LoadingFetchDialog, CycleCard, DeleteConfirmationDialog},
   data() {
     return {
       routineId: null,
@@ -16,10 +25,23 @@ export default {
         ratingMenu: false,
         yourRating: 0,
         loadingDialogState: 'loading',
+      deleteDialog: false,
     }
+  },
+  computed: {
+    routineIsMine() {
+      return this.routine.author.id === this.getId();
+    },
   },
   mounted() {
 
+  },
+  methods: {
+    ...mapState(useProfileStore, ['getId']),
+    removeRoutine() {
+      useSaveRoutine().deleteRoutine(this.routineId);
+      this.$router.replace("/routines");
+    },
   },
   async created() {
     if (this.$route.params.id) {
@@ -29,9 +51,9 @@ export default {
         this.routine = {
           name: apiAns.name,
           detail: apiAns.detail,
-          rating: apiAns.rating,
+          rating: apiAns.score,
           author: apiAns.user, // {id, username, avatarUrl}
-          difficulty: apiAns.difficulty, //todo mostrar
+          difficulty: difficultyNamesToSpanish[apiAns.difficulty], //todo mostrar
           category: apiAns.category, // {id, name}
           creationDate: new Date(apiAns.date),
           liked: false, //todo
@@ -62,7 +84,15 @@ export default {
             <v-icon large>mdi-arrow-left</v-icon>
           </v-btn>
           <h4 class="text-h4 font-weight-bold ml-5">{{ routine.name }}</h4>
-          <v-btn icon @click="routine.liked = !routine.liked" class="ml-auto">
+          <v-btn v-if="routineIsMine" outlined class="rounded-pill ml-auto" @click="deleteDialog = true">
+            <v-icon class="mr-1">mdi-delete</v-icon>
+            <span>Eliminar Rutina</span>
+          </v-btn>
+          <v-btn v-if="routineIsMine" outlined class="rounded-pill ml-4" @click="$router.push(`${$route.fullPath}/edit`)">
+            <v-icon class="mr-1">mdi-pencil</v-icon>
+            <span>Editar Rutina</span>
+          </v-btn>
+          <v-btn icon @click="routine.liked = !routine.liked" class="ml-4">
             <v-icon color="primary" large
             >{{ routine.liked ? "mdi-heart" : "mdi-heart-outline" }}
             </v-icon>
@@ -80,6 +110,8 @@ export default {
           <span class="ml-3">hecha por {{ routine.author.username }}</span>
           <span class="ml-10 mr-2">Categoría:</span>
           <v-chip>{{ routine.category.name }}</v-chip>
+          <span class="ml-10 mr-2">Dificultad:</span>
+          <v-chip>{{ routine.difficulty }}</v-chip>
           <v-menu v-model="ratingMenu" :close-on-content-click="false" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-chip
@@ -167,6 +199,15 @@ export default {
         not-found-text="¡Oops! La rutina no se ha encontrado."
         ok-not-found-button-text="OK"
         v-on:oknotfound="$router.back()"
+    />
+    <DeleteConfirmationDialog
+        :dialog="deleteDialog"
+        title="¿Está seguro que desea eliminar la rutina?"
+        body-text="Se eliminará de forma permanente junto con su contenido."
+        agree-button-text="Sí"
+        disagree-button-text="No"
+        v-on:agree="deleteDialog = false; removeRoutine();"
+        v-on:disagree="deleteDialog = false"
     />
   </div>
 </template>

@@ -253,8 +253,6 @@ export const useProfileStore = defineStore({
       return this.lastName;
     },
     getId() {
-      console.log("El id");
-      console.log(this.profile.id);
       return this.profile.id;
     },
     getPic() {

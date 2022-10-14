@@ -148,6 +148,22 @@ export const useSaveRoutine = defineStore("editroutine", {
         console.log("Oops!" + error);
       }
     },
+    async deleteRoutine(routine_id) {
+      try {
+        await fetch(
+            `http://localhost:8080/api/routines/${routine_id}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`,
+              },
+            }
+        );
+      } catch (error) {
+        console.log("Oops!" + error);
+      }
+    },
     /*
      * routineBody = {
      *   "name": "7 x 4 Challenge",
