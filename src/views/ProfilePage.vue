@@ -22,6 +22,11 @@
                 <span>{{ this.userInfo.username }}</span>
               </h3>
             </div>
+            <div class="mt-2">
+              <h3>
+                <span> {{ getDescription() }}</span>
+              </h3>
+            </div>
             <div v-if="userInfo.birthdate" class="d-flex flex-row align-center">
               <v-icon class="pb-2">mdi-cake</v-icon>
               <div class="pa-1 mx-3">
@@ -95,13 +100,25 @@ export default {
       avatar: "",
       hasRoutines: true,
       userRoutines: [],
+      description: [
+        "Solo estoy aquí porque mis amigos me hicieron una cuenta",
+        "Me gustan los paseos en la playa y alguna otra cosa creo",
+        "Campeón mundial de wrestling :D",
+        "No sé qué poner en descripción",
+        "Vean mis rutinas! Tengo de todo, pero quizás no las cargué todavía :p",
+      ],
     };
   },
   methods: {
     ...mapActions(useProfileStore, ["generateUser", "getRoutinesFrom"]),
+    ...mapState(useProfileStore, ["getId", "profile"]),
+    getDescription() {
+      return this.description[
+        parseInt(this.$route.params.id) % this.description.length
+      ];
+    },
   },
   computed: {
-    ...mapState(useProfileStore, ["getId", "profile"]),
     userExists() {
       return this.userInfo !== null && Object.keys(this.userInfo).length !== 0;
     },
