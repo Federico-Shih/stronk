@@ -212,6 +212,20 @@ export const useSaveRoutine = defineStore("editroutine", {
         console.log("Oops!" + errors);
       }
     },
+    async sumbitRoutineScore(routineId, score) {
+      try {
+          await fetch(`http://localhost:8080/api/reviews/${routineId}`, {
+            method: "POST",
+            body: JSON.stringify({ score: score , review: "" }),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${this.getToken}`,
+            },
+          });
+      } catch (errors) {
+        console.log("Oops!" + errors);
+      }
+    },
   },
 });
 

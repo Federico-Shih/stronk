@@ -32,6 +32,7 @@
               variant="small"
               :title="atr.name"
               :image="atr.metadata?.image"
+              :routineId="atr.id"
             />
           </router-link>
         </div>

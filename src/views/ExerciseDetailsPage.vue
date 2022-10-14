@@ -14,7 +14,7 @@
         <h1 class="pl-4">{{this.title}}</h1>
       </div>
 
-      <div class="mr-16 alignmentToTheRight">
+      <div v-if="exerciseIsMine" class="mr-16 alignmentToTheRight">
         <router-link :to="{name: 'exercises_edit', params:{id: `${this.exId}` }  }" style="text-decoration: none;color: inherit">
           <v-btn outlined class="rounded-pill">
             <v-icon left>mdi-pencil</v-icon>
@@ -100,6 +100,11 @@ export default {
     LoadingFetchDialog,
   },
   computed: {
+    ...mapState(useProfileStore,["getId"]),
+  exerciseIsMine() {
+    return this.creatorid === this.getId;
+  },
+
   },
   data() {
     return {

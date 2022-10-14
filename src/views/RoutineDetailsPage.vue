@@ -5,8 +5,7 @@ import LoadingFetchDialog from "@/components/LoadingFetchDialog.vue";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 import {CycleTypes, useCycles, useSaveRoutine} from "@/stores/routine";
 import {useProfileStore} from "@/stores/profile";
-import {mapState} from "pinia";
-
+import {mapActions, mapState} from "pinia";
 const difficultyNamesToSpanish = {
   "beginner": "Principiante",
   "intermediate": "Intermedio",
@@ -26,6 +25,8 @@ export default {
         yourRating: 0,
         loadingDialogState: 'loading',
       deleteDialog: false,
+      saveSnackbarRating: false,
+      timeout: 2000,
     }
   },
   computed: {
@@ -38,11 +39,21 @@ export default {
   },
   methods: {
     ...mapState(useProfileStore, ['getId']),
-    removeRoutine() {
-      useSaveRoutine().deleteRoutine(this.routineId);
-      this.$router.replace("/routines");
+    ...mapActions(useSaveRoutine, [
+      "deleteRoutine",
+        "sumbitRoutineScore",
+    ]),
+    async removeRoutine() {//Aca no estaba puesto el async ni el await, no se si era intencional
+     await this.deleteRoutine(this.routineId);
+     this.$router.replace("/routines");
     },
-  },
+    async sumbitRating(){
+      await this.sumbitRoutineScore(this.routineId, this.yourRating);
+      this.ratingMenu = false;
+      this.saveSnackbarRating=true;
+    },
+
+    },
   async created() {
     if (this.$route.params.id) {
       try{
@@ -127,7 +138,6 @@ export default {
                     disabled
                     readonly
                     :value="routine.rating"
-                    half-increments
                     dense
                     class="ml-3"
                 ></v-rating>
@@ -143,7 +153,6 @@ export default {
                     empty-icon="mdi-star-outline"
                     full-icon="mdi-star"
                     half-icon="mdi-star-half-full"
-                    half-increments
                     hover
                     length="5"
                     size="24"
@@ -151,6 +160,11 @@ export default {
                 ></v-rating>
                 <h4 class="ml-2">{{ this.yourRating }}</h4>
               </div>
+              <v-btn
+                  depressed
+                  color="primary"
+                  class="rounded-pill ml-4"
+                  @click="sumbitRating">Confirmar</v-btn>
             </v-card>
           </v-menu>
         </div>
@@ -209,6 +223,19 @@ export default {
         v-on:agree="deleteDialog = false; removeRoutine();"
         v-on:disagree="deleteDialog = false"
     />
+    <v-snackbar v-model="saveSnackbarRating" color="green" :timeout="timeout">
+      Puntuacion guardada con éxito!
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="saveSnackbarRating = false;"
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 

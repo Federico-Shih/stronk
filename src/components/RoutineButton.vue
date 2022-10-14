@@ -28,7 +28,7 @@ export default {
     variant: String,
     title: String,
     image: String,
-    routineId: String,
+    routineId: Number,
   },
   data() {
     return {
