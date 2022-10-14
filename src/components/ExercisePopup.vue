@@ -5,7 +5,7 @@
           style="position: absolute; right: 0; top: 0; z-index: 1000"
           class="ma-5"
           icon
-          @click="hideExPopup()"
+          @click="hide()"
       >
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -67,6 +67,10 @@ export default {
     },
     disableExercise(item){
       return this.usedExercises.some((used) => used.id === item.id); //si no esta en el array de usados
+    },
+    hide(){
+      this.$emit('popup-hide');
+      this.hideExPopup();
     }
   },
   mounted(){

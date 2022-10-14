@@ -91,7 +91,7 @@
           </div>
         </v-card-text>
       </div>
-      <ExercisePopup :used-exercises="this.exercises" v-if="showPopup" @ex-sumbit="sumbitEx" />
+      <ExercisePopup :used-exercises="this.exercises" v-if="showPopup" @ex-sumbit="sumbitEx" @popup-hide="hidePopup" />
       <DeleteConfirmationDialog
           :dialog="deleteDialog"
           title="¿Está seguro que desea eliminar el ciclo?"
@@ -204,6 +204,9 @@ export default {
         duration: ExerciseType === "Repeticiones" ? 999 : 1,
         repetitions: ExerciseType === "Tiempo" ? 999 : 1
       });
+      this.showPopup = false;
+    },
+    hidePopup(){
       this.showPopup = false;
     },
     updateDuration(value, index) {
