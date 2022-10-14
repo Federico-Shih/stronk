@@ -10,6 +10,8 @@ export const useProfileStore = defineStore({
     validated: false,
     correctEmailVerification: false,
     profile: {},
+    page: 0,
+    shownAll: false,
   }), //headers solo con put y post
   actions: {
     async loadCurrentNames() {
@@ -131,7 +133,6 @@ export const useProfileStore = defineStore({
     },
     async logout() {
       this.validated = false;
-      this.token = "";
       this.profile = {};
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
@@ -140,22 +141,53 @@ export const useProfileStore = defineStore({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `bearer ${this.token}`,
           },
         });
+        this.token = "";
       } catch (error) {
         console.log(error);
       }
     },
     async generateAllUsers() {
       try {
-        const res = await fetch("http://localhost:8080/api/users", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`,
-          },
-        });
+        const res = await fetch(
+          "http://localhost:8080/api/users?" +
+            new URLSearchParams({ size: 100 }),
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.token}`,
+            },
+          }
+        );
         return await res.json();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    setPage(newPage) {
+      this.page = newPage;
+    },
+    async generateNUsers(amount) {
+      try {
+        const res = await fetch(
+          "http://localhost:8080/api/users?" +
+            new URLSearchParams({ page: this.page, size: amount }),
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `bearer ${this.token}`,
+            },
+          }
+        );
+        console.log(this.page);
+        const retValue = await res.json();
+        this.page = this.page + 1;
+        this.shownAll = retValue.isLastPage;
+        return retValue;
       } catch (error) {
         console.log(error);
       }

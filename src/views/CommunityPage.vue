@@ -4,7 +4,7 @@
       <v-col class="mr-16">
         <h1>Comunidad</h1>
         <search-bar title="¿Buscás a alguien en particular?"></search-bar>
-        <div v-if="hasProf">
+        <div v-if="hasProf" class="alignmentToTheCenter">
           <div v-for="person in this.allUsers.content" :key="person.id">
             <router-link
               style="text-decoration: none; color: inherit"
@@ -18,6 +18,9 @@
               />
             </router-link>
           </div>
+          <v-icon x-large v-if="showArrow" @click="loadMoreUsers"
+            >mdi-chevron-double-down
+          </v-icon>
         </div>
         <div v-else>
           <div
@@ -109,7 +112,9 @@ export default {
   data() {
     return {
       Abdos: abdos,
+      pageSize: 10,
       hasProf: false,
+      showArrow: true,
       allUsers: [],
       snackbar: false,
       recommendedUsers: [],
@@ -157,22 +162,38 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useProfileStore, ["generateAllUsers"]),
+    ...mapActions(useProfileStore, [
+      "generateAllUsers",
+      "generateNUsers",
+      "setPage",
+    ]),
     ...mapState(useProfileStore, ["getHasProfile"]),
     loadRecommendedUsers() {
       this.recommendedUsers = this.hasProf
-        ? this.allUsers.content.slice(
-            this.allUsers.content.length - 6,
-            this.allUsers.content.length - 2
-          )
+        ? this.allUsers.content.slice(this.pageSize - 3, this.pageSize)
         : this.defaultUsers.slice(0, 3);
     },
+    changeShownArrow(users) {
+      this.showArrow = !users.isLastPage;
+    },
+    async loadMoreUsers() {
+      const addedUsers = await this.generateNUsers(this.pageSize);
+      console.log(addedUsers);
+      this.changeShownArrow(addedUsers);
+      this.allUsers.content = this.allUsers.content.concat(addedUsers.content);
+    },
   },
-  async mounted() {
+  async created() {
     this.hasProf = this.getHasProfile();
     if (this.hasProf) {
-      console.log("asdfasdf");
-      this.allUsers = await this.generateAllUsers();
+      this.allUsers = await this.generateNUsers(this.pageSize);
+      const page = this.allUsers.page;
+      if (page !== 0) {
+        this.setPage(0);
+        this.allUsers = await this.generateNUsers(this.pageSize * page);
+        this.setPage(page);
+      }
+      this.changeShownArrow(this.allUsers);
     }
     this.loadRecommendedUsers();
   },
@@ -182,6 +203,12 @@ export default {
 <style>
 .alignmentToTheRight {
   align-items: end;
+  display: flex;
+  flex-direction: column;
+}
+
+.alignmentToTheCenter {
+  align-items: center;
   display: flex;
   flex-direction: column;
 }

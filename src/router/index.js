@@ -110,7 +110,11 @@ const router = new VueRouter({
       component: () => import("../views/ErrorFourOFour.vue"),
     },
   ],
-  scrollBehavior() {
+  scrollBehavior(to, from, savedPosition) {
+    console.log(`Saved Position: ${savedPosition}`);
+    if (savedPosition) {
+      return savedPosition;
+    }
     return { x: 0, y: 0 };
   },
 });

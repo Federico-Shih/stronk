@@ -9,7 +9,7 @@
   >
     <v-list-item>
       <v-list-item-avatar :size="variant === 'large' ? 75 : 50"
-        ><v-img :src="profilePic" class="rounded-circle"></v-img
+        ><v-img :src="picToUse" class="rounded-circle"></v-img
       ></v-list-item-avatar>
       <div>
         <v-card-title :class="variants.fontSizes[variant]">{{
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import arn from "../assets/arnold.png";
 export default {
   name: "CommunityProfileButton",
   props: {
@@ -36,6 +37,8 @@ export default {
   },
   data() {
     return {
+      picToUse: "",
+      defaultPic: arn,
       hover: false,
       variants: {
         boxSizes: {
@@ -48,6 +51,9 @@ export default {
         },
       },
     };
+  },
+  mounted() {
+    this.picToUse = this.profilePic ? this.profilePic : this.defaultPic;
   },
 };
 </script>
