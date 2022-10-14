@@ -79,8 +79,8 @@ export default {
     nameRules: [
       (v) =>
         !v ||
-        v.length <= 14 ||
-        "Utilice un nombre con, a lo sumo, 14 carácteres",
+        v.length <= 20 ||
+        "Utilice un nombre con, a lo sumo, 20 carácteres",
       (v) => !!v || "Tiene que ingresar Nombre y Apellido"
     ],
     hidePass: true,
@@ -111,6 +111,7 @@ export default {
             this.firstName,
             this.lastName
           );
+          console.log(res);
           // 'UNIQUE constraint failed: User.email' 'UNIQUE constraint failed: User.username'
           if (res.code === 2) {
             if (res.details[0] === "UNIQUE constraint failed: User.username") {
@@ -144,6 +145,12 @@ export default {
       const valid = this.getCorrectVerification;
       if (valid) {
         await this.login(this.username, this.password);
+        if (this.getToken !== "") {
+          await this.loadCurrentNames();
+          this.setStartingConditionsAndClose();
+        } else {
+          this.verificationMessage = "Hubo un error iniciando sesión...";
+        }
       } else {
         this.verificationMessage = "Lo sentimos, ese código es incorrecto...";
       }

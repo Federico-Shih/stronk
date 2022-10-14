@@ -13,8 +13,7 @@
             class="routine-button-text"
             :class="variants.fontSizes[variant]"
           >{{ title }}
-          </v-card-title
-          >
+          </v-card-title>
         </div>
       </v-img>
     </router-link>

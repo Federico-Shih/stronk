@@ -191,7 +191,7 @@ export default {
       });
       this.loading = false;
       this.saveSnackbar = true;
-    }
+    },
   },
   data() {
     return {
@@ -228,6 +228,6 @@ export default {
     this.sex = user.gender || null;
     this.imageUrl = user.avatarUrl || "";
     this.tempImageURL = user.avatarUrl || "";
-  }
+  },
 };
 </script>

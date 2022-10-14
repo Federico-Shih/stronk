@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { authAxios, baseAxios } from "../services/authenticatedAxios";
 
 export const useProfileStore = defineStore({
   id: "profile",
@@ -17,25 +18,15 @@ export const useProfileStore = defineStore({
   actions: {
     async loadCurrentNames() {
       try {
-        const response = await fetch(
-          "http://localhost:8080/api/users/current",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.token}`,
-            },
-          }
-        );
-        console.log(response);
-        const res = await response.json();
+        const response = await authAxios.get("/users/current");
+        const res = response.data;
         if (response.status === 200) {
           this.username = res.username;
           this.firstName = res.firstName;
           this.lastName = res.lastName;
           this.profile = res;
-          return res;
         }
+        return res;
       } catch (error) {
         console.log(error);
         console.log("Error cargando nombres");
@@ -44,19 +35,11 @@ export const useProfileStore = defineStore({
     async login(username, password, recordar) {
       if (this.validated) return this.getToken;
       try {
-        const response = await fetch("http://localhost:8080/api/users/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // "Authorization": `bearer ${this.getToken()}`,
-          },
-          //tiene que ser un string si o si
-          body: JSON.stringify({
-            username,
-            password,
-          }),
+        const response = await baseAxios.post("/users/login", {
+          username,
+          password
         });
-        const res = await response.json();
+        const res = response.data;
         if (response.status === 200) {
           this.token = res.token;
           this.validated = true;
@@ -69,48 +52,30 @@ export const useProfileStore = defineStore({
           return res;
         }
       } catch (error) {
-        console.log(error);
+        return error.response?.data;
       }
     },
     async createNewProfile(username, password, email, firstName, lastName) {
       try {
-        const response = await fetch("http://localhost:8080/api/users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // "Authorization": `bearer ${this.getToken()}`,
-          },
-          body: JSON.stringify({
-            username,
-            password,
-            email,
-            firstName,
-            lastName,
-          }),
+        const { data } = await baseAxios.post("/users", {
+          username,
+          password,
+          email,
+          firstName,
+          lastName
         });
-        return response.json();
+        return data;
       } catch (error) {
-        console.log(error);
+        return error.response?.data;
       }
     },
     async verify_email(email, code) {
       try {
-        const response = await fetch(
-          "http://localhost:8080/api/users/verify_email",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            //tiene que ser un string si o si
-            body: JSON.stringify({
-              email,
-              code,
-            }),
-          }
-        );
-        console.log(response);
-        if (response.ok) {
+        const response = await baseAxios.post("/users/verify_email", {
+          email,
+          code
+        });
+        if (response.status === 200) {
           this.correctEmailVerification = true;
         }
       } catch (error) {
@@ -138,13 +103,7 @@ export const useProfileStore = defineStore({
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
       try {
-        await fetch("http://localhost:8080/api/users/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`,
-          },
-        });
+        await authAxios.post("/users/logout");
         this.token = "";
       } catch (error) {
         console.log(error);
@@ -152,18 +111,10 @@ export const useProfileStore = defineStore({
     },
     async generateAllUsers() {
       try {
-        const res = await fetch(
-          "http://localhost:8080/api/users?" +
-            new URLSearchParams({ size: 100 }),
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.token}`,
-            },
-          }
+        const res = await authAxios.get(
+          "/users?" + new URLSearchParams({ size: 100 })
         );
-        return await res.json();
+        return res.data;
       } catch (error) {
         console.log(error);
       }
@@ -173,19 +124,11 @@ export const useProfileStore = defineStore({
     },
     async generateNUsers(amount) {
       try {
-        const res = await fetch(
-          "http://localhost:8080/api/users?" +
-            new URLSearchParams({ page: this.page, size: amount }),
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.token}`,
-            },
-          }
+        const res = await authAxios.get(
+          "/users?" + new URLSearchParams({ page: this.page, size: amount })
         );
         console.log(this.page);
-        const retValue = await res.json();
+        const retValue = res.data;
         this.page = this.page + 1;
         this.shownAll = retValue.isLastPage;
         return retValue;
@@ -199,62 +142,37 @@ export const useProfileStore = defineStore({
         return this.loadedProfiles[id];
       }
       try {
-        const res = await fetch(`http://localhost:8080/api/users/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`,
-          },
-        });
+        const { data, status } = await authAxios.get(`/users/${id}`);
         // No devolver nada si sucede error
-        if (res.status === 200) {
-          const ret = await res.json();
-          this.loadedProfiles[ret.id] = ret;
-          return ret;
-        } else {
-          return null;
+        if (status === 200) {
+          this.loadedProfiles[data.id] = data;
         }
+        return data;
       } catch (error) {
         console.log(error);
       }
     },
     async getRoutinesFrom(id) {
       try {
-        const res = await fetch(
-          `http://localhost:8080/api/users/${id}/routines`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.token}`,
-            },
-          }
-        );
-        const ret = await res.json();
+        const { data } = await authAxios.get(`/users/${id}/routines`);
         console.log(`Loading routines from user ${id}`);
-        console.log(ret);
-        return ret;
+        console.log(data);
+        return data;
       } catch (error) {
         console.log(error);
       }
     },
     async saveProfile(profile) {
       try {
-        const res = await fetch(`http://localhost:8080/api/users/current`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`,
-          },
-          body: JSON.stringify(profile),
-        });
-        if (res.status === 200) {
-          return res.json();
+        const { status, data } = await authAxios.put("/users/current", profile);
+        if (status === 200) {
+          this.profile = data;
+          return data;
         } else {
           return null;
         }
       } catch (err) {
-        console.log(err);
+        return err.response.data;
       }
     },
   },
