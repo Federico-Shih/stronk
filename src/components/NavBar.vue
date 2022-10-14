@@ -13,7 +13,7 @@ export default {
       "getFirstname",
       "getLastname",
       "getToken",
-      "profile"
+      "profile",
     ]),
     ownedLinks() {
       return this.links.filter((link) =>
@@ -34,7 +34,7 @@ export default {
         { label: "Comunidad", link: "/community" },
         { label: "Mis rutinas", link: "/routines", protected: true },
         { label: "Mis ejercicios", link: "/exercises", protected: true },
-        { label: "Mi perfil", link: "/profile", protected: true }
+        { label: "Mi perfil", link: "/profile", protected: true },
       ],
       dropdownItems: [
         { label: "Configuración de cuenta", link: "", click: () => {} },
@@ -60,7 +60,7 @@ export default {
     },
     ...mapActions(usePopupStore, ["showPopup"]),
     ...mapActions(useProfileStore, ["logout", "loadCurrentNames"]),
-    ...mapState(useProfileStore, ["getId", "getPic"])
+    ...mapState(useProfileStore, ["getId", "getPic"]),
   },
   watch: {
     getHasProfile(curr) {
@@ -74,13 +74,13 @@ export default {
       this.links[4].link = `/profile`;
       this.image = this.getPic();
       this.image = this.image ? this.image : this.temp;
-    }
+    },
   },
   async created() {
     if (!this.getHasProfile && this.getToken.length !== 0) {
       await this.loadCurrentNames();
     }
-  }
+  },
 };
 </script>
 

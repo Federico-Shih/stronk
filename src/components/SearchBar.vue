@@ -1,10 +1,10 @@
 <template>
   <v-text-field
-      :label="title"
-      :v-model="model"
-      outlined
-      class="rounded-lg"
-      prepend-inner-icon="mdi-magnify"
+    :label="title"
+    :v-model="model"
+    outlined
+    class="rounded-lg"
+    prepend-inner-icon="mdi-magnify"
   >
   </v-text-field>
 </template>
@@ -14,11 +14,9 @@ export default {
   name: "SearchBar.vue",
   props: {
     title: String,
-    model: String
-  }
-}
+    model: String,
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

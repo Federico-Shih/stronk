@@ -3,9 +3,15 @@
     <v-row class="ml-8 d-flex flex-row justify-space-between">
       <v-col class="mr-16">
         <h1>Comunidad</h1>
-        <search-bar title="¿Buscás a alguien en particular?"></search-bar>
+        <v-text-field
+          label="¿Buscás a alguien en particular?"
+          v-model="searcher"
+          outlined
+          class="rounded-lg"
+          prepend-inner-icon="mdi-magnify"
+        />
         <div v-if="hasProf" class="alignmentToTheCenter">
-          <div v-for="person in this.allUsers.content" :key="person.id">
+          <div v-for="person in filteredList" :key="person.id">
             <router-link
               style="text-decoration: none; color: inherit"
               :to="{ name: 'profile', params: { id: `${person.id}` } }"
@@ -18,7 +24,10 @@
               />
             </router-link>
           </div>
-          <v-icon x-large v-if="showArrow" @click="loadMoreUsers"
+          <v-icon
+            x-large
+            v-if="showArrow && searcher === ''"
+            @click="loadMoreUsers"
             >mdi-chevron-double-down
           </v-icon>
         </div>
@@ -100,18 +109,17 @@
 <script>
 import CommunityProfileButton from "../components/CommunityProfileButton.vue";
 import abdos from "../assets/abdominallateral.jpg";
-import SearchBar from "../components/SearchBar.vue";
 import { mapActions } from "pinia";
 import { useProfileStore } from "@/stores/profile";
 import { mapState } from "pinia/dist/pinia";
 export default {
   components: {
     CommunityProfileButton,
-    SearchBar,
   },
   data() {
     return {
       Abdos: abdos,
+      searcher: "",
       pageSize: 10,
       hasProf: false,
       showArrow: true,
@@ -170,7 +178,7 @@ export default {
     ...mapState(useProfileStore, ["getHasProfile"]),
     loadRecommendedUsers() {
       this.recommendedUsers = this.hasProf
-        ? this.allUsers.content.slice(this.pageSize - 3, this.pageSize)
+        ? this.allUsers.content.slice(0, 3)
         : this.defaultUsers.slice(0, 3);
     },
     changeShownArrow(users) {
@@ -181,6 +189,15 @@ export default {
       console.log(addedUsers);
       this.changeShownArrow(addedUsers);
       this.allUsers.content = this.allUsers.content.concat(addedUsers.content);
+    },
+  },
+  computed: {
+    filteredList() {
+      if (this.allUsers.length !== 0)
+        return this.allUsers.content.filter((user) =>
+          user.username.includes(this.searcher)
+        );
+      return [];
     },
   },
   async created() {

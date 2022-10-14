@@ -3,6 +3,7 @@
     <div v-if="userExists">
       <div class="d-flex flex-row justify-space-between mb-8">
         <div class="d-flex flex-row mx-8">
+          <goBackButton/>
           <v-img
             v-if="showPic"
             class="mx-8 rounded-circle"
@@ -27,15 +28,6 @@
                 {{ new Date(userInfo.birthdate).toISOString().split("T")[0] }}
               </div>
             </div>
-
-            <v-btn
-              v-if="!ownUser"
-              outlined
-              class="mt-2 rounded-pill"
-              max-width="200px"
-            >
-              Seguir
-            </v-btn>
           </div>
         </div>
         <div class="mx-16">
@@ -57,8 +49,7 @@
           size-variant="small"
           :routines="userRoutines"
         />
-        <v-card v-else
-        >
+        <v-card v-else>
           <v-card-title class="justify-center">
             <div class="align-to-center">
               <v-icon large left> mdi-clipboard-alert</v-icon>
@@ -67,8 +58,7 @@
               </div>
             </div>
           </v-card-title>
-        </v-card
-        >
+        </v-card>
       </div>
     </div>
     <ErrorPage v-if="!userExists" />
@@ -94,7 +84,7 @@ export default {
   components: {
     GoBackButton,
     RoutineSlideGroup,
-    ErrorPage
+    ErrorPage,
   },
   data() {
     return {
@@ -104,17 +94,17 @@ export default {
       temp,
       avatar: "",
       hasRoutines: true,
-      userRoutines: []
+      userRoutines: [],
     };
   },
   methods: {
-    ...mapActions(useProfileStore, ["generateUser", "getRoutinesFrom"])
+    ...mapActions(useProfileStore, ["generateUser", "getRoutinesFrom"]),
   },
   computed: {
     ...mapState(useProfileStore, ["getId", "profile"]),
     userExists() {
       return this.userInfo !== null && Object.keys(this.userInfo).length !== 0;
-    }
+    },
   },
   async mounted() {
     this.userInfo = this.$route.params.id
@@ -134,7 +124,7 @@ export default {
         this.userRoutines = this.userRoutines.content;
       }
     }
-  }
+  },
 };
 </script>
 

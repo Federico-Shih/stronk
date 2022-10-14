@@ -12,7 +12,7 @@ export const useProfileStore = defineStore({
     profile: {},
     page: 0,
     shownAll: false,
-    loadedProfiles: {}
+    loadedProfiles: {},
   }), //headers solo con put y post
   actions: {
     async loadCurrentNames() {
@@ -203,8 +203,8 @@ export const useProfileStore = defineStore({
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`
-          }
+            Authorization: `bearer ${this.token}`,
+          },
         });
         // No devolver nada si sucede error
         if (res.status === 200) {
@@ -244,9 +244,9 @@ export const useProfileStore = defineStore({
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`
+            Authorization: `bearer ${this.token}`,
           },
-          body: JSON.stringify(profile)
+          body: JSON.stringify(profile),
         });
         if (res.status === 200) {
           return res.json();
@@ -256,7 +256,7 @@ export const useProfileStore = defineStore({
       } catch (err) {
         console.log(err);
       }
-    }
+    },
   },
   getters: {
     getHasProfile() {
