@@ -125,15 +125,16 @@ export default {
             </v-icon>
           </v-btn>
         </div>
-        <div class="d-flex flex-row align-center" style="position: relative">
-        <span
-        ><v-img
+        <div class="d-flex flex-row align-center ml-4" style="position: relative">
+          <span>
+        <v-btn icon class="ml-4" @click="$router.push({ name: 'profile', params: { id: `${routine.author.id}` } })">
+          <v-img
             height="50px"
             width="50px"
             :src="routine.author.avatarUrl"
             class="rounded-circle"
-        ></v-img
-        ></span>
+        ></v-img>
+        </v-btn></span>
           <span class="ml-3">hecha por {{ routine.author.username }}</span>
           <span class="ml-10 mr-2">Categoría:</span>
           <v-chip>{{ routine.category.name }}</v-chip>

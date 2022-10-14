@@ -15,22 +15,16 @@
       </div>
 
       <div v-if="exerciseIsMine" class="mr-16 alignmentToTheRight">
-        <router-link :to="{name: 'exercises_edit', params:{id: `${this.exId}` }  }" style="text-decoration: none;color: inherit">
-          <v-btn outlined class="rounded-pill">
+          <v-btn outlined class="rounded-pill" @click="$router.push({name: 'exercises_edit', params:{id: `${this.exId}` }  })">
             <v-icon left>mdi-pencil</v-icon>
             Editar Ejercicio
           </v-btn>
-        </router-link>
       </div>
     </div>
 
     <div class="ml-6 mb-4 d-flex flex-row">
       <div class="d-flex flex-row justify-self-start">
-        <router-link
-            style="text-decoration: none; color: inherit"
-            :to="{ name: 'profile', params: { id: `${creatorid}` } }"
-        >
-          <v-btn icon class="mx-4">
+          <v-btn icon class="mx-4" @click="$router.push({ name: 'profile', params: { id: `${creatorid}` } })">
             <v-img
               class="rounded-circle"
               :src="creatorimage"
@@ -39,7 +33,6 @@
               width="50px"
             />
           </v-btn>
-        </router-link>
         <h3 class="mt-1">hecho por {{ creatorname }}</h3>
       </div>
       <div class="d-flex flex-row offset-1 justify-space-between">
@@ -96,7 +89,7 @@
 import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
 import {useExerciseStore} from "../stores/exercise";
-import {mapActions} from "pinia";
+import {mapActions, mapState} from "pinia";
 import {useProfileStore} from "../stores/profile";
 import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
 export default {
