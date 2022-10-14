@@ -18,13 +18,13 @@
         :routines="routines"
       />
     </div>
-    <div class="">
+    <!--<div class="">
       <RoutineSlideGroup
         title="Últimas Rutinas de Quienes Sigo"
         size-variant="small"
         :routines="routines"
       />
-    </div>
+    </div> -->
   </v-main>
 </template>
 

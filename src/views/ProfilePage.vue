@@ -128,7 +128,7 @@ export default {
       ? await this.generateUser(`${this.$route.params.id}`)
       : this.profile;
     if (this.userExists) {
-      this.ownUser = (await this.getId) === this.userInfo?.id;
+      this.ownUser = this.getId() === this.userInfo?.id;
       this.avatar = this.userInfo?.avatarUrl
         ? this.userInfo?.avatarUrl
         : this.temp;
