@@ -6,6 +6,7 @@ import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue"
 import {CycleTypes, useCycles, useSaveRoutine} from "@/stores/routine";
 import {useProfileStore} from "@/stores/profile";
 import {mapActions, mapState} from "pinia";
+import {useFavoriteRoutines} from "../stores/routine";
 const difficultyNamesToSpanish = {
   "beginner": "Principiante",
   "intermediate": "Intermedio",
@@ -20,13 +21,14 @@ export default {
           img: abdominales,
         cycles: [],
         loading: true,
-        routine: null,
+        routine:{},
         ratingMenu: false,
         yourRating: 0,
         loadingDialogState: 'loading',
       deleteDialog: false,
       saveSnackbarRating: false,
       timeout: 2000,
+      favoriteSnackbar:false,
     }
   },
   computed: {
@@ -43,6 +45,8 @@ export default {
       "deleteRoutine",
         "sumbitRoutineScore",
     ]),
+    ...mapActions(useFavoriteRoutines,["favoriteRoutine","unfavoriteRoutine","isFavorite"]),
+
     async removeRoutine() {//Aca no estaba puesto el async ni el await, no se si era intencional
      await this.deleteRoutine(this.routineId);
      this.$router.replace("/routines");
@@ -52,12 +56,23 @@ export default {
       this.ratingMenu = false;
       this.saveSnackbarRating=true;
     },
+    async favorite(){
+      await this.favoriteRoutine(this.routineId);
+      this.routine.liked= true;
+      this.favoriteSnackbar=true;
+
+    },
+    async unfavorite(){
+      await this.unfavoriteRoutine(this.routineId);
+      this.routine.liked=false;
+      this.favoriteSnackbar=true;
+    },
 
     },
   async created() {
     if (this.$route.params.id) {
       try{
-        this.routineId = this.$route.params.id;
+        this.routineId = parseInt(this.$route.params.id);
         let apiAns = await useSaveRoutine().getRoutine(this.routineId);
         this.routine = {
           name: apiAns.name,
@@ -67,8 +82,9 @@ export default {
           difficulty: difficultyNamesToSpanish[apiAns.difficulty], //todo mostrar
           category: apiAns.category, // {id, name}
           creationDate: new Date(apiAns.date),
-          liked: false, //todo
-        }
+          liked: await useFavoriteRoutines().isFavorite(this.routineId), //todo revisar
+        };
+        console.log(`rutina=${JSON.stringify(this.routine)}`);
         apiAns = await useCycles().getCyclesFromRoutine(this.routineId);
         this.cycles = apiAns;
         this.cycles.sort((a,b) => a.order-b.order);
@@ -103,7 +119,7 @@ export default {
             <v-icon class="mr-1">mdi-pencil</v-icon>
             <span>Editar Rutina</span>
           </v-btn>
-          <v-btn icon @click="routine.liked = !routine.liked" class="ml-4">
+          <v-btn icon @click="(routine.liked)? unfavorite():favorite()" class="ml-4">
             <v-icon color="primary" large
             >{{ routine.liked ? "mdi-heart" : "mdi-heart-outline" }}
             </v-icon>
@@ -231,6 +247,19 @@ export default {
             text
             v-bind="attrs"
             @click="saveSnackbarRating = false;"
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar v-model="favoriteSnackbar" :color="!routine.liked? 'red':'green'" :timeout="timeout">
+      {{!routine.liked? "Rutina eliminada de favoritos":"Rutina agregada a favoritos"}}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="favoriteSnackbar = false;"
         >
           Cerrar
         </v-btn>

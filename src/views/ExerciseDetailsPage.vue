@@ -26,15 +26,20 @@
 
     <div class="ml-6 mb-4 d-flex flex-row">
       <div class="d-flex flex-row justify-self-start">
-        <v-btn icon class="mx-4">
-          <v-img
-            class="rounded-circle"
-            :src="creatorimage"
-            :alt="this.temp"
-            height="50px"
-            width="50px"
-          />
-        </v-btn>
+        <router-link
+            style="text-decoration: none; color: inherit"
+            :to="{ name: 'profile', params: { id: `${creatorid}` } }"
+        >
+          <v-btn icon class="mx-4">
+            <v-img
+              class="rounded-circle"
+              :src="creatorimage"
+              :alt="this.temp"
+              height="50px"
+              width="50px"
+            />
+          </v-btn>
+        </router-link>
         <h3 class="mt-1">hecho por {{ creatorname }}</h3>
       </div>
       <div class="d-flex flex-row offset-1 justify-space-between">

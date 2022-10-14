@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useProfileStore } from "./profile";
 import { mapState } from "pinia/dist/pinia";
-
+import { authAxios, baseAxios } from "../services/authenticatedAxios";
 export const CycleTypes = {
   WARMUP: "warmup",
   EXERCISE: "exercise",
@@ -49,29 +49,76 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
   }),
   getters: {
     ...mapState(useProfileStore, ["getToken"]),
+    getFavorites() {
+      return this.favorites;
+    }
   },
   actions: {
     async getNextPage(pageSize) {
       try {
         const res = await fetch(
-          "http://localhost:8080/api/favourites?" +
-            new URLSearchParams({ page: this.page, size: pageSize }),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
-          }
+            "http://localhost:8080/api/favourites?" +
+            new URLSearchParams({page: this.page, size: pageSize}),
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.getToken}`,
+              },
+            }
         );
-        const { isLastPage, content } = await res.json();
-        console.log(isLastPage);
+        const {isLastPage, content} = await res.json();
+        console.log(`Lastfavorite=${isLastPage}`);
         this.isLastFavorite = isLastPage;
         this.page += 1;
         this.favorites.push(...content);
+        return content;
       } catch (err) {
         console.log(err);
       }
     },
+    async favoriteRoutine(routineId) {
+      try {
+        const response = await authAxios.post(`/favourites/${routineId}`);
+        if (response.status === 200) {
+          return true;
+        } else return null;
+      } catch (err) {
+        console.log(err);
+        return null;
+      }
+    },
+    async unfavoriteRoutine(routineId) {
+      try {
+        const response = await authAxios.delete(`/favourites/${routineId}`);
+        if (response.status === 200) {
+          return true;
+        } else return null;
+      } catch (err) {
+        console.log(err);
+        return null;
+      }
+    },
+    async isFavorite(routineId) {
+      if (this.favorites.some((routine) => routine.id === routineId)) {
+        return true;
+      }
+      if (this.isLastFavorite) {
+        return false;
+      }
+      while (!this.isLastFavorite) {
+        let res = await this.getNextPage(4);
+        if (res.some((routine) => routine.id === routineId)) {
+          return true;
+        }
+      }
+      return false;
+    },
+    async getAllFavorite(){
+      while (!this.isLastFavorite) {
+        await this.getNextPage(4);
+      }
+      return this.favorites;
+    }
   },
 });
 
