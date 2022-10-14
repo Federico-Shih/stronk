@@ -66,15 +66,15 @@
     </div>
     <div class="d-flex flex-column ml-8 mb-8">
       <h2 class="mb-2">Videos demostrativos</h2>
-<!--      <div v-for="vid in videos" :id="vid.id" class="align-self-center mb-8" >-->
-<!--      <iframe-->
-<!--              width="560"-->
-<!--              height="315"-->
-<!--              :src="loadURL(vid.url)"-->
-<!--              frameborder="0"-->
-<!--              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"-->
-<!--              allowfullscreen/>-->
-<!--      </div>-->
+      <div v-for="vid in videos" :id="vid.id" class="align-self-center mb-8" >
+      <iframe
+              width="560"
+              height="315"
+              :src="loadURL(vid.url)"
+              frameborder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen/>
+      </div>
     </div>
     <LoadingFetchDialog
         :dialog-state="loadingDialogState"
@@ -120,18 +120,21 @@ export default {
     ...mapActions(useExerciseStore, ["getExerciseById"]),
     ...mapActions(useProfileStore, ["generateUser"]),
     loadURL(youtubeURL) {
-      const youtubeEmbedTemplate = 'https://www.youtube-nocookie.com/embed/'
-      const url = youtubeURL.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/)
-      // console.log("url", url)
-      const YId = undefined !== url[2] ? url[2].split(/[^0-9a-z_/\\-]/i)[0] : url[0]
-      // console.log("YId", YId)
-      // if (YId === url[0]) {
-      //   console.log("not a youtube link")
-      // } else {
-      //   console.log("it's  a youtube video")
-      // }
-      const topOfQueue = youtubeEmbedTemplate.concat(YId)
-      console.log("topOfQueue", topOfQueue)
+      const youtubeEmbedTemplate = 'https://www.youtube-nocookie.com/embed/';
+      const vimeoEmbedTemplate = 'https://player.vimeo.com/video/';
+      const Yturl = youtubeURL.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+      const Vmurl = youtubeURL.split(/(video\/|vimeo\.com\/)/);
+       //console.log("url", url)
+      const YId = undefined !== Yturl[2] ? Yturl[2].split(/[^0-9a-z_/\\-]/i)[0] : Yturl[0];
+      const VId= undefined !== Vmurl[2] ? Vmurl[2].split(/[^0-9a-z_/\\-]/i)[0] : Vmurl[0];
+      let topOfQueue;
+       if (YId === Yturl[0]) {
+     //   console.log("not a youtube link")
+         topOfQueue=vimeoEmbedTemplate.concat(VId);
+      } else {
+       // console.log("it's  a youtube video")
+           topOfQueue = youtubeEmbedTemplate.concat(YId);
+      }
       return topOfQueue;
     },
   },
