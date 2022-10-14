@@ -10,6 +10,7 @@
           :variant="sizeVariant"
           :title="routine.name"
           :image="routine.metadata"
+          :routineId="routine.id"
         />
       </v-slide-item>
     </v-slide-group>

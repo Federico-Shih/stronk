@@ -6,6 +6,7 @@ import { useProfileStore } from "@/stores/profile";
 export default {
   computed: {
     ...mapState(usePopupStore, ["show", "onAuthRoute", "popupType"]),
+    ...mapState(useProfileStore, ["getToken", "getCorrectVerification"]),
     passwordConfirmRule() {
       return (
         this.password === this.confirmPassword ||
@@ -98,11 +99,6 @@ export default {
       "resend_verification",
       "loadCurrentNames",
     ]),
-    ...mapState(useProfileStore, [
-      "getToken",
-      "getHasProfile",
-      "getCorrectVerification",
-    ]),
     ...mapActions(usePopupStore, ["hidePopup"]),
     async onSubmit() {
       this.$refs.form.validate();
@@ -130,7 +126,7 @@ export default {
           this.isVerification = true;
         } else {
           await this.login(this.username, this.password, this.rememberPassword);
-          if (this.getHasProfile) {
+          if (this.getToken !== "") {
             await this.loadCurrentNames();
             this.setStartingConditionsAndClose();
           } else {
@@ -145,11 +141,9 @@ export default {
     },
     async verify() {
       await this.verify_email(this.email, this.verificationCode);
-      const valid = this.getCorrectVerification();
+      const valid = this.getCorrectVerification;
       if (valid) {
         await this.login(this.username, this.password);
-        await this.loadCurrentNames();
-        this.setStartingConditionsAndClose();
       } else {
         this.verificationMessage = "Lo sentimos, ese código es incorrecto...";
       }

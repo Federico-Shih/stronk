@@ -6,15 +6,18 @@
     @mouseleave="hover = false"
     :elevation="hover ? 5 : 0"
   >
-    <v-img :src="image" :alt="title" class="routine-button-image">
-      <div class="fill-height bottom-gradient d-flex flex-column justify-end">
-        <v-card-title
-          class="routine-button-text"
-          :class="variants.fontSizes[variant]"
-          >{{ title }}</v-card-title
-        >
-      </div>
-    </v-img>
+    <router-link :to="`/routines/${routineId}`">
+      <v-img :src="image" :alt="title" class="routine-button-image">
+        <div class="fill-height bottom-gradient d-flex flex-column justify-end">
+          <v-card-title
+            class="routine-button-text"
+            :class="variants.fontSizes[variant]"
+          >{{ title }}
+          </v-card-title
+          >
+        </div>
+      </v-img>
+    </router-link>
   </v-card>
 </template>
 

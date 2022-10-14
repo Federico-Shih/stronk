@@ -1,11 +1,14 @@
 <template>
   <v-main>
-    <div class="d-flex flex-row justify-space-between mb-8 px-10">
-      <GoBackButton></GoBackButton>
+    <div class="d-flex flex-row justify-center pa-10">
+      <div style="position: absolute; left: 0; top: 0" class="ma-10">
+        <GoBackButton></GoBackButton>
+      </div>
       <v-card
         outlined
-        width="100%"
-        class="mx-16 pa-8 d-flex flex-column justify-space-around"
+        width="60%"
+        class="mx-16 pa-8 d-flex flex-column"
+        style="gap: 20px"
       >
         <div class="d-flex flex-row justify-start align-center mb-8">
           <v-img
@@ -13,28 +16,16 @@
             :src="imageUrl"
             height="150px"
             max-width="150px"
+            alt="Imagen de usuario"
           />
-          <v-btn
-            v-if="!changePhoto"
-            outlined
-            @click="changePhoto++"
-            class="rounded-pill mb-4"
-          >
-            <v-icon class="mr-2">mdi-image-edit</v-icon>
-            <span>Cambiar Foto</span>
-          </v-btn>
-          <v-file-input
-            v-if="changePhoto"
-            prepend-icon="mdi-camera"
-            v-model="image"
-            type="file"
-            class="input"
-            label="Cargar Imagen"
-            hint="Cambiar foto de perfil"
-            outlined
-            dense
-            @change="onFileChange"
-          />
+          <div>
+            <v-text-field
+              label="URL de tu avatar"
+              v-model="tempImageURL"
+              @blur="changeUrl"
+              :rules="[notValidUriRule]"
+            ></v-text-field>
+          </div>
         </div>
         <div class="d-flex flex-row">
           <v-text-field
@@ -56,7 +47,7 @@
             counter="32"
           ></v-text-field>
         </div>
-        <div class="">
+        <div class="d-flex flex-row" style="gap: 50px">
           <v-menu
             ref="menu"
             v-model="menu"
@@ -89,19 +80,21 @@
               @change="save"
             ></v-date-picker>
           </v-menu>
-        </div>
-        <div>
-          <v-textarea
+          <v-select
             outlined
+            :items="sexOptions"
+            v-model="sex"
+            label="Género elegido"
             dense
-            prepend-icon="mdi-text-account"
-            v-model="description"
-            :rules="descriptionRules"
-            counter="280"
-            label="Descripción"
-          >
-          </v-textarea>
+          />
         </div>
+        <v-text-field
+          outlined
+          dense
+          type="number"
+          v-model="phoneNumber"
+          label="Numero de teléfono"
+        ></v-text-field>
         <div class="d-flex flex-row justify-end">
           <v-btn
             outlined
@@ -112,6 +105,8 @@
           </v-btn>
           <v-btn
             outlined
+            :loading="loading"
+            @click="onSubmit"
             class="rounded-pill mx-4 d-flex flex-row justify-space-between"
           >
             <v-icon class="mr-1">mdi-content-save</v-icon>
@@ -120,22 +115,54 @@
         </div>
       </v-card>
     </div>
+    <v-snackbar v-model="saveSnackbar" color="green">
+      Perfil guardada con éxito!
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="saveSnackbar = false">
+          Seguir Editando
+        </v-btn>
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="
+            saveSnackbar = false;
+            $router.back();
+          "
+        >
+          Salir
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-main>
 </template>
 
 <script>
 import temp from "../assets/arnold.png";
 import GoBackButton from "../components/GoBackButton.vue";
+import { mapActions, mapState } from "pinia";
+import { useProfileStore } from "../stores/profile";
+
+const httpRegex =
+  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+
 export default {
   components: {
-    GoBackButton,
+    GoBackButton
   },
   watch: {
     menu(val) {
       val && setTimeout(() => (this.activePicker = "YEAR"));
-    },
+    }
+  },
+  computed: {
+    ...mapState(useProfileStore, ["profile"]),
+    notValidUriRule: function() {
+      return httpRegex.test(this.tempImageURL) || "No es un URL válido.";
+    }
   },
   methods: {
+    ...mapActions(useProfileStore, ["saveProfile"]),
     save(date) {
       this.$refs.menu.save(date);
     },
@@ -147,65 +174,60 @@ export default {
       };
       reader.readAsDataURL(file);
     },
-    onFileChange(file) {
-      if (!file) {
-        return;
+    changeUrl() {
+      if (this.notValidUriRule !== "No es un URL válido.") {
+        this.imageUrl = this.tempImageURL;
       }
-      this.createImage(file);
     },
+    async onSubmit() {
+      this.loading = true;
+      await this.saveProfile({
+        firstName: this.name,
+        lastName: this.surname,
+        gender: this.sex ? this.sex : undefined,
+        birthdate: new Date(this.date).getTime(),
+        phone: this.phoneNumber,
+        avatarUrl: this.imageUrl
+      });
+      this.loading = false;
+      this.saveSnackbar = true;
+    }
   },
   data() {
     return {
+      loading: false,
       activePicker: null,
-      name: "Arnold",
-      surname: "Schwartzenegger",
-      date: "1950-03-24",
-      description:
-        "Hola, soy Arnold. No se escribir mi apellido ni mi fecha de nacimiento así que puse cualquier banana!",
+      name: "",
+      surname: "",
+      date: null,
       menu: false,
       changePhoto: false,
       image: undefined,
       imageUrl: temp,
       nameRules: [(v) => v.length <= 32 || "Max 32 caracteres"],
       descriptionRules: [(v) => v.length <= 280 || "Max 280 caracteres"],
-      routines: [
-        {
-          title: "Abdominales en 15 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 30 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 45 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 30 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 45 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 30 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          title: "Abdominales en 45 minutos!",
-          image:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
+      sexOptions: [
+        { text: "Masculino", value: "male" },
+        { text: "Femenino", value: "female" },
+        { text: "Otro", value: "other" }
       ],
+      sex: null,
+      phoneNumber: "",
+      tempImageURL: "",
+      saveSnackbar: false
     };
   },
+  async created() {
+    const user = this.profile;
+    this.name = user.firstName || "";
+    this.surname = user.lastName || "";
+    this.date = user.birthdate
+      ? new Date(user.birthdate).toISOString().split("T")[0]
+      : null;
+    this.phoneNumber = user.phone || "";
+    this.sex = user.gender || null;
+    this.imageUrl = user.avatarUrl || "";
+    this.tempImageURL = user.avatarUrl || "";
+  }
 };
 </script>

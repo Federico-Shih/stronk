@@ -55,25 +55,31 @@ const router = new VueRouter({
       path: "/routines/:id",
       name: "routine",
       component: () => import("../views/RoutineDetailsPage.vue"),
-      beforeEnter: tokenGuard,
+      beforeEnter: tokenGuard
     },
     {
       path: "/routines/:id/edit",
       name: "routine_edit",
       component: () => import("../views/RoutineEditCreationPage.vue"),
-      beforeEnter: tokenGuard,
+      beforeEnter: tokenGuard
+    },
+    {
+      path: "/profile/edit",
+      name: "profile_edit",
+      component: () => import("../views/EditProfilePage.vue"),
+      beforeEnter: tokenGuard
     },
     {
       path: "/profile/:id",
-      name: "profile",
+      name: "profile_extern",
       component: () => import("../views/ProfilePage.vue"),
-      beforeEnter: tokenGuard,
+      beforeEnter: tokenGuard
     },
     {
-      path: "/profile/:id/edit",
-      name: "profile_edit",
-      component: () => import("../views/EditProfilePage.vue"),
-      beforeEnter: tokenGuard,
+      path: "/profile",
+      name: "profile",
+      component: () => import("../views/ProfilePage.vue"),
+      beforeEnter: tokenGuard
     },
     {
       path: "/exercises",

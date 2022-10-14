@@ -12,6 +12,7 @@ export const useProfileStore = defineStore({
     profile: {},
     page: 0,
     shownAll: false,
+    loadedProfiles: {}
   }), //headers solo con put y post
   actions: {
     async loadCurrentNames() {
@@ -193,18 +194,26 @@ export const useProfileStore = defineStore({
       }
     },
     async generateUser(id) {
+      // Cacheo los perfiles para que cuando tenga que editar no los busque devuelta
+      if (id in this.loadedProfiles) {
+        return this.loadedProfiles[id];
+      }
       try {
         const res = await fetch(`http://localhost:8080/api/users/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `bearer ${this.token}`,
-          },
+            Authorization: `bearer ${this.token}`
+          }
         });
-        const ret = await res.json();
-        console.log(`Loading user ${id}`);
-        console.log(ret);
-        return ret;
+        // No devolver nada si sucede error
+        if (res.status === 200) {
+          const ret = await res.json();
+          this.loadedProfiles[ret.id] = ret;
+          return ret;
+        } else {
+          return null;
+        }
       } catch (error) {
         console.log(error);
       }
@@ -229,6 +238,25 @@ export const useProfileStore = defineStore({
         console.log(error);
       }
     },
+    async saveProfile(profile) {
+      try {
+        const res = await fetch(`http://localhost:8080/api/users/current`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `bearer ${this.token}`
+          },
+          body: JSON.stringify(profile)
+        });
+        if (res.status === 200) {
+          return res.json();
+        } else {
+          return null;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   },
   getters: {
     getHasProfile() {
