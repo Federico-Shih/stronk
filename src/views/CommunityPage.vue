@@ -14,7 +14,7 @@
           <div v-for="person in filteredList" :key="person.id">
             <router-link
               style="text-decoration: none; color: inherit"
-              :to="{ name: 'profile', params: { id: `${person.id}` } }"
+              :to="`/profile/${person.id}`"
             >
               <CommunityProfileButton
                 variant="large"
