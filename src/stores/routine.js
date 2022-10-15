@@ -1,12 +1,42 @@
 import { defineStore } from "pinia";
 import { useProfileStore } from "./profile";
 import { mapState } from "pinia/dist/pinia";
-import { authAxios, baseAxios } from "../services/authenticatedAxios";
+import { authAxios /*baseAxios*/ } from "@/services/authenticatedAxios";
 export const CycleTypes = {
   WARMUP: "warmup",
   EXERCISE: "exercise",
   COOLDOWN: "cooldown",
 };
+
+export const useRoutines = defineStore("useroutines", {
+  state: () => ({
+    page: 0,
+    size: 10,
+    routinesFiltered: [],
+    isLastPage: false,
+  }),
+  actions: {
+    resetPages() {
+      this.page = 0;
+    },
+    async getAnotherPage(paramsObject) {
+      try {
+        paramsObject["page"] = this.page;
+        paramsObject["size"] = this.size;
+        const { data } = await authAxios.get(
+          "/routines?" + new URLSearchParams(paramsObject)
+        );
+        const { isLastPage, content } = data;
+        this.isLastPage = isLastPage;
+        this.page += 1;
+        this.routinesFiltered.push(...content);
+        return content;
+      } catch (err) {
+        return err.response?.data;
+      }
+    },
+  },
+});
 
 export const useMyRoutines = defineStore("myroutines", {
   state: () => ({
@@ -22,22 +52,25 @@ export const useMyRoutines = defineStore("myroutines", {
       try {
         const { data } = await authAxios.get(
           "/users/current/routines?" +
-          new URLSearchParams({ page: this.page, size: this.page === 0? pageSize-1 : pageSize })
+            new URLSearchParams({
+              page: this.page,
+              size: this.page === 0 ? pageSize - 1 : pageSize,
+            })
         );
         const { isLastPage, content } = data;
         this.isLastPage = isLastPage;
         this.page += 1;
         this.routines.push(...content);
-        return content;
+        return this.routines;
       } catch (err) {
         return err.response?.data;
       }
     },
     resetPages() {
-        this.page = 0;
-        this.routines = [];
-        this.isLastPage = false;
-    }
+      this.page = 0;
+      this.routines = [];
+      this.isLastPage = false;
+    },
   },
 });
 
@@ -51,14 +84,14 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
     ...mapState(useProfileStore, ["getToken"]),
     getFavorites() {
       return this.favorites;
-    }
+    },
   },
   actions: {
     async getNextPage(pageSize) {
       try {
         const { data } = await authAxios.get(
           "/favourites?" +
-          new URLSearchParams({ page: this.page, size: pageSize })
+            new URLSearchParams({ page: this.page, size: pageSize })
         );
         const { isLastPage, content } = data;
         console.log(`Lastfavorite=${isLastPage}`);
@@ -117,7 +150,7 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
       this.page = 0;
       this.favorites = [];
       this.isLastPage = false;
-    }
+    },
   },
 });
 
@@ -129,12 +162,12 @@ export const useSaveRoutine = defineStore("editroutine", {
       "Espalda",
       "Piernas",
       "Abdominales",
-      "Brazos"
+      "Brazos",
     ],
-    categories: []
+    categories: [],
   }),
   getters: {
-    ...mapState(useProfileStore, ["getToken"])
+    ...mapState(useProfileStore, ["getToken"]),
   },
   actions: {
     async getCategories() {
@@ -144,8 +177,8 @@ export const useSaveRoutine = defineStore("editroutine", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`
-            }
+              Authorization: `Bearer ${this.getToken}`,
+            },
           });
           let text = await res.text();
           let ans = text ? JSON.parse(text) : null;
@@ -156,17 +189,17 @@ export const useSaveRoutine = defineStore("editroutine", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${this.getToken}`
+                  Authorization: `Bearer ${this.getToken}`,
                 },
-                body: JSON.stringify({ name: category })
+                body: JSON.stringify({ name: category }),
               });
             }
             res = await fetch("http://localhost:8080/api/categories", {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${this.getToken}`
-              }
+                Authorization: `Bearer ${this.getToken}`,
+              },
             });
             text = await res.text();
             ans = text ? JSON.parse(text) : null;
@@ -232,7 +265,7 @@ export const useSaveRoutine = defineStore("editroutine", {
       try {
         await authAxios.post(`/reviews/${routineId}`, {
           score: score,
-          review: ""
+          review: "",
         });
       } catch (errors) {
         console.log("Oops!" + errors);

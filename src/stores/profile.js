@@ -127,10 +127,8 @@ export const useProfileStore = defineStore({
         const res = await authAxios.get(
           "/users?" + new URLSearchParams({ page: this.page, size: amount })
         );
-        console.log(this.page);
         const retValue = res.data;
         this.page = this.page + 1;
-        this.shownAll = retValue.isLastPage;
         return retValue;
       } catch (error) {
         console.log(error);
