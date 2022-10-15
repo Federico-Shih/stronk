@@ -32,14 +32,15 @@ export default {
       loadingDialogState: "loading",
       exitDialog: false,
       rules: {
-        required: (value) => value.length > 0 || "Requerido"
+        required: (value) => value.length > 0 || "Requerido",
+        maxLength(n){ return (value) => value.length <= n || `Maximo ${n} caracteres`},
       },
       saveButtonLoading: false
     };
   },
   computed: {
     edit() {
-      return this.$route.params.id !== undefined;
+      return this.routineId !== null;
     }
   },
   async beforeCreate() {
@@ -210,7 +211,7 @@ export default {
                 dense
                 outlined
                 class="rounded-lg"
-                :rules="[rules.required]"
+                :rules="[rules.required, rules.maxLength(100)]"
             />
           </v-form>
           <v-textarea
@@ -219,6 +220,7 @@ export default {
               dense
               outlined
               class="rounded-lg"
+              :rules="[rules.maxLength(200)]"
           />
         </div>
         <div class="d-flex flex-column justify-start">

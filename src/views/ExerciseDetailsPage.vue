@@ -1,96 +1,97 @@
 <template>
-  <v-container fluid>
-    <div class="d-flex flex-row justify-space-between">
-      <div class="d-flex flex-row justify-start align-center">
-        <GoBackButton />
-        <h1 class="pl-4">{{ this.title }}</h1>
-      </div>
+  <div>
+    <v-container fluid v-if="loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'">
+      <div class="d-flex flex-row justify-space-between">
+        <div class="d-flex flex-row justify-start align-center">
+          <GoBackButton />
+          <h1 class="pl-4">{{ this.title }}</h1>
+        </div>
 
-      <div v-if="exerciseIsMine" class="mr-16">
-        <v-btn
-            color="primary"
-            class="rounded-pill mr-4"
-            @click="deleteDialog = true"
-        >
-          <v-icon left>mdi-delete</v-icon>
-          Eliminar Ejercicio
-        </v-btn>
-        <v-btn
-            color="primary"
-          class="rounded-pill"
-          @click="
+        <div v-if="exerciseIsMine" class="mr-16">
+          <v-btn
+              color="primary"
+              class="rounded-pill mr-4"
+              @click="deleteDialog = true"
+          >
+            <v-icon left>mdi-delete</v-icon>
+            Eliminar Ejercicio
+          </v-btn>
+          <v-btn
+              color="primary"
+              class="rounded-pill"
+              @click="
             $router.push({ name: 'exercises_edit', params: { id: `${exId}` } })
           "
-        >
-          <v-icon left>mdi-pencil</v-icon>
-          Editar Ejercicio
-        </v-btn>
+          >
+            <v-icon left>mdi-pencil</v-icon>
+            Editar Ejercicio
+          </v-btn>
+        </div>
       </div>
-    </div>
-
-    <v-container fluid class="d-flex flex-column" style="gap: 2em">
-      <div class="d-flex flex-row">
-        <div class="d-flex flex-row justify-self-start">
-          <v-btn
-            icon
-            class="mx-4"
-            @click="
+      <v-container fluid class="d-flex flex-column" style="gap: 2em">
+        <div class="d-flex flex-row">
+          <div class="d-flex flex-row justify-self-start">
+            <v-btn
+                icon
+                class="mx-4"
+                @click="
               $router.push({ name: 'profile', params: { id: `${creatorid}` } })
             "
-          >
+            >
+              <v-img
+                  class="rounded-circle"
+                  :src="creatorimage"
+                  :alt="this.temp"
+                  height="50px"
+                  width="50px"
+              />
+            </v-btn>
+            <h3 class="mt-1">hecho por {{ creatorname }}</h3>
+          </div>
+          <div class="d-flex flex-row offset-1 justify-space-between">
+            <h3 class="pr-4 mt-1">Tipo:</h3>
+            <v-chip class="mr-2">{{ type }}</v-chip>
+          </div>
+        </div>
+        <div class="d-flex flex-column" style="width: 70%">
+          <h2 class="mb-2">Descripcion del Ejercicio</h2>
+          <p>{{ description }}</p>
+        </div>
+        <div class="d-flex flex-column">
+          <h2 class="mb-2">Imagenes demostrativas</h2>
+          <div class="d-flex flex-wrap align-start" style="width: 80%">
             <v-img
-              class="rounded-circle"
-              :src="creatorimage"
-              :alt="this.temp"
-              height="50px"
-              width="50px"
+                v-for="img in images"
+                :src="img.url"
+                :alt="img.url"
+                :key="img.id"
+                class="mr-4 mb-4 flex-grow-0"
+                style="width: 150px"
+            >
+            </v-img>
+          </div>
+        </div>
+        <div class="d-flex flex-column">
+          <h2 class="mb-2">Videos demostrativos</h2>
+          <div v-for="vid in videos" :key="vid.id" class="align-self-center mb-8">
+            <iframe
+                width="560"
+                height="315"
+                :src="loadURL(vid.url)"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
             />
-          </v-btn>
-          <h3 class="mt-1">hecho por {{ creatorname }}</h3>
+          </div>
         </div>
-        <div class="d-flex flex-row offset-1 justify-space-between">
-          <h3 class="pr-4 mt-1">Tipo:</h3>
-          <v-chip class="mr-2">{{ type }}</v-chip>
-        </div>
-      </div>
-      <div class="d-flex flex-column" style="width: 70%">
-        <h2 class="mb-2">Descripcion del Ejercicio</h2>
-        <p>{{ description }}</p>
-      </div>
-      <div class="d-flex flex-column">
-        <h2 class="mb-2">Imagenes demostrativas</h2>
-        <div class="d-flex flex-wrap align-start" style="width: 80%">
-          <v-img
-            v-for="img in images"
-            :src="img.url"
-            :alt="img.url"
-            :key="img.id"
-            class="mr-4 mb-4 flex-grow-0"
-            style="width: 150px"
-          >
-          </v-img>
-        </div>
-      </div>
-      <div class="d-flex flex-column">
-        <h2 class="mb-2">Videos demostrativos</h2>
-        <div v-for="vid in videos" :key="vid.id" class="align-self-center mb-8">
-          <iframe
-            width="560"
-            height="315"
-            :src="loadURL(vid.url)"
-            frameborder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          />
-        </div>
-      </div>
+      </v-container>
     </v-container>
     <LoadingFetchDialog
-      :dialog-state="loadingDialogState"
-      loading-text="Por favor, espere..."
-      not-found-text="¡Oops! El ejercicio no se ha encontrado."
-      ok-not-found-button-text="OK"
-      v-on:oknotfound="$router.back()"
+        :dialog-state="loadingDialogState"
+        loading-text="Por favor, espere..."
+        not-found-text="¡Oops! El ejercicio no se ha encontrado."
+        ok-not-found-button-text="OK"
+        v-on:oknotfound="$router.back()"
     />
     <DeleteConfirmationDialog
         :dialog="deleteDialog"
@@ -104,7 +105,8 @@
       "
         v-on:disagree="deleteDialog = false"
     />
-  </v-container>
+  </div>
+
 </template>
 
 <script>

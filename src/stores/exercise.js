@@ -218,6 +218,7 @@ export const useExerciseStore = defineStore("exercise", {
       );
       newExercise.videos = imageAndVideoRequests.slice(putImageRequests.length);
       this.Ownexercises.push(newExercise);
+      return newExercise.id;
     },
     async putExerciseImage(exerciseId, image, num) {
       try {
