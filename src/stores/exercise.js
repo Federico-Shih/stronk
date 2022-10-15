@@ -95,7 +95,7 @@ export const useExerciseStore = defineStore("exercise", {
           response = await authAxios.get(`/exercises/${id}/images`);
           data = response.data;
           if (response.status === 200) {
-            exercise.images = data;
+            exercise.images = data.content;
           } else {
             throw new Error(
               "Error en buscar imagenes del ejercicio con id:" + id
@@ -109,7 +109,7 @@ export const useExerciseStore = defineStore("exercise", {
           response = await authAxios.get(`/exercises/${id}/videos`);
           data = response.data;
           if (response.status === 200) {
-            exercise.videos = data;
+            exercise.videos = data.content;
           } else {
             throw new Error(
               "Error en buscar videos del ejercicio con id:" + id
