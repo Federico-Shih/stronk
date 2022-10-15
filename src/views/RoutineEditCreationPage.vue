@@ -307,7 +307,7 @@ export default {
     <DeleteConfirmationDialog
         :dialog="exitDialog"
         title="¿Está seguro que desea salir?"
-        body-text="Se perderán todos los cambios guardados."
+        body-text="Se perderán todos los cambios no guardados."
         agree-button-text="Sí"
         disagree-button-text="No"
         v-on:agree="exitDialog = false; $router.back()"
