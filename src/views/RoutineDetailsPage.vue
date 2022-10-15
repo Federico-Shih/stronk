@@ -1,5 +1,6 @@
 <script>
 import abdominales from "../assets/abdominales.jpg";
+import temp from "../assets/user-default.png";
 import CycleCard from "../components/rutine/CycleCard.vue";
 import LoadingFetchDialog from "@/components/LoadingFetchDialog.vue";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
@@ -26,6 +27,7 @@ export default {
     return {
       routineId: null,
       img: abdominales,
+      temp: temp,
       cycles: [],
       loading: true,
       routine: {},
@@ -234,7 +236,8 @@ export default {
                       <v-img
                         height="50px"
                         width="50px"
-                        :src="routine.author.avatarUrl"
+                        :src="routine.author.avatarUrl ? routine.author.avatarUrl : temp"
+                        :lazy-src="temp"
                         class="rounded-circle"
                       ></v-img>
                     </v-btn>

@@ -6,12 +6,26 @@
           <goBackButton />
           <v-img
             v-if="showPic"
+            :lazy-src="userDefault"
             class="mx-8 rounded-circle"
             :src="avatar"
             alt="No picture Available"
             height="150px"
             width="150px"
-          />
+          >
+            <template v-slot:placeholder>
+              <v-row
+                  class="fill-height ma-0"
+                  align="center"
+                  justify="center"
+              >
+                <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+          </v-img>
           <div class="d-flex flex-column justify-center align-start">
             <div class="d-flex flex-row justify-start align-baseline">
               <h1 class="mr-4 d-flex flex-row" style="gap: 5px">
@@ -84,13 +98,14 @@
 </template>
 
 <script>
-import temp from "../assets/arnold.png";
+import temp from "../assets/user-default.png";
 import RoutineSlideGroup from "../components/RoutineSlideGroup.vue";
 import GoBackButton from "../components/GoBackButton.vue";
 import ErrorPage from "./ErrorFourOFour.vue";
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "@/stores/profile";
 import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
+import userDefault from "../assets/user-default.png";
 
 export default {
   components: {
@@ -109,6 +124,7 @@ export default {
       avatar: "",
       hasRoutines: true,
       userRoutines: [],
+      userDefault: userDefault,
       description: [
         "Solo estoy aquí porque mis amigos me hicieron una cuenta",
         "Me gustan los paseos en la playa y alguna otra cosa creo",

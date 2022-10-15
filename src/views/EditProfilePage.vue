@@ -12,12 +12,26 @@
       >
         <div class="d-flex flex-row justify-start align-center mb-8">
           <v-img
-            class="mx-8 rounded-circle"
-            :src="imageUrl"
-            height="150px"
-            max-width="150px"
-            alt="Imagen de usuario"
-          />
+              :lazy-src="temp"
+              class="mx-8 rounded-circle"
+              :src="imageUrl"
+              alt="Imagen de usuario"
+              height="150px"
+              max-width="150px"
+          >
+            <template v-slot:placeholder>
+              <v-row
+                  class="fill-height ma-0"
+                  align="center"
+                  justify="center"
+              >
+                <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+          </v-img>
           <div>
             <v-text-field
               label="URL de tu avatar"
@@ -80,21 +94,16 @@
               @change="save"
             ></v-date-picker>
           </v-menu>
-          <v-select
-            outlined
-            :items="sexOptions"
-            v-model="sex"
-            label="Género elegido"
-            dense
-          />
+          <v-text-field
+              outlined
+              dense
+              type="number"
+              v-model="phoneNumber"
+              prepend-icon="mdi-phone"
+              label="Numero de teléfono"
+          ></v-text-field>
         </div>
-        <v-text-field
-          outlined
-          dense
-          type="number"
-          v-model="phoneNumber"
-          label="Numero de teléfono"
-        ></v-text-field>
+
         <div class="d-flex flex-row justify-end">
           <v-btn
             outlined
@@ -138,7 +147,7 @@
 </template>
 
 <script>
-import temp from "../assets/arnold.png";
+import temp from "../assets/user-default.png";
 import GoBackButton from "../components/GoBackButton.vue";
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "../stores/profile";
@@ -184,7 +193,6 @@ export default {
       await this.saveProfile({
         firstName: this.name,
         lastName: this.surname,
-        gender: this.sex ? this.sex : undefined,
         birthdate: new Date(this.date).getTime(),
         phone: this.phoneNumber,
         avatarUrl: this.imageUrl
@@ -204,14 +212,9 @@ export default {
       changePhoto: false,
       image: undefined,
       imageUrl: temp,
+      temp: temp,
       nameRules: [(v) => v.length <= 32 || "Max 32 caracteres"],
       descriptionRules: [(v) => v.length <= 280 || "Max 280 caracteres"],
-      sexOptions: [
-        { text: "Masculino", value: "male" },
-        { text: "Femenino", value: "female" },
-        { text: "Otro", value: "other" }
-      ],
-      sex: null,
       phoneNumber: "",
       tempImageURL: "",
       saveSnackbar: false
@@ -225,8 +228,7 @@ export default {
       ? new Date(user.birthdate).toISOString().split("T")[0]
       : null;
     this.phoneNumber = user.phone || "";
-    this.sex = user.gender || null;
-    this.imageUrl = user.avatarUrl || "";
+    this.imageUrl = user.avatarUrl || temp;
     this.tempImageURL = user.avatarUrl || "";
   },
 };

@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import temp from "../assets/arnold.png";
+import temp from "../assets/user-default.png";
 import GoBackButton from "../components/GoBackButton.vue";
 import { useExerciseStore } from "../stores/exercise";
 import { mapActions, mapState } from "pinia";

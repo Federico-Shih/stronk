@@ -2,7 +2,7 @@
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "@/stores/profile";
 import logotype from "../assets/logotipo.png";
-import temp from "../assets/cristiano.png";
+import temp from "../assets/user-default.png";
 import { usePopupStore } from "@/stores/auth";
 
 export default {
@@ -37,9 +37,7 @@ export default {
         { label: "Mi perfil", link: "/profile", protected: true }
       ],
       dropdownItems: [
-        { label: "Configuración de cuenta", link: "", click: () => {} },
-        { divider: true },
-        { label: "Cambiar Idioma", link: "", click: () => {} },
+        { label: "Editar Perfil", link: "", click: () => { this.$router.push("/profile/edit") } },
         { divider: true },
         {
           label: "Cerrar sesión",
@@ -132,7 +130,7 @@ export default {
               @click="setExpanded(!expanded)"
             >
               Bienvenido, {{ firstname }}
-              <v-img class="ml-2" :src="image" max-width="30" />
+              <v-img class="ml-2 rounded-circle" :src="image" :lazy-src="temp" height="30" max-width="30" />
               <v-icon class="text--black ml-3">
                 {{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
               </v-icon>
