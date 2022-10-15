@@ -15,7 +15,7 @@
       </div>
 
       <div v-if="exerciseIsMine" class="mr-16 alignmentToTheRight">
-          <v-btn outlined class="rounded-pill" @click="$router.push({name: 'exercises_edit', params:{id: `${this.exId}` }  })">
+          <v-btn outlined class="rounded-pill" @click="$router.push({name: 'exercises_edit', params:{id: `${exId}` }  })">
             <v-icon left>mdi-pencil</v-icon>
             Editar Ejercicio
           </v-btn>

@@ -27,12 +27,14 @@
             :to="`/exercises/${this.id}`"
             style="text-decoration: none; color: inherit"
           >
-            <div>
-              <v-list-item-title class="font-weight-bold mb-2">
+            <div style="max-width:275px">
+              <v-list-item-title class="font-weight-bold mb-2" style="
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                      ">
                 {{ this.exerciseName }}
               </v-list-item-title>
               <v-list-item-subtitle style="
-                max-width: 300px;
                         text-overflow: ellipsis;
                         overflow: hidden;
                       ">

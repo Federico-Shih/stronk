@@ -1,5 +1,6 @@
 import { defineStore, mapState } from "pinia";
 import { useProfileStore } from "./profile";
+import { authAxios, baseAxios } from "../services/authenticatedAxios";
 
 export const useExerciseStore = defineStore("exercise", {
   state: () => ({
@@ -22,96 +23,59 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async getOwnExercisesData() {
       try {
-        const response = await fetch("http://localhost:8080/api/exercises", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.getToken}`,
-          },
-        });
-        const text = await response.text();
-        const result = text ? JSON.parse(text) : "";
-        if (result !== "") {
-          this.Ownexercises = result.content;
+        const response = await authAxios.get('/exercises');
+        const data =  response.data;
+        if (response.status=== 200) {
+          this.Ownexercises = data.content;
+        }else{
+          throw new Error("Error buscar los ejercicios");
         }
       } catch (error) {
         console.log(`Oops! ${error}`);
         return null;
       }
+
       let response = "";
-      let text = "";
-      let result = "";
-      let images = null;
-      let videos = null;
+      let data = "";
       for (let i = 0; i < this.Ownexercises.length; i++) {
         try {
-          response = await fetch(
-            `http://localhost:8080/api/exercises/${this.Ownexercises[i].id}/images`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-          );
-          text = await response.text();
-          result = text ? JSON.parse(text) : "";
-          if (result !== "") {
-            images = result.content;
+          response = await authAxios.get(`/exercises/${this.Ownexercises[i].id}/images`);
+          data = response.data;
+          if (response.status === 200) {
+            this.Ownexercises[i].images = data.content;
           } else {
-            images = [];
+            throw new Error("Error en buscar las imagenes");
           }
         } catch (error) {
           console.log(`Oops! ${error}`);
           return null;
         }
-        this.Ownexercises[i].images = images;
         try {
-          response = await fetch(
-            `http://localhost:8080/api/exercises/${this.Ownexercises[i].id}/videos`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-          );
-          text = await response.text();
-          result = text ? JSON.parse(text) : "";
-          if (result !== "") {
-            videos = result.content;
+          response = await authAxios.get(`/exercises/${this.Ownexercises[i].id}/videos`)
+          data = response.data;
+          if (response.status === 200) {
+            this.Ownexercises[i].videos = data.content;
           } else {
-            videos = [];
+            throw new Error("Error en buscar los videos");
           }
         } catch (error) {
           console.log(`Oops! ${error}`);
           return null;
         }
-        this.Ownexercises[i].videos = videos;
       }
       return this.Ownexercises;
     },
     async getExerciseData(id) {
-      let text;
-      let result;
-      let response;
-      let exercise = null;
-      let images = null;
-      let videos = null;
+      let exercise=null;
+      let data=null;
+      let response=null;
       try {
-        response = await fetch(`http://localhost:8080/api/exercises/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.getToken}`,
-          },
-        });
-        text = await response.text();
-        result = text ? JSON.parse(text) : "";
-        if (result !== "") {
-          exercise = result;
+        response = await authAxios.get(`/exercises/${id}`);
+        data = response.data;
+        if(response.status===200){
+          exercise=data;
+        }else{
+          throw new Error("Error en buscar el ejercicio con id: "+id);
         }
       } catch (error) {
         console.log(`Oops! ${error}`);
@@ -119,51 +83,29 @@ export const useExerciseStore = defineStore("exercise", {
       }
       if (exercise !== null) {
         try {
-          response = await fetch(
-            `http://localhost:8080/api/exercises/${id}/images`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-          );
-          text = await response.text();
-          result = text ? JSON.parse(text) : "";
-          if (result !== "") {
-            images = result.content;
-          } else {
-            images = [];
+          response = await authAxios.get(`/exercises/${id}/images`)
+          data = response.data;
+          if(response.status===200){
+            exercise.images=data;
+          }else{
+            throw new Error("Error en buscar imagenes del ejercicio con id:"+id);
           }
         } catch (error) {
           console.log(`Oops! ${error}`);
           return null;
         }
-        exercise.images = images;
         try {
-          response = await fetch(
-            `http://localhost:8080/api/exercises/${id}/videos`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-          );
-          text = await response.text();
-          result = text ? JSON.parse(text) : "";
-          if (result !== "") {
-            videos = result.content;
-          } else {
-            videos = [];
+          response = await authAxios.get(`/exercises/${id}/videos`)
+          data = response.data;
+          if(response.status===200){
+            exercise.videos=data;
+          }else{
+            throw new Error("Error en buscar videos del ejercicio con id:"+id);
           }
         } catch (error) {
           console.log(`Oops! ${error}`);
           return null;
         }
-        exercise.videos = videos;
         this.Otherexercises.push(exercise);
       }
       return exercise;
@@ -204,26 +146,12 @@ export const useExerciseStore = defineStore("exercise", {
         );
         await Promise.all([...removeImagesRequests, ...removeVideosRequests]);
         let putExercise;
-        const response = await fetch(
-          `http://localhost:8080/api/exercises/${id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-            body: JSON.stringify(exercise),
-          }
-        );
+        const response = await authAxios.put(`/exercises/${id}`,exercise);
         if (response.status !== 200) {
           console.log("Put exercise failed");
           return;
         }
-        const text = await response.text();
-        const result = text ? JSON.parse(text) : "";
-        if (result !== "") {
-          putExercise = result;
-        }
+        putExercise = response.data;
         const putImageRequests = images.map((image, index) =>
           this.putExerciseImage(id, image, index + 1)
         );
@@ -250,18 +178,11 @@ export const useExerciseStore = defineStore("exercise", {
     async putExercise(exercise, images, videos) {
       let newExercise;
       try {
-        const response = await fetch(`http://localhost:8080/api/exercises`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${this.getToken}`,
-          },
-          body: JSON.stringify(exercise),
-        });
-        const text = await response.text();
-        const result = text ? JSON.parse(text) : "";
-        if (result !== "") {
-          newExercise = result;
+        const response = await authAxios.post(`/exercises`,exercise)
+        if(response.status===201){
+          newExercise=response.data;
+        }else{
+          throw new Error("Error en crear el ejercicio");
         }
       } catch (error) {
         console.log(`Oops! ${error}`);
@@ -286,19 +207,8 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async putExerciseImage(exerciseId, image, num) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/exercises/${exerciseId}/images`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-            body: JSON.stringify({ number: num, url: image }),
-          }
-        );
-        const text = await response.text();
-        return text ? JSON.parse(text) : "";
+        const response = await authAxios.post(`/exercises/${exerciseId}/images`,{number:num,url:image});
+        return response.data;
       } catch (error) {
         console.log(`Oops! ${error}`);
         return null;
@@ -306,19 +216,8 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async putExerciseVideo(exerciseId, video, num) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/exercises/${exerciseId}/videos`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-            body: JSON.stringify({ number: num, url: video }),
-          }
-        );
-        const text = await response.text();
-        return text ? JSON.parse(text) : "";
+        const response = await authAxios.post(`/exercises/${exerciseId}/videos`,{ number: num, url: video });
+        return response.data
       } catch (error) {
         console.log(`Oops! ${error}`);
         return null;
@@ -326,16 +225,7 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async removeExerciseImage(exerciseId, imageId) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/exercises/${exerciseId}/images/${imageId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
-        );
+        const response = await authAxios.delete(`/exercises/${exerciseId}/images/${imageId}`);
         console.log(response);
       } catch (err) {
         console.log(`Oops~ ${err}`);
@@ -343,16 +233,7 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async removeExerciseVideos(exerciseId, videoId) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/exercises/${exerciseId}/videos/${videoId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
-        );
+        const response = await authAxios.delete(`/exercises/${exerciseId}/videos/${videoId}`);
         console.log(response);
       } catch (err) {
         console.log(`Oops~ ${err}`);
@@ -360,16 +241,7 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async deleteExercise(exerciseId) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/exercises/${exerciseId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
-        );
+        const response = await authAxios.delete(`/exercises/${exerciseId}`);
         console.log(response);
       } catch (err) {
         console.log(`Oops~ ${err}`);
