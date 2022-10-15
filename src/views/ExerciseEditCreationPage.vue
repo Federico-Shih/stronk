@@ -31,7 +31,7 @@
             dense
             outlined
             class="rounded-lg"
-            :rules="notEmptyRules"
+            :rules="[rules.notEmptyRule,rules.maxLenght(100)]"
           />
           <v-textarea
             v-model="description"
@@ -39,23 +39,38 @@
             dense
             outlined
             class="rounded-lg"
+            validate-on-blur
+            :rules="[rules.maxLenght(200)]"
           />
-          <v-text-field
-            v-model="imageurl"
-            label="Escriba el URL de la imagen"
-            dense
-            outlined
-            class="rounded-lg"
-            @keypress.native.enter="loadImage()"
-          ></v-text-field>
-          <v-text-field
-            v-model="videourl"
-            label="Escriba un URL del video de Youtube"
-            dense
-            outlined
-            class="rounded-lg"
-            @keypress.native.enter="loadVideo()"
-          ></v-text-field>
+          <h2 class="mb-2">Agregue imagenes y videos demostrativos</h2>
+          <v-form @submit.prevent="loadImage" ref="imgform" v-model="validImgUrl">
+            <v-text-field
+              v-model="imageurl"
+              label="Ingrese el URL de la imagen"
+              dense
+              outlined
+              class="rounded-lg"
+              append-icon="mdi-send"
+              :rules="[rules.maxLenght(255)]"
+              validate-on-blur
+              @click:append="loadImage()"
+              @keypress.native.enter="loadImage()"
+            ></v-text-field>
+          </v-form>
+          <v-form @submit.prevent="loadVideo" ref="vidform" v-model="validVidUrl">
+            <v-text-field
+              v-model="videourl"
+              label="Ingrese el URL del video (Vimeo o Youtube)"
+              dense
+              outlined
+              class="rounded-lg"
+              append-icon="mdi-send"
+              :rules="[rules.maxLenght(255)]"
+              validate-on-blur
+              @click:append="loadVideo()"
+              @keypress.native.enter="loadVideo()"
+            ></v-text-field>
+          </v-form>
         </div>
         <div class="d-flex flex-column justify-start mr-10">
           <div class="d-flex flex-row align-center justify-end">
@@ -181,6 +196,8 @@ export default {
     return {
       name: "",
       valid: false,
+      validImgUrl: false,
+      validVidUrl: false,
       description: "",
       type: ["Ejercicio", "Descanso"],
       typeSelected: 0,
@@ -188,7 +205,10 @@ export default {
       videourl: "",
       images: [],
       videos: [],
-      notEmptyRules: [(v) => !!v || "Campo de nombre no puede quedar vacío"],
+      rules:{
+        notEmptyRule: (v) => !!v || "Campo de nombre no puede quedar vacío",
+        maxLenght(n) {return value => value < n || `Menor a ${n} caracteres`},
+      },
       savingExerciseButton: false,
       loadingDialogState: "loading",
       saveSnackbar: false,
@@ -211,15 +231,21 @@ export default {
       "putExercise",
     ]),
     loadImage() {
-      if (this.imageurl !== "") {
-        this.images.push(this.imageurl);
-        this.imageurl = "";
+      this.$refs.imgform.validate();
+      if(this.validImgUrl) {
+        if (this.imageurl !== "") {
+          this.images.push(this.imageurl);
+          this.imageurl = "";
+        }
       }
     },
     loadVideo() {
-      if (this.videourl !== "") {
-        this.videos.push(this.videourl);
-        this.videourl = "";
+      this.$refs.vidform.validate();
+      if (this.validVidUrl){
+        if (this.videourl !== "") {
+          this.videos.push(this.videourl);
+          this.videourl = "";
+        }
       }
     },
     removeImage(img) {
