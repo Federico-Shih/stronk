@@ -8,6 +8,14 @@
 
       <div v-if="exerciseIsMine" class="mr-16">
         <v-btn
+            outlined
+            class="rounded-pill mr-4"
+            @click="deleteDialog = true"
+        >
+          <v-icon left>mdi-delete</v-icon>
+          Eliminar Ejercicio
+        </v-btn>
+        <v-btn
           outlined
           class="rounded-pill"
           @click="
@@ -84,6 +92,18 @@
       ok-not-found-button-text="OK"
       v-on:oknotfound="$router.back()"
     />
+    <DeleteConfirmationDialog
+        :dialog="deleteDialog"
+        title="¿Está seguro que desea eliminar el ejercicio?"
+        body-text="Se eliminará de forma permanente junto con su contenido."
+        agree-button-text="Sí"
+        disagree-button-text="No"
+        v-on:agree="
+        deleteDialog = false;
+        deleteThisExercise();
+      "
+        v-on:disagree="deleteDialog = false"
+    />
   </v-container>
 </template>
 
@@ -94,11 +114,13 @@ import { useExerciseStore } from "../stores/exercise";
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "../stores/profile";
 import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
+import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog.vue";
 
 export default {
   components: {
     GoBackButton,
-    LoadingFetchDialog
+    LoadingFetchDialog,
+    DeleteConfirmationDialog,
   },
   computed: {
     ...mapState(useProfileStore, ["getId"]),
@@ -118,11 +140,12 @@ export default {
       creatorname: null,
       creatorimage: null,
       title: null,
-      loadingDialogState: "loading"
+      loadingDialogState: "loading",
+      deleteDialog:false,
     };
   },
   methods: {
-    ...mapActions(useExerciseStore, ["getExerciseById"]),
+    ...mapActions(useExerciseStore, ["getExerciseById","deleteExercise"]),
     ...mapActions(useProfileStore, ["generateUser"]),
     loadURL(youtubeURL) {
       const youtubeEmbedTemplate = "https://www.youtube-nocookie.com/embed/";
@@ -150,6 +173,10 @@ export default {
       }
       return topOfQueue;
     },
+    async deleteThisExercise() {
+      await this.deleteExercise(this.exId);
+       await this.$router.replace(`/exercises`);
+    }
   },
   async mounted() {
     this.exId = parseInt(this.$route.params.id);

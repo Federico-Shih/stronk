@@ -7,7 +7,7 @@
           <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} un Ejercicio</h1>
         </div>
         <div class="d-flex flex-row mr-8">
-          <v-btn outlined class="rounded-pill mr-4" @click="$router.back()">
+          <v-btn outlined class="rounded-pill mr-4" @click="discardDialog=true">
             <v-icon left>mdi-close</v-icon>
             Descartar {{ edit ? " Cambios" : " Ejercicio" }}
           </v-btn>
@@ -31,7 +31,7 @@
             dense
             outlined
             class="rounded-lg"
-            :rules="[rules.notEmptyRule,rules.maxLenght(100)]"
+            :rules="[rules.notEmptyRule,rules.maxLenght(70)]"
           />
           <v-textarea
             v-model="description"
@@ -177,6 +177,18 @@
       ok-not-found-button-text="OK"
       v-on:oknotfound="$router.back()"
     />
+    <DeleteConfirmationDialog
+        :dialog="discardDialog"
+        title="¿Está seguro que desea descartar el ejercicio?"
+        body-text="Se perderán todos los cambios realizados."
+        agree-button-text="Sí"
+        disagree-button-text="No"
+        v-on:agree="
+        discardDialog = false;
+        $router.back();
+      "
+        v-on:disagree="discardDialog = false"
+    />
   </v-container>
 </template>
 
@@ -186,10 +198,12 @@ import { useExerciseStore } from "../stores/exercise";
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "../stores/profile";
 import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
+import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog.vue";
 export default {
   components: {
     GoBackButton,
     LoadingFetchDialog,
+    DeleteConfirmationDialog,
   },
 
   data() {
@@ -207,12 +221,13 @@ export default {
       videos: [],
       rules:{
         notEmptyRule: (v) => !!v || "Campo de nombre no puede quedar vacío",
-        maxLenght(n) {return value => value < n || `Menor a ${n} caracteres`},
+        maxLenght(n) {return value => value.length < n || `Menor a ${n} caracteres`},
       },
       savingExerciseButton: false,
       loadingDialogState: "loading",
       saveSnackbar: false,
-      timeout: 2000
+      timeout: 2000,
+      discardDialog:false,
     };
   },
   computed: {
