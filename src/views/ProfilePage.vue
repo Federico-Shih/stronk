@@ -1,9 +1,9 @@
 <template>
-  <v-main>
+  <div>
     <div v-if="userExists">
       <div class="d-flex flex-row justify-space-between mb-8">
         <div class="d-flex flex-row mx-8">
-          <goBackButton/>
+          <goBackButton />
           <v-img
             v-if="showPic"
             class="mx-8 rounded-circle"
@@ -17,9 +17,14 @@
               <h1 class="mr-4 d-flex flex-row" style="gap: 5px">
                 <span>{{ this.userInfo.firstName }}</span>
                 <span>{{ this.userInfo.lastName }}</span>
+                <span v-if="!this.userInfo.firstName">{{
+                    this.userInfo.username
+                  }}</span>
               </h1>
               <h3>
-                <span>{{ this.userInfo.username }}</span>
+                <span v-if="this.userInfo.firstName">{{
+                    this.userInfo.username
+                  }}</span>
               </h3>
             </div>
             <div class="mt-2">
@@ -74,7 +79,7 @@
         :routines="routines"
       />
     </div> -->
-  </v-main>
+  </div>
 </template>
 
 <script>
@@ -111,7 +116,6 @@ export default {
   },
   methods: {
     ...mapActions(useProfileStore, ["generateUser", "getRoutinesFrom"]),
-    ...mapState(useProfileStore, ["getId", "profile"]),
     getDescription() {
       return this.description[
         parseInt(this.$route.params.id) % this.description.length
@@ -119,16 +123,18 @@ export default {
     },
   },
   computed: {
+    ...mapState(useProfileStore, ["getId", "profile"]),
     userExists() {
       return this.userInfo !== null && Object.keys(this.userInfo).length !== 0;
-    },
+    }
   },
   async mounted() {
     this.userInfo = this.$route.params.id
       ? await this.generateUser(`${this.$route.params.id}`)
       : this.profile;
+    console.log(this.userInfo);
     if (this.userExists) {
-      this.ownUser = this.getId() === this.userInfo?.id;
+      this.ownUser = this.getId === this.userInfo?.id;
       this.avatar = this.userInfo?.avatarUrl
         ? this.userInfo?.avatarUrl
         : this.temp;

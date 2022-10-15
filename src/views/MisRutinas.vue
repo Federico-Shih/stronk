@@ -1,9 +1,8 @@
 <template>
-  <div class="mt-2" :style="{ width: '100%', height: '100%' }">
-    <h1 class="ml-10">Mis Rutinas</h1>
+  <v-container fluid style="margin-left: 2em">
+    <h1>Mis Rutinas</h1>
     <div class="alignedToCenter flex-grow-1">
       <div
-        class="pa-1"
         :style="{
           background: $vuetify.theme.themes[theme].contback,
           width: '78%',
@@ -89,7 +88,7 @@
         </h2>
       </div>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>

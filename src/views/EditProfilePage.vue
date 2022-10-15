@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <div>
     <div class="d-flex flex-row justify-center pa-10">
       <div style="position: absolute; left: 0; top: 0" class="ma-10">
         <GoBackButton></GoBackButton>
@@ -134,7 +134,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </v-main>
+  </div>
 </template>
 
 <script>

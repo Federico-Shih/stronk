@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <div>
     <div class="page-title">
       <h1 class="mb-1">Explorar Nuevas Rutinas</h1>
       <search-bar title="Busca una rutina en particular..."></search-bar>
@@ -25,7 +25,7 @@
         :routines="routines"
       />
     </div> -->
-  </v-main>
+  </div>
 </template>
 
 <script>

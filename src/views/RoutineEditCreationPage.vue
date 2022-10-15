@@ -1,16 +1,21 @@
 <template>
-  <div class="d-flex flex-column justify-start py-8 px-4">
-    <div class="d-flex flex-row justify-space-between">
-      <div class="d-flex flex-row justify-start">
+  <v-container fluid class="d-flex flex-column justify-start">
+    <div class="d-flex flex-row align-center">
+      <div class="d-flex flex-row justify-start align-center">
         <GoBackButton />
         <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} una Rutina</h1>
       </div>
-      <div class="d-flex flex-row mr-8">
+      <div class="d-flex flex-row mr-8 ml-auto">
         <v-btn outlined class="rounded-pill mr-4" @click="$router.back()">
           <v-icon left>mdi-close</v-icon>
           Descartar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
-        <v-btn outlined class="rounded-pill" @click="trySaveRoutine()" :loading="saveButtonLoading">
+        <v-btn
+          outlined
+          class="rounded-pill"
+          @click="trySaveRoutine()"
+          :loading="saveButtonLoading"
+        >
           <v-icon left>mdi-content-save</v-icon>
           Guardar {{ edit ? " Cambios" : " Rutina" }}
         </v-btn>
@@ -20,12 +25,12 @@
       <div class="d-flex flex-column justify-start pt-4" style="width: 40%">
         <v-form v-model="valid">
           <v-text-field
-              v-model="name"
-              label="Nombre de la Rutina"
-              dense
-              outlined
-              class="rounded-lg"
-              :rules="[rules.required]"
+            v-model="name"
+            label="Nombre de la Rutina"
+            dense
+            outlined
+            class="rounded-lg"
+            :rules="[rules.required]"
           />
         </v-form>
         <v-textarea
@@ -94,14 +99,7 @@
     <v-snackbar v-model="snackbar" :timeout="4000" color="red">
       Error, existen campos incorrectos!
       <template v-slot:action="{ attrs }">
-        <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="
-                  snackbar = false;
-                "
-        >
+        <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
           Cerrar
         </v-btn>
       </template>
@@ -109,49 +107,45 @@
     <v-snackbar v-model="saveSnackbar" color="green">
       Rutina guardada con éxito!
       <template v-slot:action="{ attrs }">
-        <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="saveSnackbar = false;"
-        >
+        <v-btn color="white" text v-bind="attrs" @click="saveSnackbar = false">
           Seguir Editando
         </v-btn>
         <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="saveSnackbar = false; $router.back()"
+          color="white"
+          text
+          v-bind="attrs"
+          @click="
+            saveSnackbar = false;
+            $router.back();
+          "
         >
           Salir
         </v-btn>
       </template>
     </v-snackbar>
     <LoadingFetchDialog
-        :dialog-state="loadingDialogState"
-        loading-text="Por favor, espere..."
-        not-found-text="¡Oops! La rutina no se ha encontrado."
-        ok-not-found-button-text="OK"
-        v-on:oknotfound="$router.back()"
+      :dialog-state="loadingDialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="¡Oops! La rutina no se ha encontrado."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
 import EditCycle from "@/components/editroutine/EditCycle.vue";
 import GoBackButton from "@/components/GoBackButton.vue";
 import Vue from "vue";
-import {CycleTypes, useCycles, useSaveRoutine} from "@/stores/routine";
-import {mapActions} from "pinia";
+import { CycleTypes, useCycles, useSaveRoutine } from "@/stores/routine";
+import { mapActions } from "pinia";
 import LoadingFetchDialog from "@/components/LoadingFetchDialog.vue";
 
 const difficultyApiNames = ["beginner", "intermediate", "advanced"];
 
-
-
 export default {
   name: "RoutineEditCreationPage",
-  components: {LoadingFetchDialog, GoBackButton, EditCycle },
+  components: { LoadingFetchDialog, GoBackButton, EditCycle },
   data() {
     return {
       routineId: null,
@@ -169,11 +163,11 @@ export default {
       valid: true,
       snackbar: false,
       saveSnackbar: false,
-      loadingDialogState: 'loading',
+      loadingDialogState: "loading",
       rules: {
-        required: value => value.length > 0 || 'Requerido',
+        required: (value) => value.length > 0 || "Requerido"
       },
-      saveButtonLoading: false,
+      saveButtonLoading: false
     };
   },
   computed: {
@@ -185,50 +179,51 @@ export default {
     this.category = await useSaveRoutine().getCategories();
   },
   async created() {
-    this.bus.$on('removeCycle', (order) => {
+    this.bus.$on("removeCycle", (order) => {
       this.removeCycle(order);
-    })
-    this.bus.$on('validatedCycle', () => {
-      console.log('validateCycle');
+    });
+    this.bus.$on("validatedCycle", () => {
+      console.log("validateCycle");
       this.cycleValidations++;
-    })
-    this.bus.$on('savedCycle', () => {
+    });
+    this.bus.$on("savedCycle", () => {
       this.cycleSaves++;
-      if(this.cycleSaves === this.cycles.length)
-        this.finishSave();
-    })
+      if (this.cycleSaves === this.cycles.length) this.finishSave();
+    });
     if (this.$route.params.id) {
-      try{
+      try {
         this.routineId = this.$route.params.id;
         let apiAns = await useSaveRoutine().getRoutine(this.routineId);
         this.name = apiAns.name;
         this.detail = apiAns.detail;
         this.difficultySelected = difficultyApiNames.indexOf(apiAns.difficulty);
         this.categorySelected = apiAns.category.id - 1;
-        apiAns = await useCycles().getCyclesFromRoutine(
-            this.routineId
-        );
+        apiAns = await useCycles().getCyclesFromRoutine(this.routineId);
         this.cycles = apiAns.map((cycle, index) => ({
           ...cycle,
           "cycle-type": cycle.type,
           internalId: index
         }));
-        this.cycles.sort((a,b) => a.order-b.order);
+        this.cycles.sort((a, b) => a.order - b.order);
         this.maxId = this.cycles.length;
       } catch (e) {
-        this.loadingDialogState = 'notFound';
+        this.loadingDialogState = "notFound";
       }
-
     } else {
       this.cycles = this.cycles.concat(
         { "cycle-type": CycleTypes.WARMUP, order: 1, id: null, internalId: 0 },
-        { "cycle-type": CycleTypes.EXERCISE, order: 2, id: null, internalId: 1 },
+        {
+          "cycle-type": CycleTypes.EXERCISE,
+          order: 2,
+          id: null,
+          internalId: 1
+        },
         { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: null, internalId: 2 }
       );
       this.maxId = 3;
     }
-    if(this.loadingDialogState === 'loading') {
-      this.loadingDialogState = 'ok';
+    if (this.loadingDialogState === "loading") {
+      this.loadingDialogState = "ok";
     }
   },
   methods: {
@@ -265,19 +260,20 @@ export default {
       this.cycles = newCycles;
     },
     setButtonLoading(value) {
-      console.log('hola');
+      console.log("hola");
       this.saveButtonLoading = value;
     },
     trySaveRoutine() {
       this.cycleValidations = 0;
-      this.bus.$emit('validate');
+      this.bus.$emit("validate");
       this.setButtonLoading(true);
       setTimeout(() => {
-        console.log(`Cycles validated ${this.cycleValidations} out of ${this.cycles.length}`);
+        console.log(
+          `Cycles validated ${this.cycleValidations} out of ${this.cycles.length}`
+        );
         if (this.cycleValidations === this.cycles.length && this.valid) {
           this.saveRoutine();
-        }
-        else {
+        } else {
           this.snackbar = true;
           this.setButtonLoading(false);
         }
@@ -285,26 +281,23 @@ export default {
     },
     async saveRoutine() {
       const routineBody = {
-        "name": this.name,
-        "detail": this.detail,
-        "isPublic": true,
-        "difficulty": difficultyApiNames[this.difficultySelected],
-        "metadata": null,
-        "category": {
-          "id": this.categorySelected + 1,
+        name: this.name,
+        detail: this.detail,
+        isPublic: true,
+        difficulty: difficultyApiNames[this.difficultySelected],
+        metadata: null,
+        category: {
+          id: this.categorySelected + 1
         }
       };
-      if(this.edit)
-      {
+      if (this.edit) {
         await useSaveRoutine().modifyRoutine(this.routineId, routineBody);
         await useCycles().cleanCyclesFromRoutine(this.routineId);
-      }
-      else
-      {
+      } else {
         this.routineId = await useSaveRoutine().createRoutine(routineBody);
       }
       this.cycleSaves = 0;
-      this.bus.$emit('saveCycle', this.routineId);
+      this.bus.$emit("saveCycle", this.routineId);
     },
     finishSave() {
       this.saveSnackbar = true;

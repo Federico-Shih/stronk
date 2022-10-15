@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column justify-start px-4 py-8">
+  <v-container fluid class="d-flex flex-column justify-start">
     <v-form @submit.prevent="submitExercise" ref="form" v-model="valid">
       <div class="d-flex flex-row justify-space-between">
         <div class="d-flex flex-row justify-start align-center">
@@ -57,8 +57,8 @@
             @keypress.native.enter="loadVideo()"
           ></v-text-field>
         </div>
-        <div class="d-flex flex-column justify-start">
-          <div class="d-flex flex-row align-center mr-8">
+        <div class="d-flex flex-column justify-start mr-10">
+          <div class="d-flex flex-row align-center justify-end">
             <h4 class="mr-4">Tipo de Actividad:</h4>
             <v-chip-group
               v-model="typeSelected"
@@ -67,29 +67,32 @@
               active-class="primary--text"
             >
               <v-chip v-for="index in type.length" :key="index" class="pa-5"
-                >{{ type[index - 1] }}
+              >{{ type[index - 1] }}
               </v-chip>
             </v-chip-group>
           </div>
-          <v-simple-table v-if="images.length > 0">
-            <template v-slot:default>
-              <thead class="mb-2">
+          <v-container style="width: 600px">
+            <v-simple-table v-if="images.length > 0">
+              <template v-slot:default>
+                <thead class="mb-2">
                 <tr>
                   <th class="text-left">Imagenes agregadas</th>
                   <th class="text-left">Acciones</th>
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 <tr v-for="(img, index) in images" :key="index">
                   <td>
-                    <span
+                    <div
                       style="
-                        width: 300px;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                      "
-                      >{{ img }}</span
+                          width: 300px;
+                          text-overflow: ellipsis;
+                          overflow: hidden;
+                          white-space: nowrap;
+                        "
                     >
+                      {{ img }}
+                    </div>
                   </td>
                   <td>
                     <v-btn icon @click="removeImage(img)">
@@ -97,28 +100,28 @@
                     </v-btn>
                   </td>
                 </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-          <v-simple-table v-if="videos.length > 0">
-            <template v-slot:default>
-              <thead class="mb-2">
+                </tbody>
+              </template>
+            </v-simple-table>
+            <v-simple-table v-if="videos.length > 0">
+              <template v-slot:default>
+                <thead class="mb-2">
                 <tr>
                   <th class="text-left">Videos agregados</th>
                   <th class="text-left">Acciones</th>
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 <tr v-for="(vid, index) in videos" :key="index">
                   <td>
-                    <span
-                      style="
-                        width: 300px;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                      "
+                      <span
+                        style="
+                          width: 300px;
+                          text-overflow: ellipsis;
+                          overflow: hidden;
+                        "
                       >{{ vid }}</span
-                    >
+                      >
                   </td>
                   <td>
                     <v-btn icon @click="removeVideo(vid)">
@@ -126,41 +129,40 @@
                     </v-btn>
                   </td>
                 </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-container>
         </div>
       </div>
     </v-form>
     <v-snackbar v-model="saveSnackbar" color="green">
       Ejercicio guardada con éxito!
       <template v-slot:action="{ attrs }">
-        <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="saveSnackbar = false;"
-        >
+        <v-btn color="white" text v-bind="attrs" @click="saveSnackbar = false">
           Seguir Editando
         </v-btn>
         <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="saveSnackbar = false; $router.back()"
+          color="white"
+          text
+          v-bind="attrs"
+          @click="
+            saveSnackbar = false;
+            $router.back();
+          "
         >
           Salir
         </v-btn>
       </template>
     </v-snackbar>
     <LoadingFetchDialog
-        :dialog-state="loadingDialogState"
-        loading-text="Por favor, espere..."
-        not-found-text="¡Oops! El ejercicio no se ha encontrado."
-        ok-not-found-button-text="OK"
-        v-on:oknotfound="$router.back()"
+      :dialog-state="loadingDialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="¡Oops! El ejercicio no se ha encontrado."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -187,10 +189,10 @@ export default {
       images: [],
       videos: [],
       notEmptyRules: [(v) => !!v || "Campo de nombre no puede quedar vacío"],
-      savingExerciseButton:false,
-      loadingDialogState: 'loading',
-      saveSnackbar:false,
-      timeout:2000,
+      savingExerciseButton: false,
+      loadingDialogState: "loading",
+      saveSnackbar: false,
+      timeout: 2000
     };
   },
   computed: {
@@ -221,20 +223,20 @@ export default {
       }
     },
     removeImage(img) {
-      let found=false;
+      let found = false;
       this.images = this.images.filter((value) => {
         if (value === img && !found) {
-          found=true;
+          found = true;
           return false;
         }
         return true;
       });
     },
     removeVideo(vid) {
-      let found=false;
+      let found = false;
       this.videos = this.videos.filter((value) => {
         if (value === vid && !found) {
-          found=true;
+          found = true;
           return false;
         }
       });
@@ -249,7 +251,7 @@ export default {
           type: this.typeSelected === 0 ? "exercise" : "rest",
           metadata: { creatorid: this.getId },
         };
-        this.savingExerciseButton=true;
+        this.savingExerciseButton = true;
         if (this.edit) {
           await this.saveExercise(
             exercise,
@@ -260,8 +262,8 @@ export default {
         } else {
           await this.putExercise(exercise, this.images, this.videos);
         }
-        this.savingExerciseButton=false;
-        this.saveSnackbar=true;
+        this.savingExerciseButton = false;
+        this.saveSnackbar = true;
       }
     },
   },
@@ -275,12 +277,12 @@ export default {
         this.images = exercise.images.map((img) => img.url);
         this.videos = exercise.videos.map((vid) => vid.url);
       } catch (e) {
-        this.loadingDialogState = 'notFound';
+        this.loadingDialogState = "notFound";
       }
     }
-    if(this.loadingDialogState === 'loading'){
-      this.loadingDialogState = 'ok';
+    if (this.loadingDialogState === "loading") {
+      this.loadingDialogState = "ok";
     }
-  }
+  },
 };
 </script>

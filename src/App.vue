@@ -2,7 +2,9 @@
   <v-app class="app">
     <NavBar />
     <v-main class="main">
-      <router-view />
+      <div class="pt-10">
+        <router-view :key="$route.fullPath" />
+      </div>
     </v-main>
     <AuthPopup />
   </v-app>

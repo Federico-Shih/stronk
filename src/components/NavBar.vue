@@ -34,7 +34,7 @@ export default {
         { label: "Comunidad", link: "/community" },
         { label: "Mis rutinas", link: "/routines", protected: true },
         { label: "Mis ejercicios", link: "/exercises", protected: true },
-        { label: "Mi perfil", link: `/profile/${this.id}`, protected: true },
+        { label: "Mi perfil", link: "/profile", protected: true }
       ],
       dropdownItems: [
         { label: "Configuración de cuenta", link: "", click: () => {} },
@@ -71,7 +71,7 @@ export default {
     getFirstname(curr) {
       this.firstname = curr;
       this.id = this.getId();
-      this.links[4].link = `/profile/${this.id}`;
+      this.links[4].link = "/profile";
       this.image = this.getPic();
       this.image = this.image ? this.image : this.temp;
     },

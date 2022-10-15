@@ -1,6 +1,6 @@
 <template>
-  <v-main class="px-8">
-    <v-row class="ml-8 d-flex flex-row justify-space-between">
+  <v-container fluid style="margin-left: 2em">
+    <v-row class="d-flex flex-row justify-space-between">
       <v-col class="mr-16">
         <h1>Comunidad</h1>
         <v-text-field
@@ -103,7 +103,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </v-main>
+  </v-container>
 </template>
 
 <script>

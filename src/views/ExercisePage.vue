@@ -1,36 +1,39 @@
 <template>
-  <v-main class="px-16">
-    <div class="ml-8 d-flex flex-column justify-space-between">
+  <v-container fluid style="margin-left: 2em">
+    <div class="d-flex flex-column justify-space-between">
       <div class="d-flex flex-row mb-4">
         <h1>Mis Ejercicios</h1>
 
-        <router-link class="align-self-end ml-8" style="text-decoration: none; color: inherit;" :to="{ name: 'exercise_create' }"
-        ><v-icon x-large
-        >mdi-plus-circle-outline</v-icon
-        ></router-link
+        <router-link
+          class="align-self-end ml-8"
+          style="text-decoration: none; color: inherit"
+          :to="{ name: 'exercise_create' }"
+        >
+          <v-icon x-large>mdi-plus-circle-outline</v-icon>
+        </router-link
         >
       </div>
       <div class="d-flex justify-center">
         <v-progress-circular
-            v-show="loading"
-            indeterminate
-            color="primary"
-            :size="100"
+          v-show="loading"
+          indeterminate
+          color="primary"
+          :size="100"
         />
       </div>
       <div v-for="exer in exercises" :key="exer.id">
-            <ExerciseDepiction
-                @refreshevent="refreshOwnExercises"
-                variant="large"
-                :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
-                :exercise-name="exer.name"
-                :category="exer.detail"
-                :id="exer.id"
-                class="mt-0"
-            />
+        <ExerciseDepiction
+          @refreshevent="refreshOwnExercises"
+          variant="large"
+          :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
+          :exercise-name="exer.name"
+          :category="exer.detail"
+          :id="exer.id"
+          class="mt-0"
+        />
       </div>
     </div>
-  </v-main>
+  </v-container>
 </template>
 
 <script>
@@ -46,7 +49,7 @@ export default {
     return {
       abdominales: abspic,
       exercises: [],
-      loading:true,
+      loading: true
     };
   },
   methods: {
@@ -56,15 +59,15 @@ export default {
       "getOwnExercises",
     ]),
     async refreshOwnExercises() {
-      let aux = await this.getOwnExercises();//Faltaria poner un timeout para que no se quede cargando en la animacion
-      this.loading=false;
-      this.exercises =aux;
+      let aux = await this.getOwnExercises(); //Faltaria poner un timeout para que no se quede cargando en la animacion
+      this.loading = false;
+      this.exercises = aux;
     },
   },
   async mounted() {
-    let aux = await this.getOwnExercises();//Faltaria poner un timeout para que no se quede cargando en la animacion
-    this.loading=false;
-    this.exercises =aux;
+    let aux = await this.getOwnExercises(); //Faltaria poner un timeout para que no se quede cargando en la animacion
+    this.loading = false;
+    this.exercises = aux;
   },
 };
 </script>
