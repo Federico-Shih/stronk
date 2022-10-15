@@ -170,6 +170,14 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar v-model="error" color="red" :timeout="timeout">
+      Ocurrio un error guardando el ejercicio.
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="error = false">
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
     <LoadingFetchDialog
       :dialog-state="loadingDialogState"
       loading-text="Por favor, espere..."
@@ -228,6 +236,7 @@ export default {
       saveSnackbar: false,
       timeout: 2000,
       discardDialog:false,
+      error:false,
     };
   },
   computed: {
@@ -293,6 +302,7 @@ export default {
           metadata: { creatorid: this.getId },
         };
         this.savingExerciseButton = true;
+        try{
         if (this.edit) {
           await this.saveExercise(
             exercise,
@@ -305,6 +315,10 @@ export default {
         }
         this.savingExerciseButton = false;
         this.saveSnackbar = true;
+      }catch (e) {
+        this.savingExerciseButton = false;
+        this.error = true;
+      }
       }
     },
   },

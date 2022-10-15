@@ -28,13 +28,21 @@
         />
       </div>
       <span>
-        <router-link to="/exercises/create" >
+        <router-link to="/exercises/create" v-show="!loading&& !errorloading" >
           <h2 v-if="exercises.length === 0" class="text--black">
             No tienes ejercicios, empezá creando tu primer ejercicio!
           </h2>
         </router-link>
       </span>
     </div>
+    <v-snackbar v-model="errorSnackbar" color="red" :timeout="timeout">
+      Ocurrio un error cargando los ejercicios.
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="errorSnackbar = false">
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -51,7 +59,10 @@ export default {
     return {
       abdominales: abspic,
       exercises: [],
-      loading: true
+      loading: true,
+      errorSnackbar:false,
+      errorloading:false,
+      timeout:5000,
     };
   },
   methods: {
@@ -61,15 +72,22 @@ export default {
       "getOwnExercises",
     ]),
     async refreshOwnExercises() {
-      let aux = await this.getOwnExercises(); //Faltaria poner un timeout para que no se quede cargando en la animacion
+      let aux;
+      try {
+        aux  = await this.getOwnExercises();
+      }catch (e) {
+        console.log(e);
+        this.loading= false;
+        this.errorSnackbar=true;
+        this.errorloading= true;
+        return;
+      } //Faltaria poner un timeout para que no se quede cargando en la animacion
       this.loading = false;
       this.exercises = aux;
     },
   },
   async mounted() {
-    let aux = await this.getOwnExercises(); //Faltaria poner un timeout para que no se quede cargando en la animacion
-    this.loading = false;
-    this.exercises = aux;
+    await this.refreshOwnExercises();
   },
 };
 </script>
