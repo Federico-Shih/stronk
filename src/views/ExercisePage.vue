@@ -27,6 +27,13 @@
           class="mt-0"
         />
       </div>
+      <span>
+        <router-link to="/exercises/create" >
+          <h2 v-if="exercises.length === 0" class="text--black">
+            No tienes ejercicios, empezá creando tu primer ejercicio!
+          </h2>
+        </router-link>
+      </span>
     </div>
   </v-container>
 </template>

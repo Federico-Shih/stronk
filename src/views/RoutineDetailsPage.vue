@@ -158,67 +158,17 @@ export default {
               <v-icon class="">mdi-share-variant</v-icon>
             </v-btn>
             <v-btn
-              icon
-              @click="routine.liked ? unfavorite() : favorite()"
-              class="ml-4"
+                icon
+                @click="routine.liked ? unfavorite() : favorite()"
+                class="ml-4"
             >
               <v-icon color="primary" large
               >{{ routine.liked ? "mdi-heart" : "mdi-heart-outline" }}
               </v-icon>
             </v-btn>
-            <v-menu
-              v-model="ratingMenu"
-              :close-on-content-click="false"
-              offset-y
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-chip
-                  large
-                  label
-                  class="d-flex flex-row align-center text--primary mt-8"
-                  style="position: absolute; right: 0"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ routine.rating }}
-                  <v-rating
-                    disabled
-                    readonly
-                    :value="routine.rating"
-                    dense
-                    class="ml-3"
-                  ></v-rating>
-                </v-chip>
-              </template>
-              <v-card class="pa-4">
-                <h4>Tu puntación para esta rutina:</h4>
-                <div class="d-flex flex-row align-baseline">
-                  <v-rating
-                    v-model="yourRating"
-                    color="primary"
-                    dense
-                    empty-icon="mdi-star-outline"
-                    full-icon="mdi-star"
-                    half-icon="mdi-star-half-full"
-                    hover
-                    length="5"
-                    size="24"
-                    value="3"
-                  ></v-rating>
-                  <h4 class="ml-2">{{ this.yourRating }}</h4>
-                </div>
-                <v-btn
-                  depressed
-                  color="primary"
-                  class="rounded-pill ml-4"
-                  @click="sumbitRating"
-                >Confirmar
-                </v-btn>
-              </v-card>
-            </v-menu>
+            </div>
           </div>
-        </div>
-        <v-container fluid>
+        <v-container fluid class="d-flex flex-row">
           <v-card width="800">
             <v-card-text>
               <v-container>
@@ -259,6 +209,58 @@ export default {
               </v-container>
             </v-card-text>
           </v-card>
+          <v-spacer></v-spacer>
+          <div class="mr-10">
+            <v-menu
+                v-model="ratingMenu"
+                :close-on-content-click="false"
+                offset-y
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                    large
+                    label
+                    class="d-flex flex-row align-center text--primary mt-8"
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  {{ routine.rating }}
+                  <v-rating
+                      disabled
+                      readonly
+                      :value="routine.rating"
+                      dense
+                      class="ml-3"
+                  ></v-rating>
+                </v-chip>
+              </template>
+              <v-card class="pa-4">
+                <h4>Tu puntación para esta rutina:</h4>
+                <div class="d-flex flex-row align-baseline">
+                  <v-rating
+                      v-model="yourRating"
+                      color="primary"
+                      dense
+                      empty-icon="mdi-star-outline"
+                      full-icon="mdi-star"
+                      half-icon="mdi-star-half-full"
+                      hover
+                      length="5"
+                      size="24"
+                      value="3"
+                  ></v-rating>
+                  <h4 class="ml-2">{{ this.yourRating }}</h4>
+                </div>
+                <v-btn
+                    depressed
+                    color="primary"
+                    class="rounded-pill ml-4"
+                    @click="sumbitRating"
+                >Confirmar
+                </v-btn>
+              </v-card>
+            </v-menu>
+          </div>
         </v-container>
       </div>
       <v-container fluid class="mt-3">

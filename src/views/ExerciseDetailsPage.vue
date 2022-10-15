@@ -50,7 +50,7 @@
         </div>
         <div class="d-flex flex-row offset-1 justify-space-between">
           <h3 class="pr-4 mt-1">Tipo:</h3>
-          <v-chip label class="mr-2">{{ type }}</v-chip>
+          <v-chip class="mr-2">{{ type }}</v-chip>
         </div>
       </div>
       <div class="d-flex flex-column" style="width: 70%">
