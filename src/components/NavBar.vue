@@ -44,10 +44,13 @@ export default {
         {
           label: "Cerrar sesión",
           link: "",
-          click: () => {
-            this.logout();
-          },
-        },
+          click: async () => {
+            await this.logout();
+            if (this.$route.path !== "/") {
+              await this.$router.replace("/");
+            }
+          }
+        }
       ],
       temp,
       image: "",

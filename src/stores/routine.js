@@ -20,22 +20,17 @@ export const useMyRoutines = defineStore("myroutines", {
   actions: {
     async getNextPage(pageSize) {
       try {
-        const res = await fetch(
-          "http://localhost:8080/api/users/current/routines?" +
-            new URLSearchParams({ page: this.page, size: pageSize }),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
-          }
+        const { data } = await authAxios.get(
+          "/users/current/routines?" +
+          new URLSearchParams({ page: this.page, size: pageSize })
         );
-        const { isLastPage, content } = await res.json();
+        const { isLastPage, content } = data;
         this.isLastPage = isLastPage;
         this.page += 1;
         this.routines.push(...content);
+        return content;
       } catch (err) {
-        console.log(err);
+        return err.response?.data;
       }
     },
   },
@@ -56,24 +51,18 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
   actions: {
     async getNextPage(pageSize) {
       try {
-        const res = await fetch(
-            "http://localhost:8080/api/favourites?" +
-            new URLSearchParams({page: this.page, size: pageSize}),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.getToken}`,
-              },
-            }
+        const { data } = await authAxios.get(
+          "/favourites?" +
+          new URLSearchParams({ page: this.page, size: pageSize })
         );
-        const {isLastPage, content} = await res.json();
+        const { isLastPage, content } = data;
         console.log(`Lastfavorite=${isLastPage}`);
         this.isLastFavorite = isLastPage;
         this.page += 1;
         this.favorites.push(...content);
         return content;
       } catch (err) {
-        console.log(err);
+        return err.response?.data;
       }
     },
     async favoriteRoutine(routineId) {
@@ -113,7 +102,7 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
       }
       return false;
     },
-    async getAllFavorite(){
+    async getAllFavorite() {
       while (!this.isLastFavorite) {
         await this.getNextPage(4);
       }
@@ -124,51 +113,60 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
 
 export const useSaveRoutine = defineStore("editroutine", {
   state: () => ({
-    categoriesToPost: ["Full Body","Pecho", "Espalda", "Piernas", "Abdominales", "Brazos"],
-    categories: [],
+    categoriesToPost: [
+      "Full Body",
+      "Pecho",
+      "Espalda",
+      "Piernas",
+      "Abdominales",
+      "Brazos"
+    ],
+    categories: []
   }),
   getters: {
     ...mapState(useProfileStore, ["getToken"])
   },
   actions: {
     async getCategories() {
-      if(this.categories.length === 0) {
+      if (this.categories.length === 0) {
         try {
           let res = await fetch("http://localhost:8080/api/categories", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
+              Authorization: `Bearer ${this.getToken}`
+            }
           });
           let text = await res.text();
           let ans = text ? JSON.parse(text) : null;
           if (ans === null) throw new Error("Error in getting categories");
-          if(ans.content.length === 0) {
-            for(let category of this.categoriesToPost) {
+          if (ans.content.length === 0) {
+            for (let category of this.categoriesToPost) {
               await fetch("http://localhost:8080/api/categories", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${this.getToken}`,
+                  Authorization: `Bearer ${this.getToken}`
                 },
-                body: JSON.stringify({ name: category }),
+                body: JSON.stringify({ name: category })
               });
             }
             res = await fetch("http://localhost:8080/api/categories", {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${this.getToken}`,
-              },
+                Authorization: `Bearer ${this.getToken}`
+              }
             });
             text = await res.text();
             ans = text ? JSON.parse(text) : null;
             if (ans === null) throw new Error("Error in getting categories");
           }
-          ans.content.sort((a, b) => a.id - b.id).forEach((category) => {
-            this.categories.push(category.name);
-          });
+          ans.content
+            .sort((a, b) => a.id - b.id)
+            .forEach((category) => {
+              this.categories.push(category.name);
+            });
         } catch (err) {
           console.log(err);
         }
@@ -177,36 +175,15 @@ export const useSaveRoutine = defineStore("editroutine", {
     },
     async getRoutine(routine_id) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/routines/${routine_id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
-        );
-        const text = await response.text();
-        let ans = text ? JSON.parse(text) : null;
-        if (ans === null) throw new Error("Error in getting routine");
-        return ans;
+        const { data } = await authAxios.get(`/routines/${routine_id}`);
+        return data;
       } catch (error) {
-        console.log("Oops!" + error);
+        return error.response.data;
       }
     },
     async deleteRoutine(routine_id) {
       try {
-        await fetch(
-            `http://localhost:8080/api/routines/${routine_id}`,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-        );
+        await authAxios.delete(`/routines/${routine_id}`);
       } catch (error) {
         console.log("Oops!" + error);
       }
@@ -225,19 +202,8 @@ export const useSaveRoutine = defineStore("editroutine", {
      * */
     async createRoutine(routineBody) {
       try {
-        const response = await fetch(`http://localhost:8080/api/routines`, {
-          method: "POST",
-          body: JSON.stringify(routineBody),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.getToken}`,
-          },
-        });
-        console.log("creating routine: " + routineBody);
-        const text = await response.text();
-        let ans = text ? JSON.parse(text) : null;
-        if (ans === null) throw new Error("Error in creating routine");
-        return ans.id;
+        const { data } = await authAxios.post("/routines", routineBody);
+        return data.id;
       } catch (errors) {
         console.log("Oops!" + errors);
       }
@@ -245,14 +211,7 @@ export const useSaveRoutine = defineStore("editroutine", {
     async modifyRoutine(routineId, routineBody) {
       try {
         if (routineId) {
-          await fetch(`http://localhost:8080/api/routines/${routineId}`, {
-            method: "PUT",
-            body: JSON.stringify(routineBody),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
-          });
+          await authAxios.put(`/routines/${routineId}`, routineBody);
           console.log("modifying routine: " + routineId + " : " + routineBody);
         }
       } catch (errors) {
@@ -261,14 +220,10 @@ export const useSaveRoutine = defineStore("editroutine", {
     },
     async sumbitRoutineScore(routineId, score) {
       try {
-          await fetch(`http://localhost:8080/api/reviews/${routineId}`, {
-            method: "POST",
-            body: JSON.stringify({ score: score , review: "" }),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
-          });
+        await authAxios.post(`/reviews/${routineId}`, {
+          score: score,
+          review: ""
+        });
       } catch (errors) {
         console.log("Oops!" + errors);
       }
@@ -280,57 +235,26 @@ export const useCycles = defineStore("cycle", {
   actions: {
     async getCyclesFromRoutine(routine_id) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/routines/${routine_id}/cycles`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
-        );
-        const text = await response.text();
-        let cycles = text ? JSON.parse(text) : null;
-        if (cycles === null) throw new Error("Error in getting cycles");
-        return cycles.content;
+        const { data } = await authAxios.get(`/routines/${routine_id}/cycles`);
+        return data.content;
       } catch (error) {
         console.log("Oops!" + error);
       }
     },
     async getCycleExercises(cycle_id) {
       try {
-        const response2 = await fetch(
-            `http://localhost:8080/api/cycles/${cycle_id}/exercises`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-        );
-        const text2 = await response2.text();
-        let exercises = text2 ? JSON.parse(text2) : null;
+        const { data } = await authAxios.get(`/cycles/${cycle_id}/exercises`);
+        let exercises = data;
         if (exercises === null) throw new Error("Error in getting exercises");
         let out = [];
         for (let ex of exercises.content) {
-          const response3 = await fetch(
-              `http://localhost:8080/api/exercises/${ex["exercise"].id}/images`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `bearer ${this.getToken}`,
-                },
-              }
+          const { data } = await authAxios.get(
+            `/exercises/${ex["exercise"].id}/images`
           );
-          const text3 = await response3.text();
-          let images = text3 ? JSON.parse(text3) : null;
+          const images = data;
           if (images === null)
             throw new Error("Error in getting exercises images");
-          console.log(`Getting cycle exercise ${ex['exercise'].id} image: ${text3}`);
-          let url = images.content.length > 0 ? images.content[0].url : "";
+          const url = images.content.length > 0 ? images.content[0].url : "";
           out.push({ ...ex, img_url: url });
         }
         return out;
@@ -340,51 +264,27 @@ export const useCycles = defineStore("cycle", {
     },
     async getCycleWithExercises(routine_id, cycle_id) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/routines/${routine_id}/cycles/${cycle_id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
+        const { data } = await authAxios.get(
+          `/routines/${routine_id}/cycles/${cycle_id}`
         );
-        const text = await response.text();
-        let cycle = text ? JSON.parse(text) : null;
+        let cycle = data;
         if (cycle === null) throw new Error("Error in getting cycle");
-        const response2 = await fetch(
-          `http://localhost:8080/api/cycles/${cycle_id}/exercises`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
+        const { data: exercises } = await authAxios.get(
+          `/cycles/${cycle_id}/exercises`
         );
-        const text2 = await response2.text();
-        let exercises = text2 ? JSON.parse(text2) : null;
         if (exercises === null) throw new Error("Error in getting exercises");
         let out = { ...cycle, exercises: [] };
-        for (let ex of exercises.content) {
-          const response3 = await fetch(
-            `http://localhost:8080/api/exercises/${ex["exercise"].id}/images`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
+        for (let exercise of exercises.content) {
+          const { data: images } = await authAxios.get(
+            `/exercises/${exercise["exercise"].id}/images`
           );
-          const text3 = await response3.text();
-          let images = text3 ? JSON.parse(text3) : null;
           if (images === null)
             throw new Error("Error in getting exercises images");
-          console.log(`Getting cycle exercise ${ex['exercise'].id} image: ${text3}`);
+          console.log(
+            `Getting cycle exercise ${exercise["exercise"].id} image: ${images}`
+          );
           let url = images.content.length > 0 ? images.content[0].url : "";
-          out.exercises.push({ ...ex, img_url: url });
+          out.exercises.push({ ...exercise, img_url: url });
         }
         return out;
       } catch (error) {
@@ -413,33 +313,19 @@ export const useCycles = defineStore("cycle", {
      * */
     async postCycle(routine_id, cycleBody, exercisesIdsAndBodies) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/routines/${routine_id}/cycles`,
-          {
-            method: "POST",
-            body: JSON.stringify(cycleBody),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
-          }
+        const { data: obj } = await authAxios.post(
+          `/routines/${routine_id}/cycles`,
+          cycleBody
         );
-        const text = await response.text();
-        const obj = text ? JSON.parse(text) : null;
+
         let cycleId = obj !== null ? obj.id : null;
         if (cycleId === null) throw new Error("Error in posting cycle");
         console.log("Posting cycle: " + cycleBody);
+        // TODO: CONSIDERAR PARALELIZAR
         for (let exercise of exercisesIdsAndBodies) {
-          await fetch(
-            `http://localhost:8080/api/cycles/${cycleId}/exercises/${exercise.id}`,
-            {
-              method: "POST",
-              body: JSON.stringify(exercise.body),
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.getToken}`,
-              },
-            }
+          await authAxios.post(
+            `/cycles/${cycleId}/exercises/${exercise.id}`,
+            exercise.body
           );
           console.log("Posting exercise: " + JSON.stringify(exercise));
         }
@@ -449,30 +335,12 @@ export const useCycles = defineStore("cycle", {
     },
     async cleanCyclesFromRoutine(routine_id) {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/routines/${routine_id}/cycles`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `bearer ${this.getToken}`,
-            },
-          }
+        const { data: cycles } = await authAxios.get(
+          `/routines/${routine_id}/cycles`
         );
-        const text = await response.text();
-        let cycles = text ? JSON.parse(text) : null;
         if (cycles === null) throw new Error("Error in getting cycles");
         for (const cycle of cycles.content) {
-          await fetch(
-            `http://localhost:8080/api/routines/${routine_id}/cycles/${cycle.id}`,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `bearer ${this.getToken}`,
-              },
-            }
-          );
+          await authAxios.delete(`/routines/${routine_id}/cycles/${cycle.id}`);
         }
       } catch (error) {
         console.log("Oops!" + error);

@@ -7,47 +7,41 @@
     :elevation="hover ? 5 : 2"
     :class="variants.boxSizes[variant]"
     :style="{ height: '100px' }"
+    @click="$router.push(`/exercises/${id}`)"
   >
     <v-list-item>
       <v-list-item-content>
         <div class="d-flex flex-row">
-          <router-link
-            :to="`/exercises/${this.id}`"
-            style="text-decoration: none; color: inherit"
-          >
+          <div>
             <v-img
               :src="this.picture"
               :alt="this.picture"
-              width="170px"
-              height="65px"
+              width="170"
+              height="65"
               class="mr-4"
             />
-          </router-link>
-          <router-link
-            :to="`/exercises/${this.id}`"
-            style="text-decoration: none; color: inherit"
-          >
-            <div style="max-width:275px">
-              <v-list-item-title class="font-weight-bold mb-2" style="
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                      ">
-                {{ this.exerciseName }}
-              </v-list-item-title>
-              <v-list-item-subtitle style="
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                      ">
-                {{ this.category }}
-              </v-list-item-subtitle>
-            </div>
-          </router-link>
+          </div>
+
+          <div style="max-width: 275px">
+            <v-list-item-title
+              class="font-weight-bold mb-2"
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ this.exerciseName }}
+            </v-list-item-title>
+            <v-list-item-subtitle
+              style="text-overflow: ellipsis; overflow: hidden"
+            >
+              {{ this.category }}
+            </v-list-item-subtitle>
+          </div>
           <v-spacer></v-spacer>
           <div class="d-flex align-items-end flex-column">
-            <button @click="deleteDialog=true">
+            <button @click.stop="deleteDialog = true">
               <v-icon
-                ><!--mdi-dots-vertical-->
-                mdi-close</v-icon
+              ><!--mdi-dots-vertical-->
+                mdi-close
+              </v-icon
               >
             </button>
           </div>
@@ -55,13 +49,16 @@
       </v-list-item-content>
     </v-list-item>
     <DeleteConfirmationDialog
-        :dialog="deleteDialog"
-        title="¿Está seguro que desea eliminar el ciclo?"
-        body-text="Se eliminará de forma permanente junto con sus ejercicios."
-        agree-button-text="Sí"
-        disagree-button-text="No"
-        v-on:agree="deleteDialog = false; deleteThisExercise();"
-        v-on:disagree="deleteDialog = false"
+      :dialog="deleteDialog"
+      title="¿Está seguro que desea eliminar el ciclo?"
+      body-text="Se eliminará de forma permanente junto con sus ejercicios."
+      agree-button-text="Sí"
+      disagree-button-text="No"
+      v-on:agree="
+        deleteDialog = false;
+        deleteThisExercise();
+      "
+      v-on:disagree="deleteDialog = false"
     />
   </v-card>
 </template>
@@ -71,10 +68,9 @@ import { mapActions } from "pinia";
 import { useExerciseStore } from "@/stores/exercise";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 export default {
-
   name: "ExerciseDepiction",
-  components:{
-    DeleteConfirmationDialog,
+  components: {
+    DeleteConfirmationDialog
   },
   props: {
     variant: String,

@@ -1,17 +1,12 @@
 <template>
   <v-container fluid style="margin-left: 2em">
     <div class="d-flex flex-column justify-space-between">
-      <div class="d-flex flex-row mb-4">
+      <div class="d-flex flex-row mb-4 align-center">
         <h1>Mis Ejercicios</h1>
 
-        <router-link
-          class="align-self-end ml-8"
-          style="text-decoration: none; color: inherit"
-          :to="{ name: 'exercise_create' }"
-        >
-          <v-icon x-large>mdi-plus-circle-outline</v-icon>
-        </router-link
-        >
+        <v-btn icon class="ml-10" @click="$router.push('/exercises/create')">
+          <v-icon x-large>mdi-plus-circle</v-icon>
+        </v-btn>
       </div>
       <div class="d-flex justify-center">
         <v-progress-circular

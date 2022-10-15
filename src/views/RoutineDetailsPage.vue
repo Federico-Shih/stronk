@@ -212,8 +212,7 @@ export default {
                   class="rounded-pill ml-4"
                   @click="sumbitRating"
                 >Confirmar
-                </v-btn
-                >
+                </v-btn>
               </v-card>
             </v-menu>
           </div>

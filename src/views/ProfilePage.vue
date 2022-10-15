@@ -71,14 +71,15 @@
         </v-card>
       </div>
     </div>
-    <ErrorPage v-if="!userExists" />
-    <!--   <div class="">
-      <RoutineSlideGroup
-        title="Rutinas Favoritas de Arnold"
-        size-variant="small"
-        :routines="routines"
-      />
-    </div> -->
+    <ErrorPage v-if="dialogState !== 'loading' && !userExists" />
+
+    <LoadingFetchDialog
+      :dialog-state="dialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="¡Oops! El perfil no se ha encontrado."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
+    />
   </div>
 </template>
 
@@ -89,15 +90,18 @@ import GoBackButton from "../components/GoBackButton.vue";
 import ErrorPage from "./ErrorFourOFour.vue";
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "@/stores/profile";
+import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
 
 export default {
   components: {
     GoBackButton,
     RoutineSlideGroup,
     ErrorPage,
+    LoadingFetchDialog
   },
   data() {
     return {
+      dialogState: "loading",
       ownUser: false,
       userInfo: null,
       showPic: false,
@@ -132,7 +136,6 @@ export default {
     this.userInfo = this.$route.params.id
       ? await this.generateUser(`${this.$route.params.id}`)
       : this.profile;
-    console.log(this.userInfo);
     if (this.userExists) {
       this.ownUser = this.getId === this.userInfo?.id;
       this.avatar = this.userInfo?.avatarUrl
@@ -146,6 +149,9 @@ export default {
       } else {
         this.userRoutines = this.userRoutines.content;
       }
+      this.dialogState = "";
+    } else {
+      this.dialogState = "notFound";
     }
   },
 };

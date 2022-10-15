@@ -1,94 +1,84 @@
 <template>
-  <v-container fluid style="margin-left: 2em">
-    <h1>Mis Rutinas</h1>
-    <div class="alignedToCenter flex-grow-1">
-      <div
-        :style="{
-          background: $vuetify.theme.themes[theme].contback,
-          width: '78%',
-        }"
-      >
-        <h2>Creadas Por Mi</h2>
-      </div>
-      <div
-        class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4"
-        :style="{
-          background: $vuetify.theme.themes[theme].contback,
-          width: '78%',
-        }"
-      >
-        <div
-          class="alignedToCenter"
-          :style="{ width: '25%' }"
-          v-for="atr in myRoutineList"
-          :key="atr.id"
-        >
-          <router-link
-            :to="`/routines/${atr.id}`"
-            style="text-decoration: none; color: inherit"
-          >
-            <RoutineButton
-              variant="small"
-              :title="atr.name"
-              :image="atr.metadata?.image"
-              :routineId="atr.id"
-            />
-          </router-link>
-        </div>
-        <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
-        >mdi-chevron-double-down
-        </v-icon>
-        <router-link to="/routines/create">
-          <h2 v-if="myRoutineList.length === 0" class="text--black">
-            No tienes rutinas, empezá creando tu primera!
-          </h2>
-        </router-link>
-      </div>
+  <div>
+    <div class="d-flex flex-row align-center" style="margin-left: 2em">
+      <h1>Mis Rutinas</h1>
+      <v-btn icon class="ml-10" @click="$router.push('/routines/create')">
+        <v-icon x-large>mdi-plus-circle</v-icon>
+      </v-btn>
     </div>
+    <div class="flex-grow-1">
+      <div
+        :style="{
+          background: $vuetify.theme.themes[theme].contback,
+        }"
+      >
+        <v-container fluid>
+          <h2>Creadas Por Mi</h2>
+          <div class="d-flex flex-row flex-wrap pt-2 pb-4" style="gap: 2em">
+            <div v-for="atr in myRoutineList" :key="atr.id">
+              <router-link
+                :to="`/routines/${atr.id}`"
+                style="text-decoration: none; color: inherit"
+              >
+                <RoutineButton
+                  variant="small"
+                  :title="atr.name"
+                  :image="atr.metadata?.image"
+                  :routineId="atr.id"
+                />
+              </router-link>
+            </div>
+            <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
+            >mdi-chevron-double-down
+            </v-icon>
+            <router-link to="/routines/create">
+              <h2 v-if="myRoutineList.length === 0" class="text--black">
+                No tienes rutinas, empezá creando tu primera!
+              </h2>
+            </router-link>
+          </div>
+        </v-container>
+      </div>
 
-    <div class="alignedToCenter flex-grow-1">
       <div
-        class="mt-10 pt-2 pl-1"
         :style="{
           background: $vuetify.theme.themes[theme].contback,
-          width: '78%',
         }"
+        class="mt-10"
       >
-        <h2>Rutinas Favoritas</h2>
-      </div>
-      <div
-        class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4"
-        :style="{
-          background: $vuetify.theme.themes[theme].contback,
-          width: '78%',
-        }"
-      >
-        <div
-          class="alignedToCenter"
-          :style="{ width: '25%' }"
-          v-for="atr in myFavoritesList"
-          :key="atr.id"
-        >
-          <router-link
-            :to="`/routines/${atr.id}`"
-            style="text-decoration: none; color: inherit"
-          >
-            <RoutineButton
-              variant="small"
-              :title="atr.name"
-              :image="atr.metadata?.image"
-            />
-          </router-link>
-        </div>
-        <v-icon v-if="favShowArrow" @click="increaseCounterFav"
-        >mdi-chevron-double-down
-        </v-icon>
-        <h2 v-if="myRoutineList.length === 0" class="text--black">
-          No tienes favoritos, explorá las rutinas de la comunidad!
-        </h2>
+        <v-container fluid>
+          <div class="pt-2 pl-1">
+            <h2>Rutinas Favoritas</h2>
+          </div>
+          <div class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4">
+            <div
+              class="alignedToCenter"
+              :style="{ width: '25%' }"
+              v-for="atr in myFavoritesList"
+              :key="atr.id"
+            >
+              <router-link
+                :to="`/routines/${atr.id}`"
+                style="text-decoration: none; color: inherit"
+              >
+                <RoutineButton
+                  variant="small"
+                  :title="atr.name"
+                  :image="atr.metadata?.image"
+                />
+              </router-link>
+            </div>
+            <v-icon v-if="favShowArrow" @click="increaseCounterFav"
+            >mdi-chevron-double-down
+            </v-icon>
+            <h2 v-if="myRoutineList.length === 0" class="text--black">
+              No tienes favoritos, explorá las rutinas de la comunidad!
+            </h2>
+          </div>
+        </v-container>
       </div>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script>
