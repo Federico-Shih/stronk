@@ -64,7 +64,7 @@
             <div class="align-to-center">
               <v-icon large left> mdi-clipboard-alert</v-icon>
               <div class="text-h6 font-weight-light align-self-center">
-                ¡Este Usuario no cuenta con ninguna rutina!
+                {{ this.text }}
               </div>
             </div>
           </v-card-title>
@@ -130,7 +130,12 @@ export default {
     ...mapState(useProfileStore, ["getId", "profile"]),
     userExists() {
       return this.userInfo !== null && Object.keys(this.userInfo).length !== 0;
-    }
+    },
+    text() {
+      return this.ownUser
+        ? "¡Usted no cuenta con rutinas aún!"
+        : "¡Este Usuario no cuenta con ninguna rutina!";
+    },
   },
   async mounted() {
     this.userInfo = this.$route.params.id
