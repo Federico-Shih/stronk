@@ -1,80 +1,77 @@
 <template>
-  <div>
-    <div class="d-flex flex-row align-center" style="margin-left: 2em">
+  <div v-if="!loading">
+    <div class="d-flex flex-row align-center ml-8 mb-2">
       <h1>Mis Rutinas</h1>
-      <v-btn icon class="ml-10" @click="$router.push('/routines/create')">
-        <v-icon x-large>mdi-plus-circle</v-icon>
-      </v-btn>
     </div>
     <div class="flex-grow-1">
-      <div
+      <div class="mb-4"
         :style="{
           background: $vuetify.theme.themes[theme].contback,
         }"
       >
         <v-container fluid>
-          <h2>Creadas Por Mi</h2>
+          <h2 class="ml-4">Creadas Por Mi</h2>
           <div class="d-flex flex-row flex-wrap pt-2 pb-4" style="gap: 2em">
             <div v-for="atr in myRoutineList" :key="atr.id">
-              <router-link
-                :to="`/routines/${atr.id}`"
-                style="text-decoration: none; color: inherit"
-              >
                 <RoutineButton
+                    v-if="atr.id > 0"
                   variant="small"
                   :title="atr.name"
                   :image="atr.metadata?.image"
                   :routineId="atr.id"
                 />
-              </router-link>
+                <RoutineButton
+                    v-else
+                    :new-blue-print="true"
+                    variant="small"
+                    :title="atr.name"
+                    :image="atr.metadata?.image"
+                    :routineId="atr.id"
+                />
             </div>
-            <v-icon v-if="ownShowArrow" @click="increaseCounterOwn"
-            >mdi-chevron-double-down
-            </v-icon>
+
             <router-link to="/routines/create">
               <h2 v-if="myRoutineList.length === 0" class="text--black">
                 No tienes rutinas, empezá creando tu primera!
               </h2>
             </router-link>
           </div>
+          <v-icon v-if="ownShowArrow" @click="increaseCounterOwn" class="alignedToCenter"
+          >mdi-chevron-double-down
+          </v-icon>
         </v-container>
       </div>
 
       <div
-        :style="{
+          class="mb-4"
+          :style="{
           background: $vuetify.theme.themes[theme].contback,
         }"
-        class="mt-10"
       >
         <v-container fluid>
-          <div class="pt-2 pl-1">
-            <h2>Rutinas Favoritas</h2>
-          </div>
-          <div class="d-flex flex-row flex-wrap justify-space-around pt-2 pb-4">
-            <div
-              class="alignedToCenter"
-              :style="{ width: '25%' }"
-              v-for="atr in myFavoritesList"
-              :key="atr.id"
-            >
+          <h2 class="ml-4">Rutinas Favoritas</h2>
+          <div class="d-flex flex-row flex-wrap pt-2 pb-4" style="gap: 2em">
+            <div v-for="atr in myFavoritesList" :key="atr.id">
               <router-link
-                :to="`/routines/${atr.id}`"
-                style="text-decoration: none; color: inherit"
+                  :to="`/routines/${atr.id}`"
+                  style="text-decoration: none; color: inherit"
               >
                 <RoutineButton
-                  variant="small"
-                  :title="atr.name"
-                  :image="atr.metadata?.image"
+                    variant="small"
+                    :title="atr.name"
+                    :image="atr.metadata?.image"
+                    :routineId="atr.id"
                 />
               </router-link>
             </div>
-            <v-icon v-if="favShowArrow" @click="increaseCounterFav"
-            >mdi-chevron-double-down
-            </v-icon>
-            <h2 v-if="myRoutineList.length === 0" class="text--black">
-              No tienes favoritos, explorá las rutinas de la comunidad!
-            </h2>
+
+            <h3 v-if="myFavoritesList.length === 0" class="text--black ml-8">
+              No tienes rutinas favoritas al momento
+            </h3>
           </div>
+          <v-icon v-if="favShowArrow" @click="increaseCounterFav" class="alignedToCenter"
+          >mdi-chevron-double-down
+          </v-icon>
         </v-container>
       </div>
     </div>
@@ -84,30 +81,35 @@
 <script>
 import RoutineButton from "@/components/RoutineButton.vue";
 import { useFavoriteRoutines, useMyRoutines } from "../stores/routine";
-import { mapState } from "pinia";
+import {mapActions, mapState} from "pinia";
 
 export default {
   name: "MisRutinas.vue",
   components: { RoutineButton },
   data() {
     return {
-      amountShownEachLine: 4,
-      buttonAtributesFav: []
+      amountShownEachLine: 5,
+      buttonAtributesFav: [],
+      loading: true,
     };
   },
   methods: {
-    increaseCounterOwn() {
+    ...mapActions(useMyRoutines, ["resetPages", "getNextPage"]),
+    ...mapActions(useFavoriteRoutines, ["resetPages", "getNextPage"]),
+    async increaseCounterOwn() {
       this.counterOwn = this.counterOwn + 1;
+      await useMyRoutines().getNextPage(this.amountShownEachLine);
     },
-    increaseCounterFav() {
+    async increaseCounterFav() {
       this.counterFav = this.counterFav + 1;
+      await useFavoriteRoutines().getNextPage(this.amountShownEachLine);
     },
   },
   computed: {
     ...mapState(useMyRoutines, ["routines", "isLastPage"]),
-    ...mapState(useFavoriteRoutines, ["favorites, isLastFavorite"]),
+    ...mapState(useFavoriteRoutines, ["favorites", "isLastFavorite"]),
     myRoutineList() {
-      return this.routines;
+      return [{id: -1}, ...this.routines];
     },
     myFavoritesList() {
       return this.favorites;
@@ -122,11 +124,12 @@ export default {
       return !this.isLastFavorite;
     }
   },
-  async created() {
-    const routineStore = useMyRoutines();
-    await routineStore.getNextPage(this.amountShownEachLine);
-    const favoriteStore = useFavoriteRoutines();
-    await favoriteStore.getNextPage(this.amountShownEachLine);
+  async mounted() {
+    useMyRoutines().resetPages();
+    await useMyRoutines().getNextPage(this.amountShownEachLine);
+    useFavoriteRoutines().resetPages();
+    await useFavoriteRoutines().getNextPage(this.amountShownEachLine);
+    this.loading = false;
   }
 };
 /* podemos hacer una método computed el cual haga un splice desde

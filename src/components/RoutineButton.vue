@@ -1,5 +1,6 @@
 <template>
   <v-card
+      v-if="!newBluePrint"
     class="rounded-lg"
     :class="variants.boxSizes[variant]"
     @mouseenter="hover = true"
@@ -8,7 +9,7 @@
   >
     <router-link :to="`/routines/${routineId}`">
       <v-img :src="image" :alt="title" class="routine-button-image">
-        <div class="fill-height bottom-gradient d-flex flex-column justify-end">
+        <div class="fill-height bottom-gradient rounded-lg d-flex flex-column justify-end">
           <v-card-title
             class="routine-button-text"
             :class="variants.fontSizes[variant]"
@@ -18,6 +19,24 @@
       </v-img>
     </router-link>
   </v-card>
+  <v-card
+      v-else
+      class="rounded-lg"
+      color="transparent"
+      :class="variants.boxSizes[variant]"
+      @mouseenter="hover = true"
+      @mouseleave="hover = false"
+      :elevation="hover ? 1 : 0"
+  >
+    <router-link :to="`/routines/create`" class="no-decoration">
+        <div class="fill-height rounded-lg d-flex flex-column justify-center blueprint" :style="{
+          background: $vuetify.theme.themes[theme].contbacksecondary,
+        }">
+          <v-icon size="80">mdi-plus-circle</v-icon>
+          <h2 class="text-center font-weight-bold">Nueva Rutina</h2>
+        </div>
+    </router-link>
+  </v-card>
 </template>
 
 <script>
@@ -25,9 +44,15 @@ export default {
   name: "RoutineButton",
   props: {
     variant: String,
+    newBluePrint: false,
     title: String,
     image: String,
     routineId: Number,
+  },
+  computed: {
+    theme() {
+      return this.$vuetify.theme.dark ? "dark" : "light";
+    },
   },
   data() {
     return {
@@ -50,6 +75,16 @@ export default {
 </script>
 
 <style scoped>
+
+.no-decoration {
+  text-decoration: none;
+  color: inherit;
+}
+
+.blueprint {
+  border: 2px dashed;
+}
+
 .routine-button-small {
   width: 230px;
   height: 200px;
@@ -92,6 +127,7 @@ export default {
   overflow: hidden;
   display: inline-block;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .bottom-gradient {

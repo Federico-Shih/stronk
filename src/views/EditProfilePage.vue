@@ -103,6 +103,7 @@
                 v-model="phoneNumber"
                 prepend-icon="mdi-phone"
                 label="Numero de teléfono"
+                :rules="nameRules"
             ></v-text-field>
           </div>
         </v-form>
@@ -182,7 +183,7 @@ export default {
   computed: {
     ...mapState(useProfileStore, ["profile"]),
     notValidUriRule: function() {
-      return httpRegex.test(this.tempImageURL) || "No es un URL válido.";
+      return (httpRegex.test(this.tempImageURL) && this.tempImageURL.length < 255) || "No es un URL válido.";
     }
   },
   methods: {

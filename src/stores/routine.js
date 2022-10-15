@@ -22,7 +22,7 @@ export const useMyRoutines = defineStore("myroutines", {
       try {
         const { data } = await authAxios.get(
           "/users/current/routines?" +
-          new URLSearchParams({ page: this.page, size: pageSize })
+          new URLSearchParams({ page: this.page, size: this.page === 0? pageSize-1 : pageSize })
         );
         const { isLastPage, content } = data;
         this.isLastPage = isLastPage;
@@ -33,6 +33,11 @@ export const useMyRoutines = defineStore("myroutines", {
         return err.response?.data;
       }
     },
+    resetPages() {
+        this.page = 0;
+        this.routines = [];
+        this.isLastPage = false;
+    }
   },
 });
 
@@ -107,6 +112,11 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
         await this.getNextPage(4);
       }
       return this.favorites;
+    },
+    resetPages() {
+      this.page = 0;
+      this.favorites = [];
+      this.isLastPage = false;
     }
   },
 });

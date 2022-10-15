@@ -17,6 +17,8 @@ export default new Vuetify({
       light: {
         primary: "#167BFF",
         contback: "#b2e5ff",
+        contbacksecondary: "#c1e3f6",
+        secondary: "#757575",
       },
     },
   },

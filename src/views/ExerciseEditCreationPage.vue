@@ -152,7 +152,7 @@
       </div>
     </v-form>
     <v-snackbar v-model="saveSnackbar" color="green">
-      Ejercicio guardada con éxito!
+      Ejercicio guardado con éxito!
       <template v-slot:action="{ attrs }">
         <v-btn color="white" text v-bind="attrs" @click="saveSnackbar = false">
           Seguir Editando
@@ -163,7 +163,7 @@
           v-bind="attrs"
           @click="
             saveSnackbar = false;
-            $router.back();
+            $router.go(-1);
           "
         >
           Salir
