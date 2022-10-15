@@ -37,6 +37,7 @@ export default {
       saveSnackbarRating: false,
       timeout: 2000,
       favoriteSnackbar:false,
+      shareSnackbar: false,
       stockPeopleImages: [person01, person02, person03, person04, person05, person06],
     }
   },
@@ -77,6 +78,7 @@ export default {
       this.favoriteSnackbar=true;
     },
     share() {
+      this.shareSnackbar = true;
       navigator.clipboard.writeText(window.location.href);
     }
 
@@ -261,13 +263,26 @@ export default {
         v-on:disagree="deleteDialog = false"
     />
     <v-snackbar v-model="saveSnackbarRating" color="green" :timeout="timeout">
-      Puntuacion guardada con éxito!
+      ¡Puntuación guardada con éxito!
       <template v-slot:action="{ attrs }">
         <v-btn
             color="white"
             text
             v-bind="attrs"
             @click="saveSnackbarRating = false;"
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar v-model="shareSnackbar" color="primary" :timeout="timeout">
+      ¡Enlace copiado al portapapeles!
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="shareSnackbar = false;"
         >
           Cerrar
         </v-btn>
