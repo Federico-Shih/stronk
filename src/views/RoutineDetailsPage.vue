@@ -64,9 +64,8 @@ export default {
     ]),
 
     async removeRoutine() {
-      //Aca no estaba puesto el async ni el await, no se si era intencional
       await this.deleteRoutine(this.routineId);
-      this.$router.replace("/routines");
+      await this.$router.replace("/routines");
     },
     async sumbitRating() {
       await this.sumbitRoutineScore(this.routineId, this.yourRating);
