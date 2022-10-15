@@ -298,6 +298,46 @@ export const useCycles = defineStore("cycle", {
         console.log("Oops!" + error);
       }
     },
+    async getCycleExercises(cycle_id) {
+      try {
+        const response2 = await fetch(
+            `http://localhost:8080/api/cycles/${cycle_id}/exercises`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `bearer ${this.getToken}`,
+              },
+            }
+        );
+        const text2 = await response2.text();
+        let exercises = text2 ? JSON.parse(text2) : null;
+        if (exercises === null) throw new Error("Error in getting exercises");
+        let out = [];
+        for (let ex of exercises.content) {
+          const response3 = await fetch(
+              `http://localhost:8080/api/exercises/${ex["exercise"].id}/images`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `bearer ${this.getToken}`,
+                },
+              }
+          );
+          const text3 = await response3.text();
+          let images = text3 ? JSON.parse(text3) : null;
+          if (images === null)
+            throw new Error("Error in getting exercises images");
+          console.log(`Getting cycle exercise ${ex['exercise'].id} image: ${text3}`);
+          let url = images.content.length > 0 ? images.content[0].url : "";
+          out.push({ ...ex, img_url: url });
+        }
+        return out;
+      } catch (error) {
+        console.log("Oops! " + error);
+      }
+    },
     async getCycleWithExercises(routine_id, cycle_id) {
       try {
         const response = await fetch(

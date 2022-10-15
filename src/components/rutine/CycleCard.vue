@@ -7,7 +7,11 @@ export default {
       type: Number,
       required: true
     },
-    routineId: {
+    cycleName: {
+      type: String,
+      required: true
+    },
+    cycleRepetitions: {
       type: Number,
       required: true
     },
@@ -17,13 +21,13 @@ export default {
     return {
       cycle: null,
       exercises: [],
+      loading: true,
     };
   },
   async mounted() {
     if (this.cycleId !== undefined && this.cycleId !== null) {
-      let cycle = await useCycles().getCycleWithExercises(this.routineId, this.cycleId);
-      this.cycle = cycle;
-      cycle.exercises.sort((a,b) => a.order-b.order).forEach((ex) => {
+      let exercises = await useCycles().getCycleExercises(this.cycleId);
+      exercises.sort((a,b) => a.order-b.order).forEach((ex) => {
         this.exercises.push({
           id: ex['exercise'].id,
           name: ex['exercise'].name,
@@ -33,16 +37,17 @@ export default {
           type: ex.duration === 999 ? "Repeticiones" : ex.repetitions === 999 ? "Tiempo" : "Ambos",
         });
       });
+      this.loading = false;
     }
   }
 };
 </script>
 <template>
   <div>
-    <v-card outlined v-if="this.cycle">
+    <v-card outlined v-if="!loading">
       <div style="padding-left: 180px; padding-bottom: 40px">
         <v-card-title class="font-weight-bold text-h5"
-        >{{ this.cycle.name }}
+        >{{ this.cycleName }}
         </v-card-title>
         <v-card-text>
           <h4 v-if="exercises.length === 0">No hay ejercicios para este ciclo</h4>
@@ -68,11 +73,11 @@ export default {
                       </h3>
                       <div>
                       <span v-if="exercise.type !== 'Tiempo'">
-                        {{ exercise.repetitions }} Repeticiones
+                        {{ exercise.repetitions }} {{ exercise.repetitions === 1 ? 'repetición' : 'repeticiones' }}
                         {{ exercise.type !== 'Repeticiones' ? "| " : "" }}
                       </span>
                         <span v-if="exercise.type !== 'Repeticiones'">
-                        {{ exercise.duration }}s
+                        {{ exercise.duration }} {{ exercise.duration === 1 ? "segundo" : "segundos" }}
                       </span>
                       </div>
                     </div>
@@ -111,7 +116,7 @@ export default {
           class="text-h5 pa-3 ml-6 mb-5 d-flex flex-column justify-end rounded-xl"
       >
         <div>
-          <span class="font-weight-bold text-h4">{{ this.cycle.repetitions }}</span> reps.
+          <span class="font-weight-bold text-h4">{{ this.cycleRepetitions }}</span> reps.
         </div>
       </div>
     </v-card>

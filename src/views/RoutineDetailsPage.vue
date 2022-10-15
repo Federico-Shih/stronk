@@ -7,11 +7,19 @@ import {CycleTypes, useCycles, useSaveRoutine} from "@/stores/routine";
 import {useProfileStore} from "@/stores/profile";
 import {mapActions, mapState} from "pinia";
 import {useFavoriteRoutines} from "../stores/routine";
+import person01 from "@/assets/stock_people/person01.png";
+import person02 from "@/assets/stock_people/person02.png";
+import person03 from "@/assets/stock_people/person03.png";
+import person04 from "@/assets/stock_people/person04.png";
+import person05 from "@/assets/stock_people/person05.png";
+import person06 from "@/assets/stock_people/person06.png";
+
 const difficultyNamesToSpanish = {
   "beginner": "Principiante",
   "intermediate": "Intermedio",
   "advanced": "Avanzado"
 }
+
 
 export default {
   components: {LoadingFetchDialog, CycleCard, DeleteConfirmationDialog},
@@ -29,6 +37,7 @@ export default {
       saveSnackbarRating: false,
       timeout: 2000,
       favoriteSnackbar:false,
+      stockPeopleImages: [person01, person02, person03, person04, person05, person06],
     }
   },
   computed: {
@@ -67,6 +76,9 @@ export default {
       this.routine.liked=false;
       this.favoriteSnackbar=true;
     },
+    share() {
+      navigator.clipboard.writeText(window.location.href);
+    }
 
     },
   async created() {
@@ -106,18 +118,22 @@ export default {
   <div>
     <div v-if="loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'" >
       <div class="d-flex flex-column mx-10 mt-5">
-        <div class="d-flex flex-row align-center">
+        <div class="d-flex flex-row align-center mb-2">
           <v-btn icon @click="() => this.$router.go(-1)">
             <v-icon large>mdi-arrow-left</v-icon>
           </v-btn>
           <h4 class="text-h4 font-weight-bold ml-5">{{ routine.name }}</h4>
-          <v-btn v-if="routineIsMine" outlined class="rounded-pill ml-auto" @click="deleteDialog = true">
+          <v-spacer></v-spacer>
+          <v-btn v-if="routineIsMine" outlined class="rounded-pill ml-4" @click="deleteDialog = true">
             <v-icon class="mr-1">mdi-delete</v-icon>
             <span>Eliminar Rutina</span>
           </v-btn>
           <v-btn v-if="routineIsMine" outlined class="rounded-pill ml-4" @click="$router.push(`${$route.fullPath}/edit`)">
             <v-icon class="mr-1">mdi-pencil</v-icon>
             <span>Editar Rutina</span>
+          </v-btn>
+          <v-btn outlined class="rounded-pill ml-4" @click="share()">
+            <v-icon class="">mdi-share-variant</v-icon>
           </v-btn>
           <v-btn icon @click="(routine.liked)? unfavorite():favorite()" class="ml-4">
             <v-icon color="primary" large
@@ -127,14 +143,15 @@ export default {
         </div>
         <div class="d-flex flex-row align-center ml-4" style="position: relative">
           <span>
-        <v-btn icon class="ml-4" @click="$router.push({ name: 'profile', params: { id: `${routine.author.id}` } })">
-          <v-img
-            height="50px"
-            width="50px"
-            :src="routine.author.avatarUrl"
-            class="rounded-circle"
-        ></v-img>
-        </v-btn></span>
+            <v-btn icon class="ml-4" @click="$router.push({ name: 'profile', params: { id: `${routine.author.id}` } })">
+              <v-img
+                height="50px"
+                width="50px"
+                :src="routine.author.avatarUrl"
+                class="rounded-circle"
+            ></v-img>
+            </v-btn>
+          </span>
           <span class="ml-3">hecha por {{ routine.author.username }}</span>
           <span class="ml-10 mr-2">Categoría:</span>
           <v-chip>{{ routine.category.name }}</v-chip>
@@ -186,7 +203,9 @@ export default {
           </v-menu>
         </div>
         <div style="width: 50%" class="mt-5">
-          {{ routine.detail }}
+          <span>Fecha de Creación: {{ routine.creationDate.toLocaleDateString() }}</span>
+          <br/>
+          <span>Descripción: {{ routine.detail }}</span>
         </div>
       </div>
       <v-container class="mt-3">
@@ -203,7 +222,8 @@ export default {
             v-for="(cycle, index) in this.cycles"
             :key="index"
             :cycle-id="cycle.id"
-            :routine-id="parseInt(routineId)"
+            :cycle-name="cycle.name"
+            :cycle-repetitions="cycle.repetitions"
           ></CycleCard>
           <div
               class="primary"
@@ -220,7 +240,7 @@ export default {
           >Fin
           </v-container>
         </div>
-        <div style="width: 400px; height: 600px; background-color: grey"></div>
+        <v-img contain :src="stockPeopleImages[this.routineId % stockPeopleImages.length]" max-height="600px" max-width="300px"></v-img>
       </v-container>
 
     </div>
