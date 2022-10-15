@@ -57,7 +57,7 @@
         <div class="mx-16">
           <v-btn
             v-if="ownUser"
-            outlined
+            color="primary"
             class="rounded-pill"
             @click="$router.push(`${$route.fullPath}/edit`)"
           >

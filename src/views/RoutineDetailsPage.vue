@@ -138,7 +138,7 @@ export default {
           <div class="mr-10">
             <v-btn
               v-if="routineIsMine"
-              outlined
+              color="primary"
               class="rounded-pill ml-4"
               @click="deleteDialog = true"
             >
@@ -147,14 +147,14 @@ export default {
             </v-btn>
             <v-btn
               v-if="routineIsMine"
-              outlined
+              color="primary"
               class="rounded-pill ml-4"
               @click="$router.push(`${$route.fullPath}/edit`)"
             >
               <v-icon class="mr-1">mdi-pencil</v-icon>
               <span>Editar Rutina</span>
             </v-btn>
-            <v-btn outlined class="rounded-pill ml-4" @click="share()">
+            <v-btn color="secondary" class="rounded-pill ml-4" @click="share()">
               <v-icon class="">mdi-share-variant</v-icon>
             </v-btn>
             <v-btn

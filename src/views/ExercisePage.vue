@@ -5,7 +5,7 @@
         <h1>Mis Ejercicios</h1>
 
         <v-btn icon class="ml-10" @click="$router.push('/exercises/create')">
-          <v-icon x-large>mdi-plus-circle</v-icon>
+          <v-icon x-large color="primary">mdi-plus-circle</v-icon>
         </v-btn>
       </div>
       <div class="d-flex justify-center">
@@ -16,24 +16,37 @@
           :size="100"
         />
       </div>
-      <div v-for="exer in exercises" :key="exer.id">
-        <ExerciseDepiction
-          @refreshevent="refreshOwnExercises"
-          variant="large"
-          :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
-          :exercise-name="exer.name"
-          :category="exer.detail"
-          :id="exer.id"
-          class="mt-0"
-        />
+      <div class="d-flex flex-row justify-space-between pr-16">
+        <span v-if="exercises.length === 0">
+          <router-link to="/exercises/create" v-show="!loading&& !errorloading" >
+            <h2 class="text--black">
+              No tenés ejercicios, empezá creando tu primer ejercicio!
+            </h2>
+          </router-link>
+        </span>
+        <div class="d-flex flex-column">
+          <div v-for="exer in exercises" :key="exer.id">
+            <ExerciseDepiction
+                @refreshevent="refreshOwnExercises"
+                variant="large"
+                :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
+                :exercise-name="exer.name"
+                :category="exer.detail"
+                :id="exer.id"
+                class="mt-0"
+            />
+          </div>
+        </div>
+        <div>
+          <v-img
+              contain
+              :src="exercisePerson"
+              max-height="600px"
+              max-width="300px"
+              class="mr-16"
+          ></v-img>
+        </div>
       </div>
-      <span>
-        <router-link to="/exercises/create" v-show="!loading&& !errorloading" >
-          <h2 v-if="exercises.length === 0" class="text--black">
-            No tienes ejercicios, empezá creando tu primer ejercicio!
-          </h2>
-        </router-link>
-      </span>
     </div>
     <v-snackbar v-model="errorSnackbar" color="red" :timeout="timeout">
       Ocurrio un error cargando los ejercicios.
@@ -52,6 +65,8 @@ import abspic from "../assets/abdominales.jpg";
 import SearchBar from "../components/SearchBar.vue";
 import { mapActions } from "pinia";
 import { useExerciseStore } from "@/stores/exercise";
+import exercisePerson from "@/assets/stock_people/exercisesperson.png";
+
 export default {
   name: "ExercisePage.vue",
   components: { ExerciseDepiction, SearchBar },
@@ -63,6 +78,7 @@ export default {
       errorSnackbar:false,
       errorloading:false,
       timeout:5000,
+      exercisePerson: exercisePerson,
     };
   },
   methods: {

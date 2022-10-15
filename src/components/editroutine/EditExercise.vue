@@ -40,14 +40,14 @@
           </div>
         </v-form>
         <div class="d-flex flex-row justify-end align-center">
-          <v-btn icon @click="deleteDialog = true">
+          <v-btn icon @click="deleteDialog = true" color="primary">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
           <div class="d-flex flex-column">
-            <v-btn icon :disabled="index === 0" @click="moveUp()">
+            <v-btn icon :disabled="index === 0" @click="moveUp()" color="primary">
               <v-icon>mdi-arrow-up-bold</v-icon>
             </v-btn>
-            <v-btn icon :disabled="last" @click="moveDown()">
+            <v-btn icon :disabled="last" @click="moveDown()" color="primary">
               <v-icon>mdi-arrow-down-bold</v-icon>
             </v-btn>
           </div>

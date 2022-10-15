@@ -8,7 +8,7 @@
 
       <div v-if="exerciseIsMine" class="mr-16">
         <v-btn
-            outlined
+            color="primary"
             class="rounded-pill mr-4"
             @click="deleteDialog = true"
         >
@@ -16,7 +16,7 @@
           Eliminar Ejercicio
         </v-btn>
         <v-btn
-          outlined
+            color="primary"
           class="rounded-pill"
           @click="
             $router.push({ name: 'exercises_edit', params: { id: `${exId}` } })

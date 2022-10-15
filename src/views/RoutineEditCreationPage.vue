@@ -186,12 +186,12 @@ export default {
           <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} una Rutina</h1>
         </div>
         <div class="d-flex flex-row mr-8 ml-auto">
-          <v-btn outlined class="rounded-pill mr-4" @click="showExitDialog()">
+          <v-btn color="secondary" class="rounded-pill mr-4" @click="showExitDialog()">
             <v-icon left>mdi-close</v-icon>
             Descartar {{ edit ? " Cambios" : " Rutina" }}
           </v-btn>
           <v-btn
-              outlined
+              color="primary"
               class="rounded-pill"
               @click="trySaveRoutine()"
               :loading="saveButtonLoading"
@@ -269,7 +269,8 @@ export default {
         <v-btn
             v-if="cycle.order !== cycles.length && cycle.order !== 1"
             @click="() => addCycle(cycle.order)"
-            class="mb-7 mt-5"
+            class="mb-7 mt-5 rounded-pill"
+            color="primary"
         >
           <v-icon>mdi-plus</v-icon>
           Agregar ciclo

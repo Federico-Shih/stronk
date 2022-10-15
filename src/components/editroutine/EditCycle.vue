@@ -29,7 +29,7 @@
               :rules="[rules.required]"
           />
           <h3 v-else class="mt-4">{{ cycleName }}</h3>
-          <v-btn class="mx-2" icon
+          <v-btn class="mx-2" icon color="primary"
                  :disabled="this.cycleType !== CycleTypes.EXERCISE || this.order === 2"
                  @click="deleteDialog = true">
             <v-icon>mdi-delete</v-icon>
@@ -38,7 +38,7 @@
         <v-divider></v-divider>
         <v-card-text>
           <div class="d-flex flex-row justify-center">
-            <v-btn icon @click="addExercise(0)">
+            <v-btn icon @click="addExercise(0)" color="primary">
               <v-icon>mdi-plus-circle</v-icon>
             </v-btn>
           </div>
@@ -80,7 +80,7 @@
             ></EditExercise>
             <v-divider class="mt-3"></v-divider>
             <div class="d-flex flex-row justify-center">
-              <v-btn icon @click="addExercise(index + 1)">
+              <v-btn icon @click="addExercise(index + 1)" color="primary">
                 <v-icon>mdi-plus-circle</v-icon>
               </v-btn>
             </div>

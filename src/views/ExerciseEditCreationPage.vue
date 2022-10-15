@@ -7,13 +7,13 @@
           <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} un Ejercicio</h1>
         </div>
         <div class="d-flex flex-row mr-8">
-          <v-btn outlined class="rounded-pill mr-4" @click="discardDialog=true">
+          <v-btn color="secondary" class="rounded-pill mr-4" @click="discardDialog=true">
             <v-icon left>mdi-close</v-icon>
             Descartar {{ edit ? " Cambios" : " Ejercicio" }}
           </v-btn>
           <v-btn
             :disabled="!valid"
-            outlined
+            color="primary"
             class="rounded-pill"
             @click="submitExercise"
             :loading="savingExerciseButton"

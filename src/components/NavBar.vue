@@ -1,7 +1,7 @@
 <script>
 import { mapActions, mapState } from "pinia";
 import { useProfileStore } from "@/stores/profile";
-import logotype from "../assets/logotipo.png";
+import logotype from "../assets/logotipo_blanco.png";
 import temp from "../assets/user-default.png";
 import { usePopupStore } from "@/stores/auth";
 
@@ -94,7 +94,7 @@ export default {
       v-for="{ link, label } in ownedLinks"
       :key="link"
       :to="link"
-      class="black--text ml-16 mt-2 text-decoration-none"
+      class="white--text ml-16 mt-2 text-decoration-none"
       active-class="active"
       >{{ label }}</router-link
     >
@@ -123,8 +123,7 @@ export default {
             <v-btn
               tile
               rounded
-              class="py-6"
-              :dark="!expanded"
+              class="py-6 rounded"
               v-bind="attrs"
               v-on="on"
               @click="setExpanded(!expanded)"

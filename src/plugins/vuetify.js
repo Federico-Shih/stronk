@@ -15,10 +15,10 @@ export default new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: "#167BFF",
-        contback: "#b2e5ff",
-        contbacksecondary: "#c1e3f6",
-        secondary: "#757575",
+        primary: "#5a31ff",
+        contback: "#eee0ff",
+        contbacksecondary: "#e1cdff",
+        secondary: "#fd8e01",
       },
     },
   },

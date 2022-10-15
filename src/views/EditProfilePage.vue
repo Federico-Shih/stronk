@@ -109,7 +109,7 @@
         </v-form>
         <div class="d-flex flex-row justify-end">
           <v-btn
-            outlined
+            color="secondary"
             class="rounded-pill mx-4 d-flex flex-row justify-space-between"
             @click="exitDialog = true"
           >
@@ -117,7 +117,7 @@
             <span>Descartar Cambios</span>
           </v-btn>
           <v-btn
-            outlined
+            color="primary"
             :loading="loading"
             @click="onSubmit"
             :disabled="!valid"
