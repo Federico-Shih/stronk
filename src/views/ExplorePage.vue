@@ -45,31 +45,33 @@
           </v-chip-group>
         </div>
       </div>
-      <v-select
-        label="Ordenar Por"
-        v-model="order"
-        outlined
-        :items="orderChoices"
-        dense
-        item-text="name"
-        item-value="valueCall"
-      ></v-select>
-      <div class="d-flex flex-row justify-center" v-if="order !== ''">
-        <h3 class="align-self-center">Ascendente o Descendente:</h3>
-        <v-chip-group
-          v-model="ascOrDes"
-          column
-          color="primary"
-          active-class="primary--text"
-          mandatory
-        >
-          <v-chip class="pa-5 mx-2"
+      <div v-if="debouncedInput.length >= 3 || isFiltering">
+        <v-select
+            label="Ordenar Por"
+            v-model="order"
+            outlined
+            :items="orderChoices"
+            dense
+            item-text="name"
+            item-value="valueCall"
+        ></v-select>
+        <div class="d-flex flex-row justify-center" v-if="order !== ''">
+          <h3 class="align-self-center">Ascendente o Descendente:</h3>
+          <v-chip-group
+              v-model="ascOrDes"
+              column
+              color="primary"
+              active-class="primary--text"
+              mandatory
+          >
+            <v-chip class="pa-5 mx-2"
             ><v-icon large>mdi-sort-alphabetical-ascending</v-icon>
-          </v-chip>
-          <v-chip class="pa-5 mx-2"
+            </v-chip>
+            <v-chip class="pa-5 mx-2"
             ><v-icon large>mdi-sort-alphabetical-descending</v-icon>
-          </v-chip>
-        </v-chip-group>
+            </v-chip>
+          </v-chip-group>
+        </div>
       </div>
     </div>
     <div v-if="debouncedInput.length >= 3 || isFiltering" class="">
@@ -109,16 +111,20 @@ export default {
   watch: {
     debouncedInput(curr) {
       if (curr.length >= 3) this.filteredList(curr);
+      else this.filteredList();
     },
     filtersModels(curr) {
-      this.filteredList();
+      if (this.debouncedInput.length >= 3) this.filteredList(this.debouncedInput);
+      else this.filteredList();
       this.isFiltering = !curr.every((element) => element === undefined);
     },
     order() {
-      this.filteredList();
+      if (this.debouncedInput.length >= 3) this.filteredList(this.debouncedInput);
+      else this.filteredList();
     },
     ascOrDes() {
-      this.filteredList();
+      if (this.debouncedInput.length >= 3) this.filteredList(this.debouncedInput);
+      else this.filteredList();
     },
   },
   computed: {
@@ -142,6 +148,7 @@ export default {
     ...mapActions(useRoutines, ["getAnotherPage", "resetPages"]),
     cleanModel(index) {
       this.filtersModels[index] = undefined;
+      this.filtersModels = [...this.filtersModels];
     },
     async filteredList(searchValue) {
       console.log("asdasd");
@@ -213,33 +220,7 @@ export default {
         },
       ],
       ourRoutines: [],
-      routines: [
-        {
-          name: "Abdominales en 15 minutos!",
-          metadata:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          name: "Abdominales en 30 minutos!",
-          metadata:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          name: "Abdominales en 45 minutos!",
-          metadata:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          name: "Abdominales en 30 minutos!",
-          metadata:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-        {
-          name: "Abdominales en 45 minutos!",
-          metadata:
-            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-        },
-      ],
+      routines: [],
     };
   },
 };

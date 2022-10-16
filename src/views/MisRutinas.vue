@@ -17,15 +17,14 @@
                     v-if="atr.id > 0"
                   variant="small"
                   :title="atr.name"
-                  :image="atr.metadata?.image"
                   :routineId="atr.id"
+                    :category="atr.category.id"
                 />
                 <RoutineButton
                     v-else
                     :new-blue-print="true"
                     variant="small"
                     :title="atr.name"
-                    :image="atr.metadata?.image"
                     :routineId="atr.id"
                 />
             </div>
@@ -59,8 +58,8 @@
                 <RoutineButton
                     variant="small"
                     :title="atr.name"
-                    :image="atr.metadata?.image"
                     :routineId="atr.id"
+                    :category="atr.category.id"
                 />
               </router-link>
             </div>

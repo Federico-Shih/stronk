@@ -21,6 +21,7 @@
                 :display-name="person.username"
                 description="Body Builder"
                 :profile-pic="person.avatarUrl"
+                v-if="person.id !== id"
               />
             </router-link>
           </div>
@@ -64,6 +65,7 @@
                 :display-name="person.username"
                 description="Body Builder"
                 :profile-pic="person.avatarUrl"
+                v-if="person.id !== id"
               />
             </router-link>
           </div>
@@ -121,6 +123,7 @@ export default {
       Abdos: abdos,
       searcher: "",
       pageSize: 10,
+      id: null,
       hasProf: false,
       showArrow: true,
       allUsers: [],
@@ -175,7 +178,7 @@ export default {
       "generateNUsers",
       "setPage",
     ]),
-    ...mapState(useProfileStore, ["getHasProfile"]),
+
     loadRecommendedUsers() {
       this.recommendedUsers = this.hasProf
         ? this.allUsers.content.slice(0, 3)
@@ -192,6 +195,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(useProfileStore, ["getHasProfile", "getId"]),
     filteredList() {
       if (this.allUsers.length !== 0)
         return this.allUsers.content.filter((user) =>
@@ -201,7 +205,8 @@ export default {
     },
   },
   async created() {
-    this.hasProf = this.getHasProfile();
+    this.hasProf = this.getHasProfile;
+    this.id = this.getId;
     if (this.hasProf) {
       this.allUsers = await this.generateNUsers(this.pageSize);
       const page = this.allUsers.page;

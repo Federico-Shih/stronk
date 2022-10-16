@@ -8,7 +8,7 @@
     :elevation="hover ? 5 : 0"
   >
     <router-link :to="`/routines/${routineId}`">
-      <v-img :src="image" :alt="title" class="routine-button-image">
+      <v-img :src="images[category][routineId % 2]" :alt="title" class="routine-button-image rounded-lg">
         <div class="fill-height bottom-gradient rounded-lg d-flex flex-column justify-end">
           <v-card-title
             class="routine-button-text"
@@ -40,14 +40,28 @@
 </template>
 
 <script>
+
+import abs01 from '@/assets/routine_images/abs01.jpg'
+import abs02 from '@/assets/routine_images/abs02.jpg'
+import arms01 from '@/assets/routine_images/arms01.jpg'
+import arms02 from '@/assets/routine_images/arms02.jpg'
+import back01 from '@/assets/routine_images/back01.jpg'
+import back02 from '@/assets/routine_images/back02.jpg'
+import chest01 from '@/assets/routine_images/chest01.jpg'
+import chest02 from '@/assets/routine_images/chest02.jpg'
+import fullbody01 from '@/assets/routine_images/fullbody01.jpg'
+import fullbody02 from '@/assets/routine_images/fullbody02.jpg'
+import leg01 from '@/assets/routine_images/leg01.jpg'
+import leg02 from '@/assets/routine_images/leg02.jpg'
+
 export default {
   name: "RoutineButton",
   props: {
     variant: String,
     newBluePrint: false,
     title: String,
-    image: String,
     routineId: Number,
+    category: Number,
   },
   computed: {
     theme() {
@@ -69,6 +83,14 @@ export default {
           large: "text-large",
         },
       },
+      images: {
+        5: [abs01, abs02],
+        6: [arms01, arms02],
+        3: [back01, back02],
+        2: [chest01, chest02],
+        1: [fullbody01, fullbody02],
+        4: [leg01, leg02],
+      }
     };
   },
 };
