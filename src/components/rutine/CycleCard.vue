@@ -46,7 +46,7 @@ export default {
   <div>
     <v-card outlined v-if="!loading">
       <div style="padding-left: 180px; padding-bottom: 40px">
-        <v-card-title class="font-weight-bold text-h5"
+        <v-card-title class="font-weight-bold"
         >{{ this.cycleName }}
         </v-card-title>
         <v-card-text>
