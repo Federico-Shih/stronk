@@ -16,6 +16,7 @@ export default new Vuetify({
     themes: {
       light: {
         primary: "#5a31ff",
+        darkback: "#170e46",
         contback: "#eee0ff",
         contbacksecondary: "#e1cdff",
         secondary: "#fd8e01",

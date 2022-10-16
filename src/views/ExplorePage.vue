@@ -13,41 +13,46 @@
           @click:clear="debouncedInput = ''"
         >
         </v-text-field>
-        <h4 class="mt-4 mr-3">Filtros:</h4>
-        <v-chip-group
-          v-model="filterSelected"
-          style="width: 30%"
-          column
-          active-class="primary--text"
-          multiple
-        >
-          <v-chip
-            v-for="index in filterChoices.length"
-            :key="index"
-            class="pa-5"
-            @click="cleanModel(index - 1)"
-            >{{ filterChoices[index - 1] }}
-          </v-chip>
-        </v-chip-group>
-      </div>
-      <div v-for="(selected, index) in filterSelected" :key="index">
-        <div class="d-flex justify-center" v-if="selected !== undefined">
+        <v-card class="d-flex flex-row justify-start px-2" outlined style="max-height: 56px">
+          <v-icon>mdi-filter</v-icon>
+          <h4 class="mt-4 mx-3">Filtros:</h4>
           <v-chip-group
-            v-model="filtersModels[selected]"
-            column
-            color="primary"
-            active-class="primary--text"
+              v-model="filterSelected"
+              active-class="primary--text"
+              multiple
           >
             <v-chip
-              v-for="index in filters[selected].valueNames.length"
-              :key="index"
-              class="pa-5 mx-5"
-              >{{ filters[selected].valueNames[index - 1] }}
+                v-for="index in filterChoices.length"
+                :key="index"
+                class="pa-5"
+                @click="cleanModel(index - 1)"
+            >{{ filterChoices[index - 1] }}
             </v-chip>
           </v-chip-group>
-        </div>
+        </v-card>
+
       </div>
-      <div v-if="debouncedInput.length >= 3 || isFiltering">
+      <div class="d-flex flex-row mb-6" style="gap: 1em">
+        <v-card v-for="(selected, index) in filterSelected" :key="index" outlined>
+          <h5 class="ml-4 mt-2">{{filterChoices[selected]}}</h5>
+          <div class="d-flex flex-row justify-center" v-if="selected !== undefined">
+            <v-chip-group
+                v-model="filtersModels[selected]"
+                column
+                color="primary"
+                active-class="primary--text"
+            >
+              <v-chip
+                  v-for="index in filters[selected].valueNames.length"
+                  :key="index"
+                  class="pa-5 mx-5"
+              >{{ filters[selected].valueNames[index - 1] }}
+              </v-chip>
+            </v-chip-group>
+          </div>
+        </v-card>
+      </div>
+      <div v-if="debouncedInput.length >= 3 || isFiltering" class="d-flex flex-row">
         <v-select
           label="Ordenar Por"
           v-model="order"
@@ -57,23 +62,22 @@
           item-text="name"
           item-value="valueCall"
         ></v-select>
-        <div class="d-flex flex-row justify-center" v-if="order !== ''">
-          <h3 class="align-self-center">Ascendente o Descendente:</h3>
+        <v-card class="d-flex flex-row justify-center align-center ml-2 px-2" style="max-height: 40px" outlined v-if="order !== ''">
+          <h4 class="">Ascendente o Descendente:</h4>
           <v-chip-group
             v-model="ascOrDes"
-            column
             color="primary"
             active-class="primary--text"
             mandatory
           >
-            <v-chip class="pa-5 mx-2">
-              <v-icon large>mdi-sort-alphabetical-ascending</v-icon>
+            <v-chip class="pa-2 mx-2">
+              <v-icon >mdi-sort-alphabetical-ascending</v-icon>
             </v-chip>
-            <v-chip class="pa-5 mx-2">
-              <v-icon large>mdi-sort-alphabetical-descending</v-icon>
+            <v-chip class="pa-2 mx-2">
+              <v-icon >mdi-sort-alphabetical-descending</v-icon>
             </v-chip>
           </v-chip-group>
-        </div>
+        </v-card>
       </div>
     </div>
     <div v-if="debouncedInput.length >= 3 || isFiltering" class="">
