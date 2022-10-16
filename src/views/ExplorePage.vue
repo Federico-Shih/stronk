@@ -4,11 +4,13 @@
       <h1 class="mb-1">Explorar Nuevas Rutinas</h1>
       <div class="d-flex flex-row">
         <v-text-field
-          label="Busca una rutina en particular..."
+          label="Busca una rutina o creador en particular..."
           outlined
+          clearable
           v-model="input"
           class="rounded-lg mr-2"
           prepend-inner-icon="mdi-magnify"
+          @click:clear="debouncedInput = ''"
         >
         </v-text-field>
         <h4 class="mt-4 mr-3">Filtros:</h4>
@@ -76,7 +78,7 @@
     </div>
     <div v-if="debouncedInput.length >= 3 || isFiltering" class="">
       <RoutineSlideGroup
-        title="Rutinas Buscadas"
+        title="Resultados para tu búsqueda"
         size-variant="large"
         :routines="searchingList"
       />
@@ -92,7 +94,7 @@
       <div class="">
         <RoutineSlideGroup
           title="Otras Rutinas de la Comunidad"
-          size-variant="long"
+          size-variant="large"
           :routines="routines"
         />
       </div>

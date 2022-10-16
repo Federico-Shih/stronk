@@ -25,11 +25,6 @@ const router = new VueRouter({
       component: Landing,
     },
     {
-      path: "/home",
-      name: "home",
-      component: () => import("../views/HomePage.vue"),
-    },
-    {
       path: "/explore",
       name: "explore",
       component: () => import("../views/ExplorePage.vue"),

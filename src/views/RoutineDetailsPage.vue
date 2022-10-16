@@ -138,7 +138,7 @@ export default {
           <v-btn icon @click="() => this.$router.go(-1)">
             <v-icon large>mdi-arrow-left</v-icon>
           </v-btn>
-          <h4 class="text-h4 font-weight-bold ml-5">{{ routine.name }}</h4>
+          <h1 class="font-weight-bold ml-5">{{ routine.name }}</h1>
           <v-spacer></v-spacer>
           <div class="mr-10">
             <v-btn
@@ -273,7 +273,7 @@ export default {
         </v-container>
       </div>
       <v-container fluid class="mt-3">
-        <h2 class="text-h5 font-weight-bold my-5">Ciclos de ejercicios:</h2>
+        <h2 class="font-weight-bold my-5">Ciclos de ejercicios:</h2>
         <div class="d-flex flex-row justify-space-between">
           <div style="width: 600px; position: relative">
             <v-container

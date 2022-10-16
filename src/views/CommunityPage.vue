@@ -1,17 +1,17 @@
 <template>
   <v-container fluid style="margin-left: 2em">
-    <h1>Comunidad</h1>
     <v-row class="d-flex flex-row justify-space-between">
-      <v-col class="mr-16 d-flex flex-column align-start">
-        <div style="width: 500px">
-          <v-text-field
-            label="¿Buscás a alguien en particular?"
-            v-model="searcher"
-            outlined
-            class="rounded-lg"
-            prepend-inner-icon="mdi-magnify"
-          />
-        </div>
+      <v-col class="mr-16">
+        <h1>Comunidad</h1>
+        <v-text-field
+          label="¿Buscás a alguien en particular?"
+          v-model="searcher"
+          outlined
+          clearable
+          @click:clear="resetSearch()"
+          class="rounded-lg"
+          prepend-inner-icon="mdi-magnify"
+        />
         <div v-if="hasProf" class="alignmentToTheCenter">
           <div v-for="person in filteredList" :key="person.id">
             <router-link
@@ -143,6 +143,10 @@ export default {
       "setPage",
     ]),
 
+    resetSearch() {
+      this.searcher = "";
+    },
+
     loadRecommendedUsers() {
       this.recommendedUsers = this.hasProf
         ? this.allUsers.content.slice(0, 3)
@@ -161,6 +165,9 @@ export default {
   computed: {
     ...mapState(useProfileStore, ["getHasProfile", "getId"]),
     filteredList() {
+      if(this.searcher === null) {
+        this.searcher = "";
+      }
       if (this.allUsers.length !== 0)
         return this.allUsers.content.filter((user) =>
           user.username.includes(this.searcher)
