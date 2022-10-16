@@ -185,13 +185,13 @@ export default {
       >
       <v-row style="position: relative" class="mb-5">
         <v-fade-transition hide-on-leave group>
-          <v-col :key="2" v-if="isVerification" class="text-lg-center text-h5"
+          <v-col :key="2" v-if="isVerification" class="text-lg-center"
             >Verificar Código</v-col
           >
-          <v-col :key="1" v-else-if="isRegister" class="text-lg-center text-h5"
+          <v-col :key="1" v-else-if="isRegister" class="text-lg-center"
             >Registrarse</v-col
           >
-          <v-col :key="2" v-else class="text-lg-center text-h5"
+          <v-col :key="2" v-else class="text-lg-center"
             >Iniciar Sesión</v-col
           >
         </v-fade-transition>

@@ -5,7 +5,7 @@
       max-width="600"
   >
     <v-card>
-      <v-card-title v-if="this.title" class="text-h5">
+      <v-card-title v-if="this.title" class="">
         {{ this.title }}
       </v-card-title>
       <v-card-text v-if="this.bodyText">{{ this.bodyText }}</v-card-text>

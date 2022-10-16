@@ -73,7 +73,7 @@
           <v-card-title class="justify-center">
             <div class="align-to-center">
               <v-icon large left> mdi-clipboard-alert</v-icon>
-              <div class="text-h6 font-weight-light align-self-center">
+              <div class="font-weight-light align-self-center">
                 {{ this.text }}
               </div>
             </div>
@@ -163,7 +163,6 @@ export default {
       if (this.userRoutines.length === 0) {
         this.hasRoutines = false;
       } else {
-        this.userRoutines = this.userRoutines.content;
         this.hasRoutines = true;
       }
       this.dialogState = "";

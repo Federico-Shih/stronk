@@ -113,10 +113,10 @@ export default {
         width: 136px;
       "
           :style="{ borderColor: this.$vuetify.theme.themes.light.primary }"
-          class="text-h5 pa-3 ml-6 mb-5 d-flex flex-column justify-end rounded-xl"
+          class=" pa-3 ml-6 mb-5 d-flex flex-column justify-end rounded-xl"
       >
         <div>
-          <span class="font-weight-bold text-h4">{{ this.cycleRepetitions }}</span> reps.
+          <h1 class="font-weight-bold d-inline">{{ this.cycleRepetitions }} </h1> <h4 class="d-inline">reps.</h4>
         </div>
       </div>
     </v-card>

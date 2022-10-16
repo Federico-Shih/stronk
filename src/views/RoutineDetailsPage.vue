@@ -277,8 +277,9 @@ export default {
         <div class="d-flex flex-row justify-space-between">
           <div style="width: 600px; position: relative">
             <v-container
-              class="width_full primary text-h5 font-weight-bold mb-6 rounded-pill white--text pl-8"
-            >Inicio
+              class="width_full primary font-weight-bold mb-6 rounded-pill white--text pl-8"
+            >
+              <h2>Inicio</h2>
             </v-container>
             <CycleCard
               class="mt-3"
@@ -299,8 +300,9 @@ export default {
               "
             ></div>
             <v-container
-              class="width_full primary text-h5 font-weight-bold rounded-pill mt-6 white--text pl-8"
-            >Fin
+              class="width_full primary font-weight-bold rounded-pill mt-6 white--text pl-8"
+            >
+              <h2>Fin</h2>
             </v-container>
           </div>
           <v-img

@@ -151,20 +151,22 @@ export const useProfileStore = defineStore({
       }
     },
     async getRoutinesFrom(id) {
-      let routines=[]
-      let isLastPage=false;
+      let routines=[];
+      let currPage=0;
+      let isLastPage = false;
       try {
         while(!isLastPage) {
-          const {data} = await authAxios.get(`/users/${id}/routines`);
-          console.log(`Loading routines from user ${id}`);
+          const {data} = await authAxios.get(`/users/${id}/routines?` + new URLSearchParams({ page: currPage, size: 10}));
           console.log(data);
-          isLastPage=data.isLastPage;
-          routines=routines.concat(data.content);
+          isLastPage = data.isLastPage;
+          currPage++;
+          routines = routines.concat(data.content);
         }
         return routines;
       } catch (error) {
         console.log(error);
       }
+      return routines;
     },
     async saveProfile(profile) {
       try {

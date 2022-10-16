@@ -29,7 +29,7 @@ export default {
       bus: new Vue({}),
       cycles: [],
       maxId: 0,
-      cycleValidations: 0,
+      cycleValidations: [],
       cycleSaves: 0,
       valid: true,
       snackbar: false,
@@ -57,9 +57,9 @@ export default {
     this.bus.$on("removeCycle", (order) => {
       this.removeCycle(order);
     });
-    this.bus.$on("validatedCycle", () => {
-      console.log("validateCycle");
-      this.cycleValidations++;
+    this.bus.$on("validatedCycle", (order) => {
+      this.cycleValidations.push(order);
+      this.cycleValidations = [...new Set(this.cycleValidations)];
     });
     this.bus.$on("savedCycle", () => {
       this.cycleSaves++;
@@ -135,21 +135,20 @@ export default {
       this.cycles = newCycles;
     },
     setButtonLoading(value) {
-      console.log("hola");
       this.saveButtonLoading = value;
     },
     showExitDialog() {
       this.exitDialog = true;
     },
     trySaveRoutine() {
-      this.cycleValidations = 0;
+      this.cycleValidations = [];
       this.bus.$emit("validate");
       this.setButtonLoading(true);
       setTimeout(() => {
         console.log(
-          `Cycles validated ${this.cycleValidations} out of ${this.cycles.length}`
+          `Cycles validated ${this.cycleValidations.length} out of ${this.cycles.length}`
         );
-        if (this.cycleValidations === this.cycles.length && this.valid) {
+        if (this.cycleValidations.length === this.cycles.length && this.valid) {
           this.saveRoutine();
         } else {
           this.snackbar = true;
@@ -279,8 +278,9 @@ export default {
       <div class="d-flex flex-column align-start ma-6" style="width: 780px">
         <v-container
           fluid
-          class="primary text-h5 font-weight-bold mb-6 rounded-pill white--text pl-8"
-        >Inicio
+          class="primary font-weight-bold mb-6 rounded-pill white--text pl-8"
+        >
+          <h2>Inicio</h2>
         </v-container>
         <div
           v-for="cycle in cycles"
@@ -307,8 +307,9 @@ export default {
         </div>
         <v-container
           fluid
-          class="primary text-h5 font-weight-bold rounded-pill white--text pl-8"
-        >Fin
+          class="primary font-weight-bold rounded-pill white--text pl-8"
+        >
+          <h2>Fin</h2>
         </v-container>
         <div
           class="primary"

@@ -15,7 +15,7 @@
       </v-slide-item>
       <div class="align-to-center my-16 mx-6" v-if="routines.length === 0">
         <v-icon large left> mdi-clipboard-alert</v-icon>
-        <span class="text-h6 font-weight-light align-self-center">
+        <span class="font-weight-light align-self-center">
           {{ this.noRoutinesMessage }}
         </span>
       </div>

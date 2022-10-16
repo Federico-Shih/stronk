@@ -4,7 +4,7 @@
       <div
         style="border: 6px solid; width: 136px"
         :style="{ borderColor: this.$vuetify.theme.themes.light.primary }"
-        class="text-h5 pa-3 ml-6 my-5 d-flex flex-column justify-end rounded-xl"
+        class="pa-3 ml-6 my-5 d-flex flex-column justify-end rounded-xl"
       >
         <div style="width: 100px">
           <v-text-field
@@ -111,8 +111,9 @@ import { CycleTypes } from "@/stores/routine";
 import ExercisePopup from "@/components/ExercisePopup.vue";
 import { mapActions } from "pinia";
 import { useExPopupStore } from "@/stores/expopup";
-import { useCycles } from "../../stores/routine";
+import { useCycles } from "@/stores/routine";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
+import abspic from "@/assets/abdominales.jpg";
 
 export default {
   name: "EditCycle",
@@ -184,25 +185,29 @@ export default {
     ...mapActions(useExPopupStore, ["showExPopup"]),
     validateSelf() {
       if(this.exercises.length === 0 && this.valid) {
-        console.log(`Validating cycle ${this.order}`);
-        this.bus.$emit('validatedCycle');
+        console.log(`Validating cycle ${this.cycleName} of order ${this.order}`);
+        this.bus.$emit('validatedCycle', this.order);
       }
     },
     validateEx(order) {
       if (order === this.order && this.valid) {
-        if(++this.exercisesValidations === this.exercises.length) {
+        this.exercisesValidations++;
+        if(this.exercisesValidations === this.exercises.length) {
           this.exercisesValidations = 0;
-          this.bus.$emit('validatedCycle');
+          console.log(`Validating cycle ${this.cycleName} of order ${this.order}`);
+          this.bus.$emit('validatedCycle', this.order);
         }
       }
     },
     sumbitEx(ExerciseSelected, ExerciseType, index) {
+      console.log(JSON.stringify(ExerciseSelected));
       this.exercises.splice(index, 0, {
         id: ExerciseSelected.id,
         type: ExerciseType,
         name: ExerciseSelected.name,
         duration: ExerciseType === "Repeticiones" ? 999 : 1,
-        repetitions: ExerciseType === "Tiempo" ? 999 : 1
+        repetitions: ExerciseType === "Tiempo" ? 999 : 1,
+        img_url: ExerciseSelected.images.length > 0 ? ExerciseSelected.images[0].url : abspic,
       });
       this.showPopup = false;
     },
