@@ -165,12 +165,13 @@ export default {
   computed: {
     ...mapState(useProfileStore, ["getHasProfile", "getId"]),
     filteredList() {
-      if (this.searcher === null) {
-        this.searcher = "";
+      let busq = this.searcher;
+      if (busq === null) {
+        busq = "";
       }
       if (this.allUsers.length !== 0)
         return this.allUsers.content.filter((user) =>
-          user.username.includes(this.searcher)
+          user.username.includes(busq)
         );
       return [];
     },

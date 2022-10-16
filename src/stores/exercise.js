@@ -1,18 +1,14 @@
-import { defineStore, mapState } from "pinia";
-import { useProfileStore } from "./profile";
-import { authAxios, baseAxios } from "../services/authenticatedAxios";
+import { defineStore } from "pinia";
+import { authAxios } from "../services/authenticatedAxios";
 
 export const useExerciseStore = defineStore("exercise", {
   state: () => ({
     Ownexercises: [],
     Otherexercises: [],
-    page:0,
-    pagesize:10,
-    lastPage:false,
+    page: 0,
+    pagesize: 10,
+    lastPage: false,
   }),
-  getters: {
-    ...mapState(useProfileStore, ["getToken"]),
-  },
   actions: {
     async storeRefresh() {
       return await this.getOwnExercisesData();
@@ -26,8 +22,10 @@ export const useExerciseStore = defineStore("exercise", {
     async getOwnExercisesData() {
       while (!this.lastPage) {
         try {
-          const response = await authAxios.get("/exercises?"
-              +new URLSearchParams({ page: this.page, size: this.pagesize }));
+          const response = await authAxios.get(
+            "/exercises?" +
+              new URLSearchParams({ page: this.page, size: this.pagesize })
+          );
           const data = response.data;
           this.Ownexercises.push(...data.content);
           this.page++;
@@ -245,40 +243,38 @@ export const useExerciseStore = defineStore("exercise", {
     },
     async removeExerciseImage(exerciseId, imageId) {
       try {
-        const response = await authAxios.delete(
+         await authAxios.delete(
           `/exercises/${exerciseId}/images/${imageId}`
         );
       } catch (err) {
         console.log(`Oops~ ${err}`);
-        throw new Error(error);
+        throw new Error(err);
       }
     },
     async removeExerciseVideos(exerciseId, videoId) {
       try {
-        const response = await authAxios.delete(
-          `/exercises/${exerciseId}/videos/${videoId}`
-        );
+        await authAxios.delete(`/exercises/${exerciseId}/videos/${videoId}`);
       } catch (err) {
         console.log(`Oops~ ${err}`);
-        throw new Error(error);
+        throw new Error(err);
       }
     },
     async deleteExercise(exerciseId) {
       try {
-        const response = await authAxios.delete(`/exercises/${exerciseId}`);
+         await authAxios.delete(`/exercises/${exerciseId}`);
       } catch (err) {
         console.log(`Oops~ ${err}`);
-        throw new Error(error);
+        throw new Error(err);
       }
       this.Ownexercises = this.Ownexercises.filter((exercise) => {
         return exercise.id !== exerciseId;
       });
     },
-    cleanExercises(){
-        this.Ownexercises = [];
-        this.Otherexercises = [];
-        this.page=0;
-        this.lastPage=false;
-    }
+    cleanExercises() {
+      this.Ownexercises = [];
+      this.Otherexercises = [];
+      this.page = 0;
+      this.lastPage = false;
+    },
   },
 });

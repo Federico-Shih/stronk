@@ -11,7 +11,7 @@ export const CycleTypes = {
 export const useRoutines = defineStore("useroutines", {
   state: () => ({
     page: 0,
-    size: 15,
+    size: 20,
     routinesFiltered: [],
     isLastPage: false,
   }),
