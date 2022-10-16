@@ -1,6 +1,6 @@
 <template>
   <v-container fluid style="margin-left: 2em">
-    <v-row class="d-flex flex-row justify-space-between">
+    <v-row class="d-flex flex-row flex-grow-0">
       <v-col class="mr-16 align-start">
         <h1>Comunidad</h1>
         <v-text-field
@@ -13,25 +13,25 @@
           prepend-inner-icon="mdi-magnify"
         />
         <div v-if="hasProf">
-          <div v-for="person in filteredList" :key="person.id">
-            <router-link
-              style="text-decoration: none; color: inherit"
-              :to="`/profile/${person.id}`"
-            >
-              <CommunityProfileButton
-                variant="large"
-                :display-name="person.username"
-                description="Body Builder"
-                :profile-pic="person.avatarUrl"
-                v-if="person.id !== id"
-              />
-            </router-link>
+          <div
+            v-for="person in filteredList"
+            :key="person.id"
+            class="flex-grow-0"
+          >
+            <CommunityProfileButton
+              variant="large"
+              :display-name="person.username"
+              description="Body Builder"
+              :profile-pic="person.avatarUrl"
+              v-if="person.id !== id"
+              :profileId="person.id"
+            />
           </div>
           <v-icon
             x-large
             v-if="showArrow && searcher === ''"
             @click="loadMoreUsers"
-            >mdi-chevron-double-down
+          >mdi-chevron-double-down
           </v-icon>
         </div>
         <div v-else>

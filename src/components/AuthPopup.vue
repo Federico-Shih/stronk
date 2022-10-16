@@ -29,6 +29,7 @@ export default {
     show(curr) {
       if (curr) {
         this.isRegister = this.popupType === Popup.REGISTER;
+        this.loginNotVerified = false;
       }
     },
     isRegister() {
@@ -303,8 +304,7 @@ export default {
               type="submit"
               color="primary"
             >{{ isRegister ? "Registrarse" : "Iniciar Sesión" }}
-            </v-btn
-            >
+            </v-btn>
             <v-btn v-if="isVerification" @click="verify()" color="primary">
               Verifique su correo electrónico
             </v-btn>

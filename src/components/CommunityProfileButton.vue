@@ -6,6 +6,7 @@
     @mouseleave="hover = false"
     :elevation="hover ? 5 : 2"
     :class="variants.boxSizes[variant]"
+    @click="$router.push(`/profile/${profileId}`)"
   >
     <v-list-item>
       <v-list-item-avatar :size="variant === 'large' ? 75 : 50"
