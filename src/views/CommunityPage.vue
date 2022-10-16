@@ -7,6 +7,8 @@
           label="¿Buscás a alguien en particular?"
           v-model="searcher"
           outlined
+          clearable
+          @click:clear="resetSearch()"
           class="rounded-lg"
           prepend-inner-icon="mdi-magnify"
         />
@@ -179,6 +181,10 @@ export default {
       "setPage",
     ]),
 
+    resetSearch() {
+      this.searcher = "";
+    },
+
     loadRecommendedUsers() {
       this.recommendedUsers = this.hasProf
         ? this.allUsers.content.slice(0, 3)
@@ -197,6 +203,9 @@ export default {
   computed: {
     ...mapState(useProfileStore, ["getHasProfile", "getId"]),
     filteredList() {
+      if(this.searcher === null) {
+        this.searcher = "";
+      }
       if (this.allUsers.length !== 0)
         return this.allUsers.content.filter((user) =>
           user.username.includes(this.searcher)

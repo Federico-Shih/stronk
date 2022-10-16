@@ -66,7 +66,7 @@
           </v-btn>
         </div>
       </div>
-      <div class="">
+      <div class="" v-if="hasRoutines!=null">
         <RoutineSlideGroup
           v-if="hasRoutines"
           :title="`Rutinas Creadas por ${this.userInfo.username}`"
@@ -122,7 +122,7 @@ export default {
       showPic: false,
       temp,
       avatar: "",
-      hasRoutines: true,
+      hasRoutines: null,
       userRoutines: [],
       userDefault: userDefault,
       description: [
@@ -166,6 +166,9 @@ export default {
       this.userRoutines = await this.getRoutinesFrom(this.userInfo?.id);
       if (this.userRoutines.length === 0) {
         this.hasRoutines = false;
+      } else {
+        this.userRoutines = this.userRoutines.content;
+        this.hasRoutines = true;
       }
       this.dialogState = "";
     } else {

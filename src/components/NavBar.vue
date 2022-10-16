@@ -21,7 +21,7 @@ export default {
       );
     },
     LogoClicked() {
-      return this.getHasProfile ? "/home" : "/";
+      return "/";
     },
   },
   data() {

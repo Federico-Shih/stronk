@@ -13,6 +13,12 @@
           :category="routine.category.id"
         />
       </v-slide-item>
+      <div class="align-to-center my-16 mx-6" v-if="routines.length === 0">
+        <v-icon large left> mdi-clipboard-alert</v-icon>
+        <span class="text-h6 font-weight-light align-self-center">
+          {{ this.noRoutinesMessage }}
+        </span>
+      </div>
     </v-slide-group>
   </div>
 </template>
@@ -34,6 +40,10 @@ export default {
     title: String,
     routines: Array,
     sizeVariant: String,
+    noRoutinesMessage: {
+      type: String,
+      default: "No hay rutinas para mostrar",
+    },
   },
 };
 </script>

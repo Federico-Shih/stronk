@@ -120,8 +120,8 @@ export default {
 }
 
 .routine-button-large {
-  width: 400px;
-  height: 300px;
+  width: 300px;
+  height: 230px;
   margin: 10px 5px;
 }
 
