@@ -1,15 +1,17 @@
 <template>
   <v-container fluid style="margin-left: 2em">
+    <h1>Comunidad</h1>
     <v-row class="d-flex flex-row justify-space-between">
-      <v-col class="mr-16">
-        <h1>Comunidad</h1>
-        <v-text-field
-          label="¿Buscás a alguien en particular?"
-          v-model="searcher"
-          outlined
-          class="rounded-lg"
-          prepend-inner-icon="mdi-magnify"
-        />
+      <v-col class="mr-16 d-flex flex-column align-start">
+        <div style="width: 500px">
+          <v-text-field
+            label="¿Buscás a alguien en particular?"
+            v-model="searcher"
+            outlined
+            class="rounded-lg"
+            prepend-inner-icon="mdi-magnify"
+          />
+        </div>
         <div v-if="hasProf" class="alignmentToTheCenter">
           <div v-for="person in filteredList" :key="person.id">
             <router-link
@@ -46,44 +48,6 @@
               :display-name="person.username"
               :profile-pic="person.avatarUrl"
               :description="person.description"
-            />
-          </div>
-        </div>
-      </v-col>
-      <v-spacer></v-spacer>
-      <v-divider vertical></v-divider>
-      <v-col class="mr-16 alignmentToTheRight">
-        <h2 class="align-self-start">Recomendados</h2>
-        <div v-if="hasProf">
-          <div v-for="person in this.recommendedUsers" :key="person.id">
-            <router-link
-              style="text-decoration: none; color: inherit"
-              :to="{ name: 'profile', params: { id: `${person.id}` } }"
-            >
-              <CommunityProfileButton
-                variant="small"
-                :display-name="person.username"
-                description="Body Builder"
-                :profile-pic="person.avatarUrl"
-                v-if="person.id !== id"
-              />
-            </router-link>
-          </div>
-        </div>
-        <div v-else>
-          <div
-            @click="
-              snackbar = true;
-              timeout = timeout + 1000;
-            "
-            v-for="person in recommendedUsers"
-            :key="person.id"
-          >
-            <CommunityProfileButton
-              variant="small"
-              :display-name="person.username"
-              description="Body Builder"
-              :profile-pic="person.avatarUrl"
             />
           </div>
         </div>

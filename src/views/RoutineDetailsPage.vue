@@ -51,8 +51,10 @@ export default {
   },
   computed: {
     routineIsMine() {
+      console.log(this.routine);
       return this.routine.author.id === this.getId();
-    }
+    },
+    ...mapState(useProfileStore, ["getToken"])
   },
   mounted() {
   },
@@ -102,13 +104,16 @@ export default {
           difficulty: difficultyNamesToSpanish[apiAns.difficulty], //todo mostrar
           category: apiAns.category, // {id, name}
           creationDate: new Date(apiAns.date),
-          liked: await useFavoriteRoutines().isFavorite(this.routineId), //todo revisar
+          liked:
+            this.getToken !== "" &&
+            (await useFavoriteRoutines().isFavorite(this.routineId)) //todo revisar
         };
         console.log(`rutina=${JSON.stringify(this.routine)}`);
         apiAns = await useCycles().getCyclesFromRoutine(this.routineId);
         this.cycles = apiAns;
         this.cycles.sort((a, b) => a.order - b.order);
       } catch (e) {
+        console.log(e);
         this.loadingDialogState = "notFound";
       }
     } else {
@@ -158,16 +163,16 @@ export default {
               <v-icon class="">mdi-share-variant</v-icon>
             </v-btn>
             <v-btn
-                icon
-                @click="routine.liked ? unfavorite() : favorite()"
-                class="ml-4"
+              icon
+              @click="routine.liked ? unfavorite() : favorite()"
+              class="ml-4"
             >
               <v-icon color="primary" large
               >{{ routine.liked ? "mdi-heart" : "mdi-heart-outline" }}
               </v-icon>
             </v-btn>
-            </div>
           </div>
+        </div>
         <v-container fluid class="d-flex flex-row">
           <v-card width="800">
             <v-card-text>
@@ -186,7 +191,11 @@ export default {
                       <v-img
                         height="50px"
                         width="50px"
-                        :src="routine.author.avatarUrl ? routine.author.avatarUrl : temp"
+                        :src="
+                          routine.author.avatarUrl
+                            ? routine.author.avatarUrl
+                            : temp
+                        "
                         :lazy-src="temp"
                         class="rounded-circle"
                       ></v-img>
@@ -212,25 +221,25 @@ export default {
           <v-spacer></v-spacer>
           <div class="mr-10">
             <v-menu
-                v-model="ratingMenu"
-                :close-on-content-click="false"
-                offset-y
+              v-model="ratingMenu"
+              :close-on-content-click="false"
+              offset-y
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-chip
-                    large
-                    label
-                    class="d-flex flex-row align-center text--primary mt-8"
-                    v-bind="attrs"
-                    v-on="on"
+                  large
+                  label
+                  class="d-flex flex-row align-center text--primary mt-8"
+                  v-bind="attrs"
+                  v-on="on"
                 >
                   {{ routine.rating }}
                   <v-rating
-                      disabled
-                      readonly
-                      :value="routine.rating"
-                      dense
-                      class="ml-3"
+                    disabled
+                    readonly
+                    :value="routine.rating"
+                    dense
+                    class="ml-3"
                   ></v-rating>
                 </v-chip>
               </template>
@@ -238,24 +247,24 @@ export default {
                 <h4>Tu puntación para esta rutina:</h4>
                 <div class="d-flex flex-row align-baseline">
                   <v-rating
-                      v-model="yourRating"
-                      color="primary"
-                      dense
-                      empty-icon="mdi-star-outline"
-                      full-icon="mdi-star"
-                      half-icon="mdi-star-half-full"
-                      hover
-                      length="5"
-                      size="24"
-                      value="3"
+                    v-model="yourRating"
+                    color="primary"
+                    dense
+                    empty-icon="mdi-star-outline"
+                    full-icon="mdi-star"
+                    half-icon="mdi-star-half-full"
+                    hover
+                    length="5"
+                    size="24"
+                    value="3"
                   ></v-rating>
                   <h4 class="ml-2">{{ this.yourRating }}</h4>
                 </div>
                 <v-btn
-                    depressed
-                    color="primary"
-                    class="rounded-pill ml-4"
-                    @click="sumbitRating"
+                  depressed
+                  color="primary"
+                  class="rounded-pill ml-4"
+                  @click="sumbitRating"
                 >Confirmar
                 </v-btn>
               </v-card>

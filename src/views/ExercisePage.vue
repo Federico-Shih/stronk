@@ -18,7 +18,10 @@
       </div>
       <div class="d-flex flex-row justify-space-between pr-16">
         <span v-if="exercises.length === 0">
-          <router-link to="/exercises/create" v-show="!loading&& !errorloading" >
+          <router-link
+            to="/exercises/create"
+            v-show="!loading && !errorloading"
+          >
             <h2 class="text--black">
               No tenés ejercicios, empezá creando tu primer ejercicio!
             </h2>
@@ -27,23 +30,24 @@
         <div class="d-flex flex-column">
           <div v-for="exer in exercises" :key="exer.id">
             <ExerciseDepiction
-                @refreshevent="refreshOwnExercises"
-                variant="large"
-                :picture="exer.images.length > 0 ? exer.images[0].url : abdominales"
-                :exercise-name="exer.name"
-                :category="exer.detail"
-                :id="exer.id"
-                class="mt-0"
+              @refreshevent="refreshOwnExercises"
+              variant="large"
+              :picture="
+                exer.images.length > 0 ? exer.images[0].url : abdominales
+              "
+              :exercise-name="exer.name"
+              :category="exer.detail"
+              :id="exer.id"
+              class="mt-0"
             />
           </div>
         </div>
-        <div>
+        <div class="flex-grow-1 d-flex flex-row justify-center">
           <v-img
-              contain
-              :src="exercisePerson"
-              max-height="600px"
-              max-width="300px"
-              class="mr-16"
+            contain
+            :src="exercisePerson"
+            max-height="600px"
+            max-width="300px"
           ></v-img>
         </div>
       </div>
@@ -75,10 +79,10 @@ export default {
       abdominales: abspic,
       exercises: [],
       loading: true,
-      errorSnackbar:false,
-      errorloading:false,
-      timeout:5000,
-      exercisePerson: exercisePerson,
+      errorSnackbar: false,
+      errorloading: false,
+      timeout: 5000,
+      exercisePerson: exercisePerson
     };
   },
   methods: {
@@ -90,12 +94,12 @@ export default {
     async refreshOwnExercises() {
       let aux;
       try {
-        aux  = await this.getOwnExercises();
-      }catch (e) {
+        aux = await this.getOwnExercises();
+      } catch (e) {
         console.log(e);
-        this.loading= false;
-        this.errorSnackbar=true;
-        this.errorloading= true;
+        this.loading = false;
+        this.errorSnackbar = true;
+        this.errorloading = true;
         return;
       } //Faltaria poner un timeout para que no se quede cargando en la animacion
       this.loading = false;

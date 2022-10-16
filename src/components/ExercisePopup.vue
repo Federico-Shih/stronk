@@ -30,8 +30,7 @@
         <v-spacer style="height: 50px"></v-spacer>
         <v-btn @click="onSumbit" color="primary" :disabled="!valid"
         >Terminar
-        </v-btn
-        >
+        </v-btn>
       </v-form>
     </v-card>
   </v-overlay>

@@ -31,13 +31,19 @@ export default {
       firstname: "",
       links: [
         { label: "Explorar", link: "/explore" },
-        { label: "Comunidad", link: "/community" },
+        { label: "Comunidad", link: "/community", protected: true },
         { label: "Mis rutinas", link: "/routines", protected: true },
         { label: "Mis ejercicios", link: "/exercises", protected: true },
         { label: "Mi perfil", link: "/profile", protected: true }
       ],
       dropdownItems: [
-        { label: "Editar Perfil", link: "", click: () => { this.$router.push("/profile/edit") } },
+        {
+          label: "Editar Perfil",
+          link: "",
+          click: () => {
+            this.$router.push("/profile/edit");
+          }
+        },
         { divider: true },
         {
           label: "Cerrar sesión",
@@ -94,10 +100,11 @@ export default {
       v-for="{ link, label } in ownedLinks"
       :key="link"
       :to="link"
-      class="white--text ml-16 mt-2 text-decoration-none"
+      style="text-decoration: none"
+      class="white--text ml-16 mt-2"
       active-class="active"
-      >{{ label }}</router-link
-    >
+    >{{ label }}
+    </router-link>
     <v-spacer></v-spacer>
     <div v-if="!this.getHasProfile">
       <v-btn
@@ -129,7 +136,13 @@ export default {
               @click="setExpanded(!expanded)"
             >
               Bienvenido, {{ firstname }}
-              <v-img class="ml-2 rounded-circle" :src="image" :lazy-src="temp" height="30" max-width="30" />
+              <v-img
+                class="ml-2 rounded-circle"
+                :src="image"
+                :lazy-src="temp"
+                height="30"
+                max-width="30"
+              />
               <v-icon class="text--black ml-3">
                 {{ expanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
               </v-icon>
@@ -160,6 +173,7 @@ export default {
 
 <style>
 .active {
-  font-weight: bolder;
+  font-weight: 500;
+  text-decoration: underline !important;
 }
 </style>

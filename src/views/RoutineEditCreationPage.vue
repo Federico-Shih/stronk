@@ -11,7 +11,12 @@ const difficultyApiNames = ["beginner", "intermediate", "advanced"];
 
 export default {
   name: "RoutineEditCreationPage",
-  components: {DeleteConfirmationDialog, LoadingFetchDialog, GoBackButton, EditCycle },
+  components: {
+    DeleteConfirmationDialog,
+    LoadingFetchDialog,
+    GoBackButton,
+    EditCycle
+  },
   data() {
     return {
       routineId: null,
@@ -33,7 +38,9 @@ export default {
       exitDialog: false,
       rules: {
         required: (value) => value.length > 0 || "Requerido",
-        maxLength(n){ return (value) => value.length <= n || `Maximo ${n} caracteres`},
+        maxLength(n) {
+          return (value) => value.length <= n || `Maximo ${n} caracteres`;
+        }
       },
       saveButtonLoading: false
     };
@@ -79,14 +86,14 @@ export default {
       }
     } else {
       this.cycles = this.cycles.concat(
-          { "cycle-type": CycleTypes.WARMUP, order: 1, id: null, internalId: 0 },
-          {
-            "cycle-type": CycleTypes.EXERCISE,
-            order: 2,
-            id: null,
-            internalId: 1
-          },
-          { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: null, internalId: 2 }
+        { "cycle-type": CycleTypes.WARMUP, order: 1, id: null, internalId: 0 },
+        {
+          "cycle-type": CycleTypes.EXERCISE,
+          order: 2,
+          id: null,
+          internalId: 1
+        },
+        { "cycle-type": CycleTypes.COOLDOWN, order: 3, id: null, internalId: 2 }
       );
       this.maxId = 3;
     }
@@ -140,7 +147,7 @@ export default {
       this.setButtonLoading(true);
       setTimeout(() => {
         console.log(
-            `Cycles validated ${this.cycleValidations} out of ${this.cycles.length}`
+          `Cycles validated ${this.cycleValidations} out of ${this.cycles.length}`
         );
         if (this.cycleValidations === this.cycles.length && this.valid) {
           this.saveRoutine();
@@ -180,22 +187,32 @@ export default {
 
 <template>
   <div>
-    <v-container v-if="loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'" fluid class="d-flex flex-column justify-start">
+    <v-container
+      v-if="
+        loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'
+      "
+      fluid
+      class="d-flex flex-column justify-start"
+    >
       <div class="d-flex flex-row align-center">
         <div class="d-flex flex-row justify-start align-center">
-          <GoBackButton :on-click-function="showExitDialog"/>
+          <GoBackButton :on-click-function="showExitDialog" />
           <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} una Rutina</h1>
         </div>
         <div class="d-flex flex-row mr-8 ml-auto">
-          <v-btn color="secondary" class="rounded-pill mr-4" @click="showExitDialog()">
+          <v-btn
+            color="secondary"
+            class="rounded-pill mr-4"
+            @click="showExitDialog()"
+          >
             <v-icon left>mdi-close</v-icon>
             Descartar {{ edit ? " Cambios" : " Rutina" }}
           </v-btn>
           <v-btn
-              color="primary"
-              class="rounded-pill"
-              @click="trySaveRoutine()"
-              :loading="saveButtonLoading"
+            color="primary"
+            class="rounded-pill"
+            @click="trySaveRoutine()"
+            :loading="saveButtonLoading"
           >
             <v-icon left>mdi-content-save</v-icon>
             Guardar {{ edit ? " Cambios" : " Rutina" }}
@@ -206,34 +223,37 @@ export default {
         <div class="d-flex flex-column justify-start pt-4" style="width: 40%">
           <v-form v-model="valid">
             <v-text-field
-                v-model="name"
-                label="Nombre de la Rutina"
-                dense
-                outlined
-                class="rounded-lg"
-                :rules="[rules.required, rules.maxLength(100)]"
-            />
-          </v-form>
-          <v-textarea
-              v-model="detail"
-              label="Descripción de la Rutina"
+              v-model="name"
+              label="Nombre de la Rutina"
               dense
               outlined
               class="rounded-lg"
-              :rules="[rules.maxLength(200)]"
+              :rules="[rules.required, rules.maxLength(100)]"
+            />
+          </v-form>
+          <v-textarea
+            v-model="detail"
+            label="Descripción de la Rutina"
+            dense
+            outlined
+            class="rounded-lg"
+            :rules="[rules.maxLength(200)]"
           />
         </div>
         <div class="d-flex flex-column justify-start">
           <div class="d-flex flex-row justify-end align-center mr-8">
             <h4 class="mr-4">Dificultad:</h4>
             <v-chip-group
-                v-model="difficultySelected"
-                mandatory
-                style="width: 60%"
-                column
-                active-class="primary--text"
+              v-model="difficultySelected"
+              mandatory
+              style="width: 60%"
+              column
+              active-class="primary--text"
             >
-              <v-chip v-for="index in difficulty.length" :key="index" class="pa-5"
+              <v-chip
+                v-for="index in difficulty.length"
+                :key="index"
+                class="pa-5"
               >{{ difficulty[index - 1] }}
               </v-chip>
             </v-chip-group>
@@ -241,11 +261,11 @@ export default {
           <div class="d-flex flex-row justify-end align-center mr-8">
             <h4 class="mr-4">Categoría:</h4>
             <v-chip-group
-                v-model="categorySelected"
-                mandatory
-                style="width: 60%"
-                column
-                active-class="primary--text"
+              v-model="categorySelected"
+              mandatory
+              style="width: 60%"
+              column
+              active-class="primary--text"
             >
               <v-chip v-for="index in category.length" :key="index" class="pa-5"
               >{{ category[index - 1] }}
@@ -256,28 +276,50 @@ export default {
       </div>
       <v-divider></v-divider>
       <h2 class="mt-4 ml-8">Ciclos de Ejercicios</h2>
-      <div
+      <div class="d-flex flex-column align-start ma-6" style="width: 780px">
+        <v-container
+          fluid
+          class="primary text-h5 font-weight-bold mb-6 rounded-pill white--text pl-8"
+        >Inicio
+        </v-container>
+        <div
           v-for="cycle in cycles"
           :key="cycle.internalId"
           class="d-flex flex-column align-center flex-grow-0"
-      >
-        <EditCycle
+        >
+          <EditCycle
             :bus="bus"
             :order="cycle.order"
             :cycle-type="cycle['cycle-type']"
             :cycleId="cycle.id"
             :routine-id="parseInt(routineId)"
-        />
-        <v-btn
+          />
+          <v-btn
             v-if="cycle.order !== cycles.length && cycle.order !== 1"
             @click="() => addCycle(cycle.order)"
             class="mb-7 mt-5 rounded-pill"
             color="primary"
-        >
-          <v-icon>mdi-plus</v-icon>
-          Agregar ciclo
-        </v-btn>
-        <div v-else class="mt-4"></div>
+          >
+            <v-icon>mdi-plus</v-icon>
+            Agregar ciclo
+          </v-btn>
+          <div v-else class="mt-4"></div>
+        </div>
+        <v-container
+          fluid
+          class="primary text-h5 font-weight-bold rounded-pill white--text pl-8"
+        >Fin
+        </v-container>
+        <div
+          class="primary"
+          style="
+            position: absolute;
+            height: 100%;
+            width: 6px;
+            top: 0;
+            left: 155px;
+          "
+        ></div>
       </div>
     </v-container>
     <v-snackbar v-model="snackbar" :timeout="4000" color="red">
@@ -295,10 +337,10 @@ export default {
           Seguir Editando
         </v-btn>
         <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="
+          color="white"
+          text
+          v-bind="attrs"
+          @click="
             saveSnackbar = false;
             $router.back();
           "
@@ -308,20 +350,23 @@ export default {
       </template>
     </v-snackbar>
     <DeleteConfirmationDialog
-        :dialog="exitDialog"
-        title="¿Está seguro que desea salir?"
-        body-text="Se perderán todos los cambios no guardados."
-        agree-button-text="Sí"
-        disagree-button-text="No"
-        v-on:agree="exitDialog = false; $router.back()"
-        v-on:disagree="exitDialog = false"
+      :dialog="exitDialog"
+      title="¿Está seguro que desea salir?"
+      body-text="Se perderán todos los cambios no guardados."
+      agree-button-text="Sí"
+      disagree-button-text="No"
+      v-on:agree="
+        exitDialog = false;
+        $router.back();
+      "
+      v-on:disagree="exitDialog = false"
     />
     <LoadingFetchDialog
-        :dialog-state="loadingDialogState"
-        loading-text="Por favor, espere..."
-        not-found-text="¡Oops! La rutina no se ha encontrado."
-        ok-not-found-button-text="OK"
-        v-on:oknotfound="$router.back()"
+      :dialog-state="loadingDialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="¡Oops! La rutina no se ha encontrado."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
     />
   </div>
 </template>

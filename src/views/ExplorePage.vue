@@ -47,28 +47,28 @@
       </div>
       <div v-if="debouncedInput.length >= 3 || isFiltering">
         <v-select
-            label="Ordenar Por"
-            v-model="order"
-            outlined
-            :items="orderChoices"
-            dense
-            item-text="name"
-            item-value="valueCall"
+          label="Ordenar Por"
+          v-model="order"
+          outlined
+          :items="orderChoices"
+          dense
+          item-text="name"
+          item-value="valueCall"
         ></v-select>
         <div class="d-flex flex-row justify-center" v-if="order !== ''">
           <h3 class="align-self-center">Ascendente o Descendente:</h3>
           <v-chip-group
-              v-model="ascOrDes"
-              column
-              color="primary"
-              active-class="primary--text"
-              mandatory
+            v-model="ascOrDes"
+            column
+            color="primary"
+            active-class="primary--text"
+            mandatory
           >
-            <v-chip class="pa-5 mx-2"
-            ><v-icon large>mdi-sort-alphabetical-ascending</v-icon>
+            <v-chip class="pa-5 mx-2">
+              <v-icon large>mdi-sort-alphabetical-ascending</v-icon>
             </v-chip>
-            <v-chip class="pa-5 mx-2"
-            ><v-icon large>mdi-sort-alphabetical-descending</v-icon>
+            <v-chip class="pa-5 mx-2">
+              <v-icon large>mdi-sort-alphabetical-descending</v-icon>
             </v-chip>
           </v-chip-group>
         </div>
@@ -114,16 +114,19 @@ export default {
       else this.filteredList();
     },
     filtersModels(curr) {
-      if (this.debouncedInput.length >= 3) this.filteredList(this.debouncedInput);
+      if (this.debouncedInput.length >= 3)
+        this.filteredList(this.debouncedInput);
       else this.filteredList();
       this.isFiltering = !curr.every((element) => element === undefined);
     },
     order() {
-      if (this.debouncedInput.length >= 3) this.filteredList(this.debouncedInput);
+      if (this.debouncedInput.length >= 3)
+        this.filteredList(this.debouncedInput);
       else this.filteredList();
     },
     ascOrDes() {
-      if (this.debouncedInput.length >= 3) this.filteredList(this.debouncedInput);
+      if (this.debouncedInput.length >= 3)
+        this.filteredList(this.debouncedInput);
       else this.filteredList();
     },
   },

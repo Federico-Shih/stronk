@@ -165,6 +165,9 @@ export default {
       this.isRegister = true;
       this.isVerification = false;
       this.hidePopup();
+      if (this.$route.path === "/auth") {
+        this.$router.go(-1);
+      }
     },
   },
 };

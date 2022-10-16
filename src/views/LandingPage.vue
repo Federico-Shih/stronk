@@ -20,7 +20,7 @@ export default {
     <div class="text-center mt-10">
       <h1>¡Conviertete en tu mejor versión!</h1>
       <p class="align-center">
-        Elige entre una Elige entre una gran variedad de rutinas y ejercicios<br />
+        Elige entre una gran variedad de rutinas y ejercicios<br />
         Hagamos rendir mas tu tiempo en el gimnasio.<br />
         ¡Diviertete haciendo cada dia un mejor esfuerzo!
       </p>
@@ -47,36 +47,38 @@ export default {
         </v-carousel-item>
       </v-carousel>
     </div>
-    <v-container style="background-color: white">
-      <v-row>
-        <v-col>
-          <h2>Redes Sociales</h2>
-        </v-col>
+    <v-footer style="width: 100%" dark class="mt-10">
+      <v-container>
+        <v-row>
+          <v-col>
+            <h2>Redes Sociales</h2>
+          </v-col>
 
-        <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
 
-        <v-col>
-          <h2>APP Móvil Android</h2>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-btn icon href="https://www.facebook.com/" class="mx-2">
-            <v-icon color="blue darken-3" size="100">mdi-facebook</v-icon>
-          </v-btn>
-          <v-btn icon href="https://www.twitter.com/" class="mx-16">
-            <v-icon color="blue" size="100">mdi-twitter</v-icon>
-          </v-btn>
-          <v-btn icon href="https://www.instagram.com/" class="mx-2">
-            <v-icon color="orange darken-4" size="100">mdi-instagram</v-icon>
-          </v-btn>
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-col>
-          <img :src="android" alt="android" height="35px" />
-        </v-col>
-      </v-row>
-    </v-container>
+          <v-col>
+            <h2>APP Móvil Android</h2>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn icon href="https://www.facebook.com/" class="mx-2">
+              <v-icon color="blue darken-3" size="100">mdi-facebook</v-icon>
+            </v-btn>
+            <v-btn icon href="https://www.twitter.com/" class="mx-16">
+              <v-icon color="blue" size="100">mdi-twitter</v-icon>
+            </v-btn>
+            <v-btn icon href="https://www.instagram.com/" class="mx-2">
+              <v-icon color="orange darken-4" size="100">mdi-instagram</v-icon>
+            </v-btn>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col>
+            <img :src="android" alt="android" height="35px" />
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-footer>
   </div>
 </template>
 
