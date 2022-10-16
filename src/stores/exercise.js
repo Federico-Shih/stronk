@@ -249,7 +249,6 @@ export const useExerciseStore = defineStore("exercise", {
         const response = await authAxios.delete(
           `/exercises/${exerciseId}/images/${imageId}`
         );
-        console.log(response);
       } catch (err) {
         console.log(`Oops~ ${err}`);
         throw new Error(error);
@@ -260,7 +259,6 @@ export const useExerciseStore = defineStore("exercise", {
         const response = await authAxios.delete(
           `/exercises/${exerciseId}/videos/${videoId}`
         );
-        console.log(response);
       } catch (err) {
         console.log(`Oops~ ${err}`);
         throw new Error(error);
@@ -269,7 +267,6 @@ export const useExerciseStore = defineStore("exercise", {
     async deleteExercise(exerciseId) {
       try {
         const response = await authAxios.delete(`/exercises/${exerciseId}`);
-        console.log(response);
       } catch (err) {
         console.log(`Oops~ ${err}`);
         throw new Error(error);

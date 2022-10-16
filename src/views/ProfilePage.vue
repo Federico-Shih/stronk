@@ -164,11 +164,8 @@ export default {
         : this.temp;
       this.showPic = this.avatar.length !== 0;
       this.userRoutines = await this.getRoutinesFrom(this.userInfo?.id);
-      if (this.userRoutines.totalCount === 0) {
-        this.userRoutines = [];
+      if (this.userRoutines.length === 0) {
         this.hasRoutines = false;
-      } else {
-        this.userRoutines = this.userRoutines.content;
       }
       this.dialogState = "";
     } else {
