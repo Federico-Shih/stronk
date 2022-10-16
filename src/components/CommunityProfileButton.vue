@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import arn from "../assets/arnold.png";
+import arn from "../assets/user-default.png";
 export default {
   name: "CommunityProfileButton",
   props: {

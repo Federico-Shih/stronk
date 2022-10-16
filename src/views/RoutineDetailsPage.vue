@@ -183,7 +183,7 @@ export default {
                       icon
                       @click="
                         $router.push({
-                          name: 'profile',
+                          name: 'profile_extern',
                           params: { id: `${routine.author.id}` },
                         })
                       "

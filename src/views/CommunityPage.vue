@@ -1,139 +1,74 @@
 <template>
-  <v-container fluid style="margin-left: 2em">
-    <v-row class="d-flex flex-row flex-grow-0">
-      <v-col class="mr-16 align-start">
-        <h1>Comunidad</h1>
-        <v-text-field
-          label="¿Buscás a alguien en particular?"
-          v-model="searcher"
-          outlined
-          clearable
-          @click:clear="resetSearch()"
-          class="rounded-lg"
-          prepend-inner-icon="mdi-magnify"
-        />
-        <div v-if="hasProf">
-          <div
-            v-for="person in filteredList"
-            :key="person.id"
-            class="flex-grow-0"
-          >
-            <CommunityProfileButton
-              variant="large"
-              :display-name="person.username"
-              description="Body Builder"
-              :profile-pic="person.avatarUrl"
-              v-if="person.id !== id"
-              :profileId="person.id"
-            />
+  <div>
+    <v-container v-if="allUsers!==null" fluid style="margin-left: 2em">
+      <v-row class="d-flex flex-row flex-grow-0">
+        <v-col class="mr-16 align-start">
+          <h1>Comunidad</h1>
+          <v-text-field
+              label="¿Buscás a alguien en particular?"
+              v-model="searcher"
+              outlined
+              clearable
+              @click:clear="resetSearch()"
+              class="rounded-lg"
+              prepend-inner-icon="mdi-magnify"
+          />
+          <div v-if="hasProf">
+            <div
+                v-for="person in filteredList"
+                :key="person.id"
+                class="flex-grow-0"
+            >
+              <CommunityProfileButton
+                  variant="large"
+                  :display-name="person.username"
+                  description="Body Builder"
+                  :profile-pic="person.avatarUrl"
+                  v-if="person.id !== id"
+                  :profileId="person.id"
+              />
+            </div>
+            <v-icon
+                x-large
+                v-if="showArrow && searcher === ''"
+                @click="loadMoreUsers"
+            >mdi-chevron-double-down
+            </v-icon>
           </div>
-          <v-icon
-            x-large
-            v-if="showArrow && searcher === ''"
-            @click="loadMoreUsers"
-          >mdi-chevron-double-down
-          </v-icon>
-        </div>
-        <div v-else>
-          <div
-            @click="
-              snackbar = true;
-              timeout = timeout + 1000;
-            "
-            v-for="person in defaultUsers"
-            :key="person.id"
-          >
-            <CommunityProfileButton
-              variant="large"
-              :display-name="person.username"
-              :profile-pic="person.avatarUrl"
-              :description="person.description"
-            />
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-    <v-snackbar v-model="snackbar" :timeout="timeout">
-      {{ text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="primary"
-          text
-          v-bind="attrs"
-          @click="
-            snackbar = false;
-            timeout = 2000;
-          "
-        >
-          Cerrar
-        </v-btn>
-      </template>
-    </v-snackbar>
-  </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
+    <LoadingFetchDialog
+        :dialog-state="dialogState"
+        loading-text="Por favor, espere..."
+        :not-found-text="text"
+        ok-not-found-button-text="OK"
+        v-on:oknotfound="$router.back()"/>
+  </div>
 </template>
 
 <script>
 import CommunityProfileButton from "../components/CommunityProfileButton.vue";
-import abdos from "../assets/abdominallateral.jpg";
 import { mapActions } from "pinia";
 import { useProfileStore } from "@/stores/profile";
 import { mapState } from "pinia/dist/pinia";
+import LoadingFetchDialog from "@/components/LoadingFetchDialog.vue";
 export default {
   components: {
+    LoadingFetchDialog,
     CommunityProfileButton,
   },
   data() {
     return {
-      Abdos: abdos,
       searcher: "",
       pageSize: 10,
       id: null,
       hasProf: false,
       showArrow: true,
-      allUsers: [],
-      snackbar: false,
-      recommendedUsers: [],
+      allUsers: null,
+      dialogState: 'loading',
       timeout: 1000,
-      text: "Inicie sesión para ver perfiles.",
-      defaultUsers: [
-        {
-          id: "1",
-          username: "The Arnold Schwarzenegger",
-          avatarUrl:
-            "https://media.ambito.com/p/175c80b523ca2cb374923d219f969e60/adjuntos/239/imagenes/038/108/0038108131/arnold-schwarzenegger.jpg",
-          description:
-            "Austrian-American actor, film producer, businessman, retired professional bodybuilder and politician.",
-        },
-        {
-          id: "2",
-          username: "The Terminator Guy",
-          avatarUrl:
-            "https://upload.wikimedia.org/wikipedia/commons/a/af/Arnold_Schwarzenegger_by_Gage_Skidmore_4.jpg",
-          description: "Mr Universe.",
-        },
-        {
-          id: "3",
-          username: "Arnold",
-          avatarUrl:
-            "https://tn.com.ar/resizer/z4vSOIFyoqVJdouo5QO_lFNne_k=/767x0/smart/cloudfront-us-east-1.images.arcpublishing.com/artear/QREUJ7GN7GLL2JJMK6BJYGME4E.jpg",
-          description: "American Actor and playboy.",
-        },
-        {
-          id: "4",
-          username: "Arn Schwarz",
-          avatarUrl:
-            "https://www.clarin.com/img/2019/10/30/arnold-en-la-primera-de___nhHQ72HK_720x0__1.jpg",
-          description: "Body Builder.",
-        },
-        {
-          id: "5",
-          username: "The Same Guy",
-          avatarUrl:
-            "https://media.ambito.com/p/5e2a346f9de355d551193e0fcc962ab5/adjuntos/239/imagenes/039/609/0039609224/arnold-schwarzenegger-choque-1.jpg",
-          description:
-            "Known as the Styrian Oak, or Austrian Oak, in the bodybuilding world.",
-        },
-      ],
+      text: "Inicie sesión para ver perfiles de la comunidad.",
     };
   },
   methods: {
@@ -145,12 +80,6 @@ export default {
 
     resetSearch() {
       this.searcher = "";
-    },
-
-    loadRecommendedUsers() {
-      this.recommendedUsers = this.hasProf
-        ? this.allUsers.content.slice(0, 3)
-        : this.defaultUsers.slice(0, 3);
     },
     changeShownArrow(users) {
       this.showArrow = !users.isLastPage;
@@ -188,8 +117,11 @@ export default {
         this.setPage(page);
       }
       this.changeShownArrow(this.allUsers);
+      this.dialogState = 'ok';
     }
-    this.loadRecommendedUsers();
+    else {
+      this.dialogState = 'notFound';
+    }
   },
 };
 </script>

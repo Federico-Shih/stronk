@@ -35,7 +35,7 @@
                 icon
                 class="mx-4"
                 @click="
-              $router.push({ name: 'profile', params: { id: `${creatorid}` } })
+              $router.push({ name: 'profile_extern', params: { id: `${creatorid}` } })
             "
             >
               <v-img
