@@ -1,7 +1,7 @@
 <template>
   <v-container fluid style="margin-left: 2em">
     <v-row class="d-flex flex-row justify-space-between">
-      <v-col class="mr-16">
+      <v-col class="mr-16 align-start">
         <h1>Comunidad</h1>
         <v-text-field
           label="¿Buscás a alguien en particular?"
@@ -12,7 +12,7 @@
           class="rounded-lg"
           prepend-inner-icon="mdi-magnify"
         />
-        <div v-if="hasProf" class="alignmentToTheCenter">
+        <div v-if="hasProf">
           <div v-for="person in filteredList" :key="person.id">
             <router-link
               style="text-decoration: none; color: inherit"
@@ -165,7 +165,7 @@ export default {
   computed: {
     ...mapState(useProfileStore, ["getHasProfile", "getId"]),
     filteredList() {
-      if(this.searcher === null) {
+      if (this.searcher === null) {
         this.searcher = "";
       }
       if (this.allUsers.length !== 0)
