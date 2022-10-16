@@ -88,14 +88,14 @@
         <RoutineSlideGroup
           title="Rutinas Populares"
           size-variant="large"
-          :routines="routines"
+          :routines="popularRoutines"
         />
       </div>
       <div class="">
         <RoutineSlideGroup
-          title="Otras Rutinas de la Comunidad"
-          size-variant="large"
-          :routines="routines"
+          title="Rutinas para Principiantes"
+          size-variant="long"
+          :routines="otherRoutines"
         />
       </div>
     </div>
@@ -116,20 +116,14 @@ export default {
       else this.filteredList();
     },
     filtersModels(curr) {
-      if (this.debouncedInput.length >= 3)
-        this.filteredList(this.debouncedInput);
-      else this.filteredList();
+      this.startSearch();
       this.isFiltering = !curr.every((element) => element === undefined);
     },
     order() {
-      if (this.debouncedInput.length >= 3)
-        this.filteredList(this.debouncedInput);
-      else this.filteredList();
+      this.startSearch();
     },
     ascOrDes() {
-      if (this.debouncedInput.length >= 3)
-        this.filteredList(this.debouncedInput);
-      else this.filteredList();
+      this.startSearch();
     },
   },
   computed: {
@@ -155,8 +149,12 @@ export default {
       this.filtersModels[index] = undefined;
       this.filtersModels = [...this.filtersModels];
     },
+    startSearch() {
+      if (this.debouncedInput.length >= 3)
+        this.filteredList(this.debouncedInput);
+      else this.filteredList();
+    },
     async filteredList(searchValue) {
-      console.log("asdasd");
       let object = {};
       if (searchValue !== null && searchValue !== undefined)
         object["search"] = searchValue;
@@ -175,12 +173,19 @@ export default {
     },
   },
   async mounted() {
-    this.ourRoutines = await this.getNextPage(5);
-    console.log("Our Routines:");
-    console.log(this.ourRoutines);
+    this.popularRoutines = await this.getAnotherPage({ score: 5 });
+    this.resetPages();
+    this.popularRoutines = this.popularRoutines.concat(
+      await this.getAnotherPage({ score: 4 })
+    );
+    this.resetPages();
+    this.otherRoutines = await this.getAnotherPage({ difficulty: "beginner" });
+    this.resetPages();
   },
   data() {
     return {
+      popularRoutines: [],
+      otherRoutines: [],
       isFiltering: false,
       searchingList: [],
       debouncedInput: "",
@@ -224,7 +229,6 @@ export default {
           nameOfParam: "categoryId",
         },
       ],
-      ourRoutines: [],
       routines: [],
     };
   },
