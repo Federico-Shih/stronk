@@ -6,7 +6,6 @@ export const useExerciseStore = defineStore("exercise", {
   state: () => ({
     Ownexercises: [],
     Otherexercises: [],
-    userToken: "",
     page:0,
     pagesize:10,
     lastPage:false,
@@ -275,5 +274,11 @@ export const useExerciseStore = defineStore("exercise", {
         return exercise.id !== exerciseId;
       });
     },
+    cleanExercises(){
+        this.Ownexercises = [];
+        this.Otherexercises = [];
+        this.page=0;
+        this.lastPage=false;
+    }
   },
 });

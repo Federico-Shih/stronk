@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
+import {defineStore, mapActions} from "pinia";
 import { authAxios, baseAxios } from "../services/authenticatedAxios";
-
+import {useExerciseStore} from "./exercise";
 export const useProfileStore = defineStore({
   id: "profile",
   state: () => ({
@@ -16,6 +16,7 @@ export const useProfileStore = defineStore({
     loadedProfiles: {},
   }), //headers solo con put y post
   actions: {
+    ...mapActions(useExerciseStore, ["cleanExercises"]),
     async loadCurrentNames() {
       try {
         const response = await authAxios.get("/users/current");
@@ -99,6 +100,7 @@ export const useProfileStore = defineStore({
       try {
         await authAxios.post("/users/logout");
         this.token = "";
+        this.cleanExercises();
       } catch (error) {
         console.log(error);
       }
