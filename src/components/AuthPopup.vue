@@ -166,7 +166,13 @@ export default {
     async verify() {
       this.loading = true;
 
-      await this.verify_email(this.email, this.verificationCode);
+      try {
+        await this.verify_email(this.email, this.verificationCode);
+      } catch (err) {
+        if (!err.response?.data) {
+          this.errorMessage = "Error verificando email, intente mas tarde.";
+        }
+      }
       const valid = this.getCorrectVerification;
       if (valid) {
         await this.login(this.username, this.password);
@@ -181,9 +187,15 @@ export default {
       }
       this.loading = false;
     },
-    resendVerification() {
-      this.resend_verification(this.email);
-      this.verificationMessage = "Revise su Email. Código Reenviado.";
+    async resendVerification() {
+      try {
+        await this.resend_verification(this.email);
+        this.verificationMessage = "Revise su Email. Código Reenviado.";
+      } catch (err) {
+        this.errorMessage = `Error reenviando email. ${
+          err.response?.data && "Esta cuenta de email no existe."
+        } `;
+      }
     },
     setStartingConditionsAndClose() {
       this.$refs.form.reset();
@@ -208,8 +220,10 @@ export default {
         class="ma-5"
         icon
         @click="setStartingConditionsAndClose"
-        ><v-icon>mdi-close</v-icon></v-btn
       >
+        <v-icon>mdi-close</v-icon>
+        <div style="display: none">Close popup</div>
+      </v-btn>
       <v-row style="position: relative" class="mb-5">
         <v-fade-transition hide-on-leave group>
           <v-col :key="2" v-if="isVerification" class="text-lg-center"
@@ -318,11 +332,15 @@ export default {
             </v-btn>
             <div v-if="isRegister" class="mt-2">
               ¿Ya tiene una cuenta?
-              <a @click="isRegister = false">Inicie Sesión</a>
+              <a @click="isRegister = false" class="secondary--text"
+              >Inicie Sesión</a
+              >
             </div>
             <div v-else-if="!isVerification" class="mt-2">
               ¿No tiene una cuenta?
-              <a @click="isRegister = true">Registrese</a>
+              <a @click="isRegister = true" class="secondary--text"
+              >Registrese</a
+              >
             </div>
             <div v-else class="mt-4 mb-2">
               {{ verificationMessage }}

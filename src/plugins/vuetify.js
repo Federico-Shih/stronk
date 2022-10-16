@@ -2,15 +2,15 @@ import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 import es from "vuetify/lib/locale/es";
-import colors from 'vuetify/lib/util/colors'
-import '@mdi/font/css/materialdesignicons.css'
+import colors from "vuetify/lib/util/colors";
+import "@mdi/font/css/materialdesignicons.css";
 
 Vue.use(Vuetify);
 
 export default new Vuetify({
   lang: {
     locales: { es },
-    current: "es",
+    current: "es"
   },
   theme: {
     themes: {
@@ -20,10 +20,11 @@ export default new Vuetify({
         contback: "#eee0ff",
         contbacksecondary: "#e1cdff",
         secondary: "#fd8e01",
+        accent: "#D21502"
       },
     },
   },
   icons: {
-    iconfont: 'mdi'
+    iconfont: "mdi"
   }
 });

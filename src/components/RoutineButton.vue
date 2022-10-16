@@ -1,67 +1,103 @@
 <template>
   <v-card
-      v-if="!newBluePrint"
+    v-if="!newBluePrint"
     class="rounded-lg"
     :class="variants.boxSizes[variant]"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
     :elevation="hover ? 5 : 0"
   >
-    <router-link :to="`/routines/${routineId}`">
-      <v-img :src="images[category][routineId % 2]" :alt="title" class="routine-button-image rounded-lg">
-        <div class="fill-height bottom-gradient rounded-lg d-flex flex-column justify-end">
+    <router-link
+      style="position: relative; text-decoration: none"
+      :to="`/routines/${routineId}`"
+    >
+      <v-img
+        :src="images[category][routineId % 2]"
+        :alt="title"
+        class="routine-button-image rounded-lg"
+      >
+        <div
+          class="fill-height bottom-gradient rounded-lg d-flex flex-column justify-end"
+        >
           <v-card-title
             class="routine-button-text"
             :class="variants.fontSizes[variant]"
           >{{ title }}
+            <span class="font-weight-light" v-if="author"
+            >hecho por {{ author.username }}</span
+            >
           </v-card-title>
         </div>
       </v-img>
+      <v-img
+        width="50"
+        height="50"
+        style="
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          box-shadow: 0 5px 5px black;
+        "
+        class="rounded-circle"
+        v-if="author"
+        :src="
+          author.avatarUrl && author.avatarUrl !== ''
+            ? author.avatarUrl
+            : defaultUser
+        "
+      />
     </router-link>
   </v-card>
   <v-card
-      v-else
-      class="rounded-lg"
-      color="transparent"
-      :class="variants.boxSizes[variant]"
-      @mouseenter="hover = true"
-      @mouseleave="hover = false"
-      :elevation="hover ? 1 : 0"
+    v-else
+    class="rounded-lg"
+    color="transparent"
+    :class="variants.boxSizes[variant]"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+    :elevation="hover ? 1 : 0"
   >
     <router-link :to="`/routines/create`" class="no-decoration">
-        <div class="fill-height rounded-lg d-flex flex-column justify-center blueprint" :style="{
+      <div
+        class="fill-height rounded-lg d-flex flex-column justify-center blueprint"
+        :style="{
           background: $vuetify.theme.themes[theme].contbacksecondary,
-        }">
-          <v-icon size="80">mdi-plus-circle</v-icon>
-          <h2 class="text-center font-weight-bold">Nueva Rutina</h2>
-        </div>
+        }"
+      >
+        <v-icon size="80">mdi-plus-circle</v-icon>
+        <h2 class="text-center font-weight-bold">Nueva Rutina</h2>
+      </div>
     </router-link>
   </v-card>
 </template>
 
 <script>
-
-import abs01 from '@/assets/routine_images/abs01.jpg'
-import abs02 from '@/assets/routine_images/abs02.jpg'
-import arms01 from '@/assets/routine_images/arms01.jpg'
-import arms02 from '@/assets/routine_images/arms02.jpg'
-import back01 from '@/assets/routine_images/back01.jpg'
-import back02 from '@/assets/routine_images/back02.jpg'
-import chest01 from '@/assets/routine_images/chest01.jpg'
-import chest02 from '@/assets/routine_images/chest02.jpg'
-import fullbody01 from '@/assets/routine_images/fullbody01.jpg'
-import fullbody02 from '@/assets/routine_images/fullbody02.jpg'
-import leg01 from '@/assets/routine_images/leg01.jpg'
-import leg02 from '@/assets/routine_images/leg02.jpg'
+import abs01 from "@/assets/routine_images/abs01.jpg";
+import abs02 from "@/assets/routine_images/abs02.jpg";
+import arms01 from "@/assets/routine_images/arms01.jpg";
+import arms02 from "@/assets/routine_images/arms02.jpg";
+import back01 from "@/assets/routine_images/back01.jpg";
+import back02 from "@/assets/routine_images/back02.jpg";
+import chest01 from "@/assets/routine_images/chest01.jpg";
+import chest02 from "@/assets/routine_images/chest02.jpg";
+import fullbody01 from "@/assets/routine_images/fullbody01.jpg";
+import fullbody02 from "@/assets/routine_images/fullbody02.jpg";
+import leg01 from "@/assets/routine_images/leg01.jpg";
+import leg02 from "@/assets/routine_images/leg02.jpg";
+import defaultUser from "@/assets/user-default.png";
 
 export default {
   name: "RoutineButton",
   props: {
     variant: String,
-    newBluePrint: false,
+    newBluePrint: {
+      type: Boolean,
+      default: false
+    },
     title: String,
     routineId: Number,
     category: Number,
+    author: Object
   },
   computed: {
     theme() {
@@ -80,7 +116,7 @@ export default {
         fontSizes: {
           small: "text-small",
           long: "text-medium",
-          large: "text-large",
+          large: "text-large"
         },
       },
       images: {
@@ -89,15 +125,15 @@ export default {
         3: [back01, back02],
         2: [chest01, chest02],
         1: [fullbody01, fullbody02],
-        4: [leg01, leg02],
-      }
+        4: [leg01, leg02]
+      },
+      defaultUser
     };
   },
 };
 </script>
 
 <style scoped>
-
 .no-decoration {
   text-decoration: none;
   color: inherit;

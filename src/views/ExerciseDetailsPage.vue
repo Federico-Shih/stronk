@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-container fluid v-if="loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'">
+    <v-container
+      fluid
+      v-if="
+        loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'
+      "
+    >
       <div class="d-flex flex-row justify-space-between">
         <div class="d-flex flex-row justify-start align-center">
           <GoBackButton />
@@ -9,19 +14,22 @@
 
         <div v-if="exerciseIsMine" class="mr-16">
           <v-btn
-              color="primary"
-              class="rounded-pill mr-4"
-              @click="deleteDialog = true"
+            color="accent"
+            class="rounded-pill mr-4"
+            @click="deleteDialog = true"
           >
             <v-icon left>mdi-delete</v-icon>
             Eliminar Ejercicio
           </v-btn>
           <v-btn
-              color="primary"
-              class="rounded-pill"
-              @click="
-            $router.push({ name: 'exercises_edit', params: { id: `${exId}` } })
-          "
+            color="primary"
+            class="rounded-pill"
+            @click="
+              $router.push({
+                name: 'exercises_edit',
+                params: { id: `${exId}` },
+              })
+            "
           >
             <v-icon left>mdi-pencil</v-icon>
             Editar Ejercicio
@@ -29,27 +37,33 @@
         </div>
       </div>
       <v-container fluid class="d-flex flex-column" style="gap: 2em">
-        <div class="d-flex flex-row">
+        <div class="d-flex flex-row align-center">
           <div class="d-flex flex-row justify-self-start">
             <v-btn
-                icon
-                class="mx-4"
-                @click="
-              $router.push({ name: 'profile_extern', params: { id: `${creatorid}` } })
-            "
+              icon
+              class="mx-4"
+              @click="
+                $router.push({
+                  name: 'profile_extern',
+                  params: { id: `${creatorid}` },
+                })
+              "
             >
               <v-img
-                  class="rounded-circle"
-                  :src="creatorimage"
-                  :alt="this.temp"
-                  height="50px"
-                  width="50px"
+                class="rounded-circle"
+                :src="creatorimage"
+                :alt="this.temp"
+                height="50px"
+                width="50px"
               />
+              <div style="display: none">Foto y link de usuario</div>
             </v-btn>
-            <h3 class="mt-1">hecho por {{ creatorname }}</h3>
+            <div class="mt-1 text-sm-h6">hecho por {{ creatorname }}</div>
           </div>
-          <div class="d-flex flex-row offset-1 justify-space-between">
-            <h3 class="pr-4 mt-1">Tipo:</h3>
+          <div
+            class="d-flex flex-row offset-1 align-center justify-space-between"
+          >
+            <div class="pr-4 mt-1 text-sm-h6">Tipo:</div>
             <v-chip class="mr-2">{{ type }}</v-chip>
           </div>
         </div>
@@ -61,52 +75,55 @@
           <h2 class="mb-2">Imagenes demostrativas</h2>
           <div class="d-flex flex-wrap align-start" style="width: 80%">
             <v-img
-                v-for="img in images"
-                :src="img.url"
-                :alt="img.url"
-                :key="img.id"
-                class="mr-4 mb-4 flex-grow-0"
-                style="width: 150px"
+              v-for="img in images"
+              :src="img.url"
+              :alt="img.url"
+              :key="img.id"
+              class="mr-4 mb-4 flex-grow-0"
+              style="width: 150px"
             >
             </v-img>
           </div>
         </div>
         <div class="d-flex flex-column">
           <h2 class="mb-2">Videos demostrativos</h2>
-          <div v-for="vid in videos" :key="vid.id" class="align-self-center mb-8">
+          <div
+            v-for="vid in videos"
+            :key="vid.id"
+            class="align-self-center mb-8"
+          >
             <iframe
-                width="560"
-                height="315"
-                :src="loadURL(vid.url)"
-                frameborder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
+              width="560"
+              height="315"
+              :src="loadURL(vid.url)"
+              frameborder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
             />
           </div>
         </div>
       </v-container>
     </v-container>
     <LoadingFetchDialog
-        :dialog-state="loadingDialogState"
-        loading-text="Por favor, espere..."
-        not-found-text="¡Oops! El ejercicio no se ha encontrado."
-        ok-not-found-button-text="OK"
-        v-on:oknotfound="$router.back()"
+      :dialog-state="loadingDialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="¡Oops! El ejercicio no se ha encontrado."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
     />
     <DeleteConfirmationDialog
-        :dialog="deleteDialog"
-        title="¿Está seguro que desea eliminar el ejercicio?"
-        body-text="Se eliminará de forma permanente junto con su contenido."
-        agree-button-text="Sí"
-        disagree-button-text="No"
-        v-on:agree="
+      :dialog="deleteDialog"
+      title="¿Está seguro que desea eliminar el ejercicio?"
+      body-text="Se eliminará de forma permanente junto con su contenido."
+      agree-button-text="Sí"
+      disagree-button-text="No"
+      v-on:agree="
         deleteDialog = false;
         deleteThisExercise();
       "
-        v-on:disagree="deleteDialog = false"
+      v-on:disagree="deleteDialog = false"
     />
   </div>
-
 </template>
 
 <script>
@@ -143,11 +160,11 @@ export default {
       creatorimage: null,
       title: null,
       loadingDialogState: "loading",
-      deleteDialog:false,
+      deleteDialog: false
     };
   },
   methods: {
-    ...mapActions(useExerciseStore, ["getExerciseById","deleteExercise"]),
+    ...mapActions(useExerciseStore, ["getExerciseById", "deleteExercise"]),
     ...mapActions(useProfileStore, ["generateUser"]),
     loadURL(youtubeURL) {
       const youtubeEmbedTemplate = "https://www.youtube-nocookie.com/embed/";
@@ -177,7 +194,7 @@ export default {
     },
     async deleteThisExercise() {
       await this.deleteExercise(this.exId);
-       await this.$router.replace(`/exercises`);
+      await this.$router.replace(`/exercises`);
     }
   },
   async mounted() {

@@ -49,22 +49,18 @@ export const useMyRoutines = defineStore("myroutines", {
   },
   actions: {
     async getNextPage(pageSize) {
-      try {
-        const { data } = await authAxios.get(
-          "/users/current/routines?" +
-            new URLSearchParams({
-              page: this.page,
-              size: this.page === 0 ? pageSize - 1 : pageSize,
-            })
-        );
-        const { isLastPage, content } = data;
-        this.isLastPage = isLastPage;
-        this.page += 1;
-        this.routines.push(...content);
-        return this.routines;
-      } catch (err) {
-        return err.response?.data;
-      }
+      const { data } = await authAxios.get(
+        "/users/current/routines?" +
+        new URLSearchParams({
+          page: this.page,
+          size: this.page === 0 ? pageSize - 1 : pageSize
+        })
+      );
+      const { isLastPage, content } = data;
+      this.isLastPage = isLastPage;
+      this.page += 1;
+      this.routines.push(...content);
+      return this.routines;
     },
     resetPages() {
       this.page = 0;
@@ -88,20 +84,15 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
   },
   actions: {
     async getNextPage(pageSize) {
-      try {
-        const { data } = await authAxios.get(
-          "/favourites?" +
-            new URLSearchParams({ page: this.page, size: pageSize })
-        );
-        const { isLastPage, content } = data;
-        console.log(`Lastfavorite=${isLastPage}`);
-        this.isLastFavorite = isLastPage;
-        this.page += 1;
-        this.favorites.push(...content);
-        return content;
-      } catch (err) {
-        return err.response?.data;
-      }
+      const { data } = await authAxios.get(
+        "/favourites?" +
+        new URLSearchParams({ page: this.page, size: pageSize })
+      );
+      const { isLastPage, content } = data;
+      this.isLastFavorite = isLastPage;
+      this.page += 1;
+      this.favorites.push(...content);
+      return content;
     },
     async favoriteRoutine(routineId) {
       try {
@@ -110,7 +101,6 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
           return true;
         } else return null;
       } catch (err) {
-        console.log(err);
         return null;
       }
     },
@@ -121,7 +111,6 @@ export const useFavoriteRoutines = defineStore("myfavorites", {
           return true;
         } else return null;
       } catch (err) {
-        console.log(err);
         return null;
       }
     },
@@ -172,47 +161,19 @@ export const useSaveRoutine = defineStore("editroutine", {
   actions: {
     async getCategories() {
       if (this.categories.length === 0) {
-        try {
-          let res = await fetch("http://localhost:8080/api/categories", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${this.getToken}`,
-            },
-          });
-          let text = await res.text();
-          let ans = text ? JSON.parse(text) : null;
-          if (ans === null) throw new Error("Error in getting categories");
-          if (ans.content.length === 0) {
-            for (let category of this.categoriesToPost) {
-              await fetch("http://localhost:8080/api/categories", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${this.getToken}`,
-                },
-                body: JSON.stringify({ name: category }),
-              });
-            }
-            res = await fetch("http://localhost:8080/api/categories", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.getToken}`,
-              },
-            });
-            text = await res.text();
-            ans = text ? JSON.parse(text) : null;
-            if (ans === null) throw new Error("Error in getting categories");
+        let { data: ans } = await authAxios.get("/categories");
+        if (ans.content.length === 0) {
+          for (let category of this.categoriesToPost) {
+            await authAxios.post("/categories", { name: category });
           }
-          ans.content
-            .sort((a, b) => a.id - b.id)
-            .forEach((category) => {
-              this.categories.push(category.name);
-            });
-        } catch (err) {
-          console.log(err);
+          let { data } = await fetch("/categories");
+          ans = data;
         }
+        ans.content
+          .sort((a, b) => a.id - b.id)
+          .forEach((category) => {
+            this.categories.push(category.name);
+          });
       }
       return this.categories;
     },
@@ -228,7 +189,7 @@ export const useSaveRoutine = defineStore("editroutine", {
       try {
         await authAxios.delete(`/routines/${routine_id}`);
       } catch (error) {
-        console.log("Oops!" + error);
+        return error;
       }
     },
     /*
@@ -244,32 +205,22 @@ export const useSaveRoutine = defineStore("editroutine", {
      * }
      * */
     async createRoutine(routineBody) {
-      try {
-        const { data } = await authAxios.post("/routines", routineBody);
-        return data.id;
-      } catch (errors) {
-        console.log("Oops!" + errors);
-      }
+      const { data } = await authAxios.post("/routines", routineBody);
+      return data.id;
     },
     async modifyRoutine(routineId, routineBody) {
-      try {
-        if (routineId) {
-          await authAxios.put(`/routines/${routineId}`, routineBody);
-          console.log("modifying routine: " + routineId + " : " + routineBody);
-        }
-      } catch (errors) {
-        console.log("Oops!" + errors);
+      if (routineId) {
+        return (await authAxios.put(`/routines/${routineId}`, routineBody))
+          .data;
       }
     },
     async sumbitRoutineScore(routineId, score) {
-      try {
+      return (
         await authAxios.post(`/reviews/${routineId}`, {
           score: score,
-          review: "",
-        });
-      } catch (errors) {
-        console.log("Oops!" + errors);
-      }
+          review: ""
+        })
+      ).data;
     },
   },
 });
@@ -281,7 +232,7 @@ export const useCycles = defineStore("cycle", {
         const { data } = await authAxios.get(`/routines/${routine_id}/cycles`);
         return data.content;
       } catch (error) {
-        console.log("Oops!" + error);
+        return error;
       }
     },
     async getCycleExercises(cycle_id) {
@@ -295,14 +246,12 @@ export const useCycles = defineStore("cycle", {
             `/exercises/${ex["exercise"].id}/images`
           );
           const images = data;
-          if (images === null)
-            throw new Error("Error in getting exercises images");
           const url = images.content.length > 0 ? images.content[0].url : "";
           out.push({ ...ex, img_url: url });
         }
         return out;
       } catch (error) {
-        console.log("Oops! " + error);
+        return error;
       }
     },
     async getCycleWithExercises(routine_id, cycle_id) {
@@ -323,57 +272,27 @@ export const useCycles = defineStore("cycle", {
           );
           if (images === null)
             throw new Error("Error in getting exercises images");
-          console.log(
-            `Getting cycle exercise ${exercise["exercise"].id} image: ${images}`
-          );
           let url = images.content.length > 0 ? images.content[0].url : "";
           out.exercises.push({ ...exercise, img_url: url });
         }
         return out;
       } catch (error) {
-        console.log("Oops! " + error);
+        return error;
       }
     },
-    /*
-     * cycleBody = {
-     *   "name": "Fast Warmup",
-     *   "detail": "Fast Warmup",
-     *   "type": "warmup",
-     *   "order": 1,
-     *   "repetitions": 1,
-     *   "metadata": null
-     *   }
-     * exercisesIdsAndBodies = [
-     *   {
-     *       "id": 1,
-     *       "body": {
-     *           "order": 1,
-     *           "duration": 30,
-     *           "repetitions": 0
-     *       }
-     *   }, ...
-     * ]
-     * */
     async postCycle(routine_id, cycleBody, exercisesIdsAndBodies) {
-      try {
-        const { data: obj } = await authAxios.post(
-          `/routines/${routine_id}/cycles`,
-          cycleBody
-        );
+      const { data: obj } = await authAxios.post(
+        `/routines/${routine_id}/cycles`,
+        cycleBody
+      );
 
-        let cycleId = obj !== null ? obj.id : null;
-        if (cycleId === null) throw new Error("Error in posting cycle");
-        console.log("Posting cycle: " + cycleBody);
-        // TODO: CONSIDERAR PARALELIZAR
-        for (let exercise of exercisesIdsAndBodies) {
-          await authAxios.post(
-            `/cycles/${cycleId}/exercises/${exercise.id}`,
-            exercise.body
-          );
-          console.log("Posting exercise: " + JSON.stringify(exercise));
-        }
-      } catch (errors) {
-        console.log("Oops!" + errors);
+      let cycleId = obj !== null ? obj.id : null;
+      if (cycleId === null) throw new Error("Error in posting cycle");
+      for (let exercise of exercisesIdsAndBodies) {
+        await authAxios.post(
+          `/cycles/${cycleId}/exercises/${exercise.id}`,
+          exercise.body
+        );
       }
     },
     async cleanCyclesFromRoutine(routine_id) {
@@ -386,7 +305,7 @@ export const useCycles = defineStore("cycle", {
           await authAxios.delete(`/routines/${routine_id}/cycles/${cycle.id}`);
         }
       } catch (error) {
-        console.log("Oops!" + error);
+        return error;
       }
     },
   },

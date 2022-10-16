@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex flex-row justify-center ">
+    <div class="d-flex flex-row justify-center">
       <div style="position: absolute; left: 0; top: 0" class="ml-8">
         <GoBackButton :on-click-function="showExitDialog"></GoBackButton>
       </div>
@@ -10,106 +10,101 @@
         class="mx-16 pa-8 d-flex flex-column"
         style="gap: 20px"
       >
-        <v-form class="d-flex flex-column"
-                style="gap: 20px" v-model="valid">
+        <v-form class="d-flex flex-column" style="gap: 20px" v-model="valid">
           <div class="d-flex flex-row justify-start align-center mb-8">
             <v-img
-                :lazy-src="temp"
-                class="mx-8 rounded-circle"
-                :src="imageUrl"
-                alt="Imagen de usuario"
-                height="150px"
-                max-width="150px"
+              :lazy-src="temp"
+              class="mx-8 rounded-circle"
+              :src="imageUrl"
+              alt="Imagen de usuario"
+              height="150px"
+              max-width="150px"
             >
               <template v-slot:placeholder>
-                <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                >
+                <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular
-                      indeterminate
-                      color="grey lighten-5"
+                    indeterminate
+                    color="grey lighten-5"
                   ></v-progress-circular>
                 </v-row>
               </template>
             </v-img>
             <div>
               <v-text-field
-                  label="URL de tu avatar"
-                  v-model="tempImageURL"
-                  @blur="changeUrl"
-                  :rules="[notValidUriRule]"
+                label="URL de tu avatar"
+                v-model="tempImageURL"
+                @blur="changeUrl"
+                :rules="[notValidUriRule]"
               ></v-text-field>
             </div>
           </div>
           <div class="d-flex flex-row">
             <v-text-field
-                v-model="name"
-                class="mr-8"
-                outlined
-                dense
-                label="Nombres"
-                prepend-icon="mdi-account"
-                :rules="nameRules"
-                counter="32"
+              v-model="name"
+              class="mr-8"
+              outlined
+              dense
+              label="Nombres"
+              prepend-icon="mdi-account"
+              :rules="nameRules"
+              counter="32"
             ></v-text-field>
             <v-text-field
-                v-model="surname"
-                outlined
-                dense
-                label="Apellidos"
-                :rules="nameRules"
-                counter="32"
+              v-model="surname"
+              outlined
+              dense
+              label="Apellidos"
+              :rules="nameRules"
+              counter="32"
             ></v-text-field>
           </div>
           <div class="d-flex flex-row" style="gap: 50px">
             <v-menu
-                ref="menu"
-                v-model="menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                    v-model="date"
-                    label="Birthday date"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    outlined
-                    dense
-                    v-bind="attrs"
-                    v-on="on"
+                  v-model="date"
+                  label="Birthday date"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  outlined
+                  dense
+                  v-bind="attrs"
+                  v-on="on"
                 ></v-text-field>
               </template>
               <v-date-picker
-                  v-model="date"
-                  :active-picker.sync="activePicker"
-                  :max="
-                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                  .toISOString()
-                  .substr(0, 10)
-              "
-                  min="1900-01-01"
-                  @change="save"
+                v-model="date"
+                :active-picker.sync="activePicker"
+                :max="
+                  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .substr(0, 10)
+                "
+                min="1900-01-01"
+                @change="save"
               ></v-date-picker>
             </v-menu>
             <v-text-field
-                outlined
-                dense
-                type="number"
-                v-model="phoneNumber"
-                prepend-icon="mdi-phone"
-                label="Numero de teléfono"
-                :rules="nameRules"
+              outlined
+              dense
+              type="number"
+              v-model="phoneNumber"
+              prepend-icon="mdi-phone"
+              label="Numero de teléfono"
+              :rules="nameRules"
             ></v-text-field>
           </div>
         </v-form>
         <div class="d-flex flex-row justify-end">
           <v-btn
-            color="secondary"
+            color="accent"
             class="rounded-pill mx-4 d-flex flex-row justify-space-between"
             @click="exitDialog = true"
           >
@@ -149,13 +144,16 @@
       </template>
     </v-snackbar>
     <DeleteConfirmationDialog
-        :dialog="exitDialog"
-        title="¿Está seguro que desea salir?"
-        body-text="Se perderán todos los cambios no guardados."
-        agree-button-text="Sí"
-        disagree-button-text="No"
-        v-on:agree="exitDialog = false; $router.back()"
-        v-on:disagree="exitDialog = false"
+      :dialog="exitDialog"
+      title="¿Está seguro que desea salir?"
+      body-text="Se perderán todos los cambios no guardados."
+      agree-button-text="Sí"
+      disagree-button-text="No"
+      v-on:agree="
+        exitDialog = false;
+        $router.back();
+      "
+      v-on:disagree="exitDialog = false"
     />
   </div>
 </template>
@@ -183,7 +181,10 @@ export default {
   computed: {
     ...mapState(useProfileStore, ["profile"]),
     notValidUriRule: function() {
-      return (httpRegex.test(this.tempImageURL) && this.tempImageURL.length < 255) || "No es un URL válido.";
+      return (
+        (httpRegex.test(this.tempImageURL) && this.tempImageURL.length < 255) ||
+        "No es un URL válido."
+      );
     }
   },
   methods: {

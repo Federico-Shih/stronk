@@ -26,6 +26,7 @@ export default {
   },
   data() {
     return {
+      connectError: false,
       id: "",
       logo: logotype,
       firstname: "",
@@ -85,7 +86,11 @@ export default {
   },
   async created() {
     if (!this.getHasProfile && this.getToken.length !== 0) {
-      await this.loadCurrentNames();
+      try {
+        await this.loadCurrentNames();
+      } catch (err) {
+        this.connectError = true;
+      }
     }
   },
 };
@@ -93,9 +98,10 @@ export default {
 
 <template>
   <v-app-bar app color="primary">
-    <router-link :to="LogoClicked">
+    <v-btn plain @click="$router.push(LogoClicked)">
       <v-img max-width="100" :src="logo" />
-    </router-link>
+      <div style="display: none">Home</div>
+    </v-btn>
     <router-link
       v-for="{ link, label } in ownedLinks"
       :key="link"
@@ -110,8 +116,9 @@ export default {
       <v-btn
         class="mx-5"
         elevation="1"
-        color="accent"
+        color="secondary"
         @click="showPopup('/', 'register')"
+        style="color: black"
         >Registrarse</v-btn
       >
       <v-btn elevation="1" @click="showPopup('/', 'login')"

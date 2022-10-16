@@ -33,6 +33,7 @@ const router = new VueRouter({
       path: "/community",
       name: "community",
       component: () => import("../views/CommunityPage.vue"),
+      beforeEnter: tokenGuard
     },
     {
       path: "/routines",

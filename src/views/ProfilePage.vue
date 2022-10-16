@@ -31,15 +31,8 @@
                     this.userInfo.username
                   }}</span>
               </h1>
-              <h3>
-                <span v-if="this.userInfo.firstName">{{
-                    this.userInfo.username
-                  }}</span>
-              </h3>
-            </div>
-            <div class="mt-2">
-              <h3>
-                <span> {{ getDescription() }}</span>
+              <h3 v-if="this.userInfo.firstName">
+                <span>{{ this.userInfo.username }}</span>
               </h3>
             </div>
             <div v-if="userInfo.birthdate" class="d-flex flex-row align-center">
@@ -62,7 +55,7 @@
           </v-btn>
         </div>
       </div>
-      <div class="" v-if="hasRoutines!=null">
+      <div class="" v-if="hasRoutines != null">
         <RoutineSlideGroup
           v-if="hasRoutines"
           :title="`Rutinas Creadas por ${this.userInfo.username}`"

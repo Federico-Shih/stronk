@@ -1,6 +1,6 @@
-import {defineStore, mapActions} from "pinia";
+import { defineStore, mapActions } from "pinia";
 import { authAxios, baseAxios } from "../services/authenticatedAxios";
-import {useExerciseStore} from "./exercise";
+import { useExerciseStore } from "./exercise";
 export const useProfileStore = defineStore({
   id: "profile",
   state: () => ({
@@ -18,20 +18,15 @@ export const useProfileStore = defineStore({
   actions: {
     ...mapActions(useExerciseStore, ["cleanExercises"]),
     async loadCurrentNames() {
-      try {
-        const response = await authAxios.get("/users/current");
-        const res = response.data;
-        if (response.status === 200) {
-          this.username = res.username;
-          this.firstName = res.firstName;
-          this.lastName = res.lastName;
-          this.profile = res;
-        }
-        return res;
-      } catch (error) {
-        console.log(error);
-        console.log("Error cargando nombres");
+      const response = await authAxios.get("/users/current");
+      const res = response.data;
+      if (response.status === 200) {
+        this.username = res.username;
+        this.firstName = res.firstName;
+        this.lastName = res.lastName;
+        this.profile = res;
       }
+      return res;
     },
     async login(username, password, recordar) {
       if (this.validated) return this.getToken;
@@ -71,26 +66,16 @@ export const useProfileStore = defineStore({
       }
     },
     async verify_email(email, code) {
-      try {
-        const response = await baseAxios.post("/users/verify_email", {
-          email,
-          code
-        });
-        if (response.status === 200) {
-          this.correctEmailVerification = true;
-        }
-      } catch (error) {
-        console.log("Invalid Verification!");
-      }
+      await baseAxios.post("/users/verify_email", {
+        email,
+        code
+      });
+      this.correctEmailVerification = true;
     },
     async resend_verification(email) {
-      try {
-        await baseAxios("/users/resend_verification", {
-          email
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      await baseAxios.post("/users/resend_verification", {
+        email
+      });
     },
     async logout() {
       this.validated = false;
@@ -99,11 +84,11 @@ export const useProfileStore = defineStore({
       localStorage.removeItem("token");
       try {
         await authAxios.post("/users/logout");
-        this.token = "";
-        this.cleanExercises();
       } catch (error) {
-        console.log(error);
+        this.token = "";
       }
+      this.token = "";
+      this.cleanExercises();
     },
     async generateAllUsers() {
       try {
@@ -112,23 +97,19 @@ export const useProfileStore = defineStore({
         );
         return res.data;
       } catch (error) {
-        console.log(error);
+        return [];
       }
     },
     setPage(newPage) {
       this.page = newPage;
     },
     async generateNUsers(amount) {
-      try {
-        const res = await authAxios.get(
-          "/users?" + new URLSearchParams({ page: this.page, size: amount })
-        );
-        const retValue = res.data;
-        this.page = this.page + 1;
-        return retValue;
-      } catch (error) {
-        console.log(error);
-      }
+      const res = await authAxios.get(
+        "/users?" + new URLSearchParams({ page: this.page, size: amount })
+      );
+      const retValue = res.data;
+      this.page = this.page + 1;
+      return retValue;
     },
     async generateUser(id) {
       // Cacheo los perfiles para que cuando tenga que editar no los busque devuelta
@@ -156,7 +137,6 @@ export const useProfileStore = defineStore({
             `/users/${id}/routines?` +
             new URLSearchParams({ page: currPage, size: 10 })
           );
-          console.log(data);
           isLastPage = data.isLastPage;
           currPage++;
           routines = routines.concat(data.content);

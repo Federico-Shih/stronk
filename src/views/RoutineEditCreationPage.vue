@@ -42,7 +42,8 @@ export default {
           return (value) => value.length <= n || `Maximo ${n} caracteres`;
         }
       },
-      saveButtonLoading: false
+      saveButtonLoading: false,
+      connectError: false
     };
   },
   computed: {
@@ -51,7 +52,12 @@ export default {
     }
   },
   async beforeCreate() {
-    this.category = await useSaveRoutine().getCategories();
+    try {
+      const res = await useSaveRoutine().getCategories();
+      this.category = res || [];
+    } catch (err) {
+      this.connectError = true;
+    }
   },
   async created() {
     this.bus.$on("removeCycle", (order) => {
@@ -64,6 +70,9 @@ export default {
     this.bus.$on("savedCycle", () => {
       this.cycleSaves++;
       if (this.cycleSaves === this.cycles.length) this.finishSave();
+    });
+    this.bus.$on("errorCycle", () => {
+      this.connectError = true;
     });
     if (this.$route.params.id) {
       try {
@@ -145,9 +154,6 @@ export default {
       this.bus.$emit("validate");
       this.setButtonLoading(true);
       setTimeout(() => {
-        console.log(
-          `Cycles validated ${this.cycleValidations.length} out of ${this.cycles.length}`
-        );
         if (this.cycleValidations.length === this.cycles.length && this.valid) {
           this.saveRoutine();
         } else {
@@ -167,14 +173,20 @@ export default {
           id: this.categorySelected + 1
         }
       };
-      if (this.edit) {
-        await useSaveRoutine().modifyRoutine(this.routineId, routineBody);
-        await useCycles().cleanCyclesFromRoutine(this.routineId);
-      } else {
-        this.routineId = await useSaveRoutine().createRoutine(routineBody);
+      try {
+        if (this.edit) {
+          await useSaveRoutine().modifyRoutine(this.routineId, routineBody);
+          await useCycles().cleanCyclesFromRoutine(this.routineId);
+        } else {
+          const res = await useSaveRoutine().createRoutine(routineBody);
+          if (res) this.routineId = res;
+        }
+        this.cycleSaves = 0;
+        this.bus.$emit("saveCycle", this.routineId);
+      } catch (err) {
+        this.connectError = true;
       }
-      this.cycleSaves = 0;
-      this.bus.$emit("saveCycle", this.routineId);
+      this.setButtonLoading(false);
     },
     finishSave() {
       this.saveSnackbar = true;
@@ -200,7 +212,7 @@ export default {
         </div>
         <div class="d-flex flex-row mr-8 ml-auto">
           <v-btn
-            color="secondary"
+            color="accent"
             class="rounded-pill mr-4"
             @click="showExitDialog()"
           >
@@ -330,6 +342,9 @@ export default {
           Cerrar
         </v-btn>
       </template>
+    </v-snackbar>
+    <v-snackbar v-model="connectError" :timeout="3000" color="red">
+      Error en el servicio de rutinas, estamos trabajando en eso!
     </v-snackbar>
     <v-snackbar v-model="saveSnackbar" color="green">
       Rutina guardada con éxito!

@@ -11,11 +11,11 @@ export const useExerciseStore = defineStore("exercise", {
   }),
   actions: {
     async storeRefresh() {
-      return await this.getOwnExercisesData();
+      return this.getOwnExercisesData();
     },
     async getOwnExercises() {
       if (this.Ownexercises.length === 0) {
-        return await this.getOwnExercisesData();
+        return this.getOwnExercisesData();
       }
       return this.Ownexercises;
     },
@@ -30,10 +30,7 @@ export const useExerciseStore = defineStore("exercise", {
           this.Ownexercises.push(...data.content);
           this.page++;
           this.lastPage = data.isLastPage;
-          console.log(this.page);
-          console.log(`lastPage: ${this.lastPage}`);
         } catch (error) {
-          console.log(`Oops! ${error}`);
           throw new Error(error);
         }
       }
@@ -45,13 +42,8 @@ export const useExerciseStore = defineStore("exercise", {
             `/exercises/${this.Ownexercises[i].id}/images`
           );
           data = response.data;
-          if (response.status === 200) {
-            this.Ownexercises[i].images = data.content;
-          } else {
-            throw new Error("Error en buscar las imagenes");
-          }
+          this.Ownexercises[i].images = data.content;
         } catch (error) {
-          console.log(`Oops! ${error}`);
           throw new Error(error);
         }
         try {
@@ -59,13 +51,8 @@ export const useExerciseStore = defineStore("exercise", {
             `/exercises/${this.Ownexercises[i].id}/videos`
           );
           data = response.data;
-          if (response.status === 200) {
-            this.Ownexercises[i].videos = data.content;
-          } else {
-            throw new Error("Error en buscar los videos");
-          }
+          this.Ownexercises[i].videos = data.content;
         } catch (error) {
-          console.log(`Oops! ${error}`);
           throw new Error(error);
         }
       }
@@ -78,42 +65,23 @@ export const useExerciseStore = defineStore("exercise", {
       try {
         response = await authAxios.get(`/exercises/${id}`);
         data = response.data;
-        if (response.status === 200) {
-          exercise = data;
-        } else {
-          throw new Error("Error en buscar el ejercicio con id: " + id);
-        }
+        exercise = data;
       } catch (error) {
-        console.log(`Oops! ${error}`);
         throw new Error(error);
       }
       if (exercise !== null) {
         try {
           response = await authAxios.get(`/exercises/${id}/images`);
           data = response.data;
-          if (response.status === 200) {
-            exercise.images = data.content;
-          } else {
-            throw new Error(
-              "Error en buscar imagenes del ejercicio con id:" + id
-            );
-          }
+          exercise.images = data.content;
         } catch (error) {
-          console.log(`Oops! ${error}`);
           throw new Error(error);
         }
         try {
           response = await authAxios.get(`/exercises/${id}/videos`);
           data = response.data;
-          if (response.status === 200) {
-            exercise.videos = data.content;
-          } else {
-            throw new Error(
-              "Error en buscar videos del ejercicio con id:" + id
-            );
-          }
+          exercise.videos = data.content;
         } catch (error) {
-          console.log(`Oops! ${error}`);
           throw new Error(error);
         }
         this.Otherexercises.push(exercise);
@@ -133,8 +101,6 @@ export const useExerciseStore = defineStore("exercise", {
     async saveExercise(exercise, images, videos, id) {
       try {
         let prevIndex;
-        console.log(id);
-        console.log(this.Ownexercises);
         const prevExercise = this.Ownexercises.find((exercise, index) => {
           if (exercise.id === id) {
             prevIndex = index;
@@ -142,9 +108,7 @@ export const useExerciseStore = defineStore("exercise", {
           }
           return false;
         });
-        console.log(prevIndex);
         if (!prevExercise) {
-          console.log("previous exercise not found");
           return;
         }
         // Va haciendo las llamadas de cada remove Image y remove Videos y despues espera a que terminen todas las promises
@@ -157,10 +121,6 @@ export const useExerciseStore = defineStore("exercise", {
         await Promise.all([...removeImagesRequests, ...removeVideosRequests]);
         let putExercise;
         const response = await authAxios.put(`/exercises/${id}`, exercise);
-        if (response.status !== 200) {
-          console.log("Put exercise failed");
-          throw new Error("Put exercise failed");
-        }
         putExercise = response.data;
         const putImageRequests = images.map((image, index) =>
           this.putExerciseImage(id, image, index + 1)
@@ -182,7 +142,6 @@ export const useExerciseStore = defineStore("exercise", {
 
         this.Ownexercises.splice(prevIndex, 1, putExercise);
       } catch (err) {
-        console.log(err);
         throw new Error(err);
       }
     },
@@ -190,13 +149,8 @@ export const useExerciseStore = defineStore("exercise", {
       let newExercise;
       try {
         const response = await authAxios.post(`/exercises`, exercise);
-        if (response.status === 201) {
-          newExercise = response.data;
-        } else {
-          throw new Error("Error en crear el ejercicio");
-        }
+        newExercise = response.data;
       } catch (error) {
-        console.log(`Oops! ${error}`);
         throw new Error(error);
       }
       const putImageRequests = images.map((image, index) =>
@@ -225,7 +179,6 @@ export const useExerciseStore = defineStore("exercise", {
         );
         return response.data;
       } catch (error) {
-        console.log(`Oops! ${error}`);
         throw new Error(error);
       }
     },
@@ -237,17 +190,13 @@ export const useExerciseStore = defineStore("exercise", {
         );
         return response.data;
       } catch (error) {
-        console.log(`Oops! ${error}`);
         throw new Error(error);
       }
     },
     async removeExerciseImage(exerciseId, imageId) {
       try {
-         await authAxios.delete(
-          `/exercises/${exerciseId}/images/${imageId}`
-        );
+        await authAxios.delete(`/exercises/${exerciseId}/images/${imageId}`);
       } catch (err) {
-        console.log(`Oops~ ${err}`);
         throw new Error(err);
       }
     },
@@ -255,15 +204,13 @@ export const useExerciseStore = defineStore("exercise", {
       try {
         await authAxios.delete(`/exercises/${exerciseId}/videos/${videoId}`);
       } catch (err) {
-        console.log(`Oops~ ${err}`);
         throw new Error(err);
       }
     },
     async deleteExercise(exerciseId) {
       try {
-         await authAxios.delete(`/exercises/${exerciseId}`);
+        await authAxios.delete(`/exercises/${exerciseId}`);
       } catch (err) {
-        console.log(`Oops~ ${err}`);
         throw new Error(err);
       }
       this.Ownexercises = this.Ownexercises.filter((exercise) => {

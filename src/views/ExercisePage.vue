@@ -6,6 +6,7 @@
 
         <v-btn icon class="ml-10" @click="$router.push('/exercises/create')">
           <v-icon x-large color="primary">mdi-plus-circle</v-icon>
+          <div style="display: none">Crear ejercicio</div>
         </v-btn>
       </div>
       <div class="d-flex justify-center">
@@ -96,7 +97,6 @@ export default {
       try {
         aux = await this.getOwnExercises();
       } catch (e) {
-        console.log(e);
         this.loading = false;
         this.errorSnackbar = true;
         this.errorloading = true;

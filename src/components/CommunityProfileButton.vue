@@ -34,7 +34,7 @@ export default {
     displayName: String,
     description: String,
     profilePic: String,
-    profileId: String,
+    profileId: Number
   },
   data() {
     return {

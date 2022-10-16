@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="600"
-  >
+  <v-dialog v-model="dialog" persistent max-width="600">
     <v-card>
       <v-card-title v-if="this.title" class="">
         {{ this.title }}
@@ -12,19 +8,14 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-            v-if="disagreeButtonText"
-            color="secondary"
-            text
-            @click="disagree()"
+          v-if="disagreeButtonText"
+          color="primary"
+          outlined
+          @click="disagree()"
         >
           {{ this.disagreeButtonText }}
         </v-btn>
-        <v-btn
-            v-if="agreeButtonText"
-            color="primary"
-            text
-            @click="agree()"
-        >
+        <v-btn v-if="agreeButtonText" color="accent" @click="agree()">
           {{ this.agreeButtonText }}
         </v-btn>
       </v-card-actions>
@@ -65,9 +56,7 @@ export default {
       this.$emit("disagree");
     }
   }
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

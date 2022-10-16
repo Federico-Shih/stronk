@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-container fluid class="d-flex flex-column justify-start" v-if="loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'">
+    <v-container
+      fluid
+      class="d-flex flex-column justify-start"
+      v-if="
+        loadingDialogState !== 'loading' && loadingDialogState !== 'notFound'
+      "
+    >
       <v-form @submit.prevent="submitExercise" ref="form" v-model="valid">
         <div class="d-flex flex-row justify-space-between">
           <div class="d-flex flex-row justify-start align-center">
@@ -8,16 +14,20 @@
             <h1 class="pl-4">{{ edit ? "Editar" : "Crear" }} un Ejercicio</h1>
           </div>
           <div class="d-flex flex-row mr-8">
-            <v-btn color="secondary" class="rounded-pill mr-4" @click="discardDialog=true">
+            <v-btn
+              color="accent"
+              class="rounded-pill mr-4"
+              @click="discardDialog = true"
+            >
               <v-icon left>mdi-close</v-icon>
               Descartar {{ edit ? " Cambios" : " Ejercicio" }}
             </v-btn>
             <v-btn
-                :disabled="!valid"
-                color="primary"
-                class="rounded-pill"
-                @click="submitExercise"
-                :loading="savingExerciseButton"
+              :disabled="!valid"
+              color="primary"
+              class="rounded-pill"
+              @click="submitExercise"
+              :loading="savingExerciseButton"
             >
               <v-icon left>mdi-content-save</v-icon>
               Guardar {{ edit ? " Cambios" : " Ejercicio" }}
@@ -27,49 +37,57 @@
         <div class="ml-16 d-flex flex-row justify-space-between">
           <div class="d-flex flex-column justify-start pt-4" style="width: 40%">
             <v-text-field
-                v-model="name"
-                label="Nombre del Ejercicio"
-                dense
-                outlined
-                class="rounded-lg"
-                :rules="[rules.notEmptyRule,rules.maxLenght(70)]"
+              v-model="name"
+              label="Nombre del Ejercicio"
+              dense
+              outlined
+              class="rounded-lg"
+              :rules="[rules.notEmptyRule, rules.maxLenght(70)]"
             />
             <v-textarea
-                v-model="description"
-                label="Descripción del Ejercicio"
+              v-model="description"
+              label="Descripción del Ejercicio"
+              dense
+              outlined
+              class="rounded-lg"
+              validate-on-blur
+              :rules="[rules.maxLenght(200)]"
+            />
+            <h2 class="mb-2">Agregue imagenes y videos demostrativos</h2>
+            <v-form
+              @submit.prevent="loadImage"
+              ref="imgform"
+              v-model="validImgUrl"
+            >
+              <v-text-field
+                v-model="imageurl"
+                label="Ingrese el URL de la imagen"
                 dense
                 outlined
                 class="rounded-lg"
+                append-icon="mdi-send"
+                :rules="[rules.maxLenght(255)]"
                 validate-on-blur
-                :rules="[rules.maxLenght(200)]"
-            />
-            <h2 class="mb-2">Agregue imagenes y videos demostrativos</h2>
-            <v-form @submit.prevent="loadImage" ref="imgform" v-model="validImgUrl">
-              <v-text-field
-                  v-model="imageurl"
-                  label="Ingrese el URL de la imagen"
-                  dense
-                  outlined
-                  class="rounded-lg"
-                  append-icon="mdi-send"
-                  :rules="[rules.maxLenght(255)]"
-                  validate-on-blur
-                  @click:append="loadImage()"
-                  @keypress.native.enter="loadImage()"
+                @click:append="loadImage()"
+                @keypress.native.enter="loadImage()"
               ></v-text-field>
             </v-form>
-            <v-form @submit.prevent="loadVideo" ref="vidform" v-model="validVidUrl">
+            <v-form
+              @submit.prevent="loadVideo"
+              ref="vidform"
+              v-model="validVidUrl"
+            >
               <v-text-field
-                  v-model="videourl"
-                  label="Ingrese el URL del video (Vimeo o Youtube)"
-                  dense
-                  outlined
-                  class="rounded-lg"
-                  append-icon="mdi-send"
-                  :rules="[rules.maxLenght(255)]"
-                  validate-on-blur
-                  @click:append="loadVideo()"
-                  @keypress.native.enter="loadVideo()"
+                v-model="videourl"
+                label="Ingrese el URL del video (Vimeo o Youtube)"
+                dense
+                outlined
+                class="rounded-lg"
+                append-icon="mdi-send"
+                :rules="[rules.maxLenght(255)]"
+                validate-on-blur
+                @click:append="loadVideo()"
+                @keypress.native.enter="loadVideo()"
               ></v-text-field>
             </v-form>
           </div>
@@ -77,10 +95,10 @@
             <div class="d-flex flex-row align-center justify-end">
               <h4 class="mr-4">Tipo de Actividad:</h4>
               <v-chip-group
-                  v-model="typeSelected"
-                  mandatory
-                  column
-                  active-class="primary--text"
+                v-model="typeSelected"
+                mandatory
+                column
+                active-class="primary--text"
               >
                 <v-chip v-for="index in type.length" :key="index" class="pa-5"
                 >{{ type[index - 1] }}
@@ -100,12 +118,12 @@
                   <tr v-for="(img, index) in images" :key="index">
                     <td>
                       <div
-                          style="
-                          width: 300px;
-                          text-overflow: ellipsis;
-                          overflow: hidden;
-                          white-space: nowrap;
-                        "
+                        style="
+                            width: 300px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                          "
                       >
                         {{ img }}
                       </div>
@@ -130,14 +148,14 @@
                   <tbody>
                   <tr v-for="(vid, index) in videos" :key="index">
                     <td>
-                      <span
+                        <span
                           style="
-                          width: 300px;
-                          text-overflow: ellipsis;
-                          overflow: hidden;
-                        "
-                      >{{ vid }}</span
-                      >
+                            width: 300px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                          "
+                        >{{ vid }}</span
+                        >
                     </td>
                     <td>
                       <v-btn icon @click="removeVideo(vid)">
@@ -160,10 +178,10 @@
           Seguir Editando
         </v-btn>
         <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="
+          color="white"
+          text
+          v-bind="attrs"
+          @click="
             saveSnackbar = false;
             $router.go(-1);
           "
@@ -181,23 +199,23 @@
       </template>
     </v-snackbar>
     <LoadingFetchDialog
-        :dialog-state="loadingDialogState"
-        loading-text="Por favor, espere..."
-        not-found-text="¡Oops! El ejercicio no se ha encontrado."
-        ok-not-found-button-text="OK"
-        v-on:oknotfound="$router.back()"
+      :dialog-state="loadingDialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="¡Oops! El ejercicio no se ha encontrado."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
     />
     <DeleteConfirmationDialog
-        :dialog="discardDialog"
-        title="¿Está seguro que desea descartar el ejercicio?"
-        body-text="Se perderán todos los cambios realizados."
-        agree-button-text="Sí"
-        disagree-button-text="No"
-        v-on:agree="
+      :dialog="discardDialog"
+      title="¿Está seguro que desea descartar el ejercicio?"
+      body-text="Se perderán todos los cambios realizados."
+      agree-button-text="Sí"
+      disagree-button-text="No"
+      v-on:agree="
         discardDialog = false;
         $router.back();
       "
-        v-on:disagree="discardDialog = false"
+      v-on:disagree="discardDialog = false"
     />
   </div>
 </template>
@@ -230,16 +248,18 @@ export default {
       videourl: "",
       images: [],
       videos: [],
-      rules:{
+      rules: {
         notEmptyRule: (v) => !!v || "Campo de nombre no puede quedar vacío",
-        maxLenght(n) {return value => value.length < n || `Menor a ${n} caracteres`},
+        maxLenght(n) {
+          return (value) => value.length < n || `Menor a ${n} caracteres`;
+        }
       },
       savingExerciseButton: false,
       loadingDialogState: "loading",
       saveSnackbar: false,
       timeout: 2000,
-      discardDialog:false,
-      error:false,
+      discardDialog: false,
+      error: false
     };
   },
   computed: {
@@ -256,7 +276,7 @@ export default {
     ]),
     loadImage() {
       this.$refs.imgform.validate();
-      if(this.validImgUrl) {
+      if (this.validImgUrl) {
         if (this.imageurl !== "") {
           this.images.push(this.imageurl);
           this.imageurl = "";
@@ -265,7 +285,7 @@ export default {
     },
     loadVideo() {
       this.$refs.vidform.validate();
-      if (this.validVidUrl){
+      if (this.validVidUrl) {
         if (this.videourl !== "") {
           this.videos.push(this.videourl);
           this.videourl = "";
@@ -299,27 +319,31 @@ export default {
           name: this.name,
           detail: this.description,
           type: this.typeSelected === 0 ? "exercise" : "rest",
-          metadata: { creatorid: this.getId },
+          metadata: { creatorid: this.getId }
         };
         console.log(JSON.stringify(exercise));
         this.savingExerciseButton = true;
-        try{
-        if (this.edit) {
-          await this.saveExercise(
-            exercise,
-            this.images,
-            this.videos,
-            this.exId
-          );
-        } else {
-          this.exId = await this.putExercise(exercise, this.images, this.videos);
+        try {
+          if (this.edit) {
+            await this.saveExercise(
+              exercise,
+              this.images,
+              this.videos,
+              this.exId
+            );
+          } else {
+            this.exId = await this.putExercise(
+              exercise,
+              this.images,
+              this.videos
+            );
+          }
+          this.savingExerciseButton = false;
+          this.saveSnackbar = true;
+        } catch (e) {
+          this.savingExerciseButton = false;
+          this.error = true;
         }
-        this.savingExerciseButton = false;
-        this.saveSnackbar = true;
-      }catch (e) {
-        this.savingExerciseButton = false;
-        this.error = true;
-      }
       }
     },
   },

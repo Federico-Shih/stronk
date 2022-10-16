@@ -14,6 +14,7 @@ import person03 from "@/assets/stock_people/person03.png";
 import person04 from "@/assets/stock_people/person04.png";
 import person05 from "@/assets/stock_people/person05.png";
 import person06 from "@/assets/stock_people/person06.png";
+import GoBackButton from "../components/GoBackButton.vue";
 
 const difficultyNamesToSpanish = {
   beginner: "Principiante",
@@ -22,7 +23,12 @@ const difficultyNamesToSpanish = {
 };
 
 export default {
-  components: { LoadingFetchDialog, CycleCard, DeleteConfirmationDialog },
+  components: {
+    LoadingFetchDialog,
+    CycleCard,
+    DeleteConfirmationDialog,
+    GoBackButton
+  },
   data() {
     return {
       routineId: null,
@@ -51,7 +57,6 @@ export default {
   },
   computed: {
     routineIsMine() {
-      console.log(this.routine);
       return this.routine.author.id === this.getId();
     },
     ...mapState(useProfileStore, ["getToken"])
@@ -108,12 +113,10 @@ export default {
             this.getToken !== "" &&
             (await useFavoriteRoutines().isFavorite(this.routineId)) //todo revisar
         };
-        console.log(`rutina=${JSON.stringify(this.routine)}`);
         apiAns = await useCycles().getCyclesFromRoutine(this.routineId);
         this.cycles = apiAns;
         this.cycles.sort((a, b) => a.order - b.order);
       } catch (e) {
-        console.log(e);
         this.loadingDialogState = "notFound";
       }
     } else {
@@ -135,15 +138,13 @@ export default {
     >
       <div class="d-flex flex-column">
         <div class="d-flex flex-row align-center mb-2">
-          <v-btn icon @click="() => this.$router.go(-1)">
-            <v-icon large>mdi-arrow-left</v-icon>
-          </v-btn>
+          <GoBackButton />
           <h1 class="font-weight-bold ml-5">{{ routine.name }}</h1>
           <v-spacer></v-spacer>
           <div class="mr-10">
             <v-btn
               v-if="routineIsMine"
-              color="primary"
+              color="accent"
               class="rounded-pill ml-4"
               @click="deleteDialog = true"
             >
@@ -159,8 +160,9 @@ export default {
               <v-icon class="mr-1">mdi-pencil</v-icon>
               <span>Editar Rutina</span>
             </v-btn>
-            <v-btn color="secondary" class="rounded-pill ml-4" @click="share()">
+            <v-btn color="primary" class="rounded-pill ml-4" @click="share()">
               <v-icon class="">mdi-share-variant</v-icon>
+              <div style="display: none">Compartir rutina</div>
             </v-btn>
             <v-btn
               icon
@@ -170,6 +172,7 @@ export default {
               <v-icon color="primary" large
               >{{ routine.liked ? "mdi-heart" : "mdi-heart-outline" }}
               </v-icon>
+              <div style="display: none">Dar favorito a rutina</div>
             </v-btn>
           </div>
         </div>
@@ -199,6 +202,7 @@ export default {
                         :lazy-src="temp"
                         class="rounded-circle"
                       ></v-img>
+                      <div style="display: none">Foto de perfil de usuario</div>
                     </v-btn>
                   </span>
                   <span class="ml-5"
@@ -229,7 +233,7 @@ export default {
                 <v-chip
                   large
                   label
-                  class="d-flex flex-row align-center text--primary mt-8"
+                  class="d-flex flex-row align-center mt-8"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -239,20 +243,23 @@ export default {
                     readonly
                     :value="routine.rating"
                     dense
+                    color="orange"
+                    background-color="orange"
                     class="ml-3"
                   ></v-rating>
                 </v-chip>
               </template>
               <v-card class="pa-4">
-                <h4>Tu puntación para esta rutina:</h4>
+                <h4>Tu puntuación para esta rutina:</h4>
                 <div class="d-flex flex-row align-baseline">
                   <v-rating
                     v-model="yourRating"
-                    color="primary"
+                    color="orange"
                     dense
                     empty-icon="mdi-star-outline"
                     full-icon="mdi-star"
                     half-icon="mdi-star-half-full"
+                    background-color="orange"
                     hover
                     length="5"
                     size="24"

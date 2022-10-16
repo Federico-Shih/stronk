@@ -4,7 +4,8 @@
       <h1>Mis Rutinas</h1>
     </div>
     <div class="flex-grow-1">
-      <div class="mb-4"
+      <div
+        class="mb-4"
         :style="{
           background: $vuetify.theme.themes[theme].contback,
         }"
@@ -13,37 +14,43 @@
           <h2 class="ml-4">Creadas Por Mi</h2>
           <div class="d-flex flex-row flex-wrap pt-2 pb-4" style="gap: 2em">
             <div v-for="atr in myRoutineList" :key="atr.id">
-                <RoutineButton
-                    v-if="atr.id > 0"
-                  variant="small"
-                  :title="atr.name"
-                  :routineId="atr.id"
-                    :category="atr.category.id"
-                />
-                <RoutineButton
-                    v-else
-                    :new-blue-print="true"
-                    variant="small"
-                    :title="atr.name"
-                    :routineId="atr.id"
-                />
+              <RoutineButton
+                v-if="atr.id > 0"
+                variant="small"
+                :title="atr.name"
+                :routineId="atr.id"
+                :category="atr.category.id"
+              />
+              <RoutineButton
+                v-else
+                :new-blue-print="true"
+                variant="small"
+                :title="atr.name"
+                :routineId="atr.id"
+              />
             </div>
 
-            <router-link to="/routines/create">
-              <h2 v-if="myRoutineList.length === 0" class="text--black">
+            <router-link
+              to="/routines/create"
+              v-if="myRoutineList.length === 0"
+            >
+              <h2 class="text--black">
                 No tienes rutinas, empezá creando tu primera!
               </h2>
             </router-link>
           </div>
-          <v-icon v-if="ownShowArrow" @click="increaseCounterOwn" class="alignedToCenter"
-          >mdi-chevron-double-down
-          </v-icon>
+          <div class="alignedToCenter">
+            <v-btn v-if="ownShowArrow" plain @click="increaseCounterOwn">
+              <v-icon>mdi-chevron-double-down</v-icon>
+              <div>Mostrar mas</div>
+            </v-btn>
+          </div>
         </v-container>
       </div>
 
       <div
-          class="mb-4"
-          :style="{
+        class="mb-4"
+        :style="{
           background: $vuetify.theme.themes[theme].contback,
         }"
       >
@@ -52,14 +59,14 @@
           <div class="d-flex flex-row flex-wrap pt-2 pb-4" style="gap: 2em">
             <div v-for="atr in myFavoritesList" :key="atr.id">
               <router-link
-                  :to="`/routines/${atr.id}`"
-                  style="text-decoration: none; color: inherit"
+                :to="`/routines/${atr.id}`"
+                style="text-decoration: none; color: inherit"
               >
                 <RoutineButton
-                    variant="small"
-                    :title="atr.name"
-                    :routineId="atr.id"
-                    :category="atr.category.id"
+                  variant="small"
+                  :title="atr.name"
+                  :routineId="atr.id"
+                  :category="atr.category.id"
                 />
               </router-link>
             </div>
@@ -68,28 +75,40 @@
               No tienes rutinas favoritas al momento
             </h3>
           </div>
-          <v-icon v-if="favShowArrow" @click="increaseCounterFav" class="alignedToCenter"
-          >mdi-chevron-double-down
-          </v-icon>
+          <div class="alignedToCenter">
+            <v-btn v-if="favShowArrow" plain @click="increaseCounterFav">
+              <v-icon>mdi-chevron-double-down</v-icon>
+              <div>Mostrar mas</div>
+            </v-btn>
+          </div>
         </v-container>
       </div>
     </div>
+    <LoadingFetchDialog
+      :dialog-state="loadingDialogState"
+      loading-text="Por favor, espere..."
+      not-found-text="Error cargando tus rutinas, intente más tarde..."
+      ok-not-found-button-text="OK"
+      v-on:oknotfound="$router.back()"
+    />
   </div>
 </template>
 
 <script>
 import RoutineButton from "@/components/RoutineButton.vue";
 import { useFavoriteRoutines, useMyRoutines } from "../stores/routine";
-import {mapActions, mapState} from "pinia";
+import { mapActions, mapState } from "pinia";
+import LoadingFetchDialog from "../components/LoadingFetchDialog.vue";
 
 export default {
   name: "MisRutinas.vue",
-  components: { RoutineButton },
+  components: { RoutineButton, LoadingFetchDialog },
   data() {
     return {
       amountShownEachLine: 5,
       buttonAtributesFav: [],
       loading: true,
+      loadingDialogState: ""
     };
   },
   methods: {
@@ -108,7 +127,7 @@ export default {
     ...mapState(useMyRoutines, ["routines", "isLastPage"]),
     ...mapState(useFavoriteRoutines, ["favorites", "isLastFavorite"]),
     myRoutineList() {
-      return [{id: -1}, ...this.routines];
+      return [{ id: -1 }, ...this.routines];
     },
     myFavoritesList() {
       return this.favorites;
@@ -124,11 +143,19 @@ export default {
     }
   },
   async mounted() {
-    useMyRoutines().resetPages();
-    await useMyRoutines().getNextPage(this.amountShownEachLine);
-    useFavoriteRoutines().resetPages();
-    await useFavoriteRoutines().getNextPage(this.amountShownEachLine);
-    this.loading = false;
+    this.loadingDialogState = "loading";
+    this.loading = true;
+    try {
+      useMyRoutines().resetPages();
+      await useMyRoutines().getNextPage(this.amountShownEachLine);
+      useFavoriteRoutines().resetPages();
+      await useFavoriteRoutines().getNextPage(this.amountShownEachLine);
+      this.loading = false;
+      this.loadingDialogState = "";
+    } catch (err) {
+      this.loading = false;
+      this.loadingDialogState = "notFound";
+    }
   }
 };
 /* podemos hacer una método computed el cual haga un splice desde

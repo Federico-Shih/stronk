@@ -11,6 +11,7 @@
           :title="routine.name"
           :routineId="routine.id"
           :category="routine.category.id"
+          :author="routine.user"
         />
       </v-slide-item>
       <div class="align-to-center my-16 mx-6" v-if="routines.length === 0">
@@ -42,9 +43,12 @@ export default {
     sizeVariant: String,
     noRoutinesMessage: {
       type: String,
-      default: "No hay rutinas para mostrar",
-    },
+      default: "No hay rutinas para mostrar"
+    }
   },
+  mounted() {
+    console.log(this.routines);
+  }
 };
 </script>
 

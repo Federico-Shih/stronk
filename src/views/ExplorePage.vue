@@ -13,46 +13,59 @@
           @click:clear="debouncedInput = ''"
         >
         </v-text-field>
-        <v-card class="d-flex flex-row justify-start px-2" outlined style="max-height: 56px">
+        <v-card
+          class="d-flex flex-row justify-start px-2"
+          outlined
+          style="max-height: 56px"
+        >
           <v-icon>mdi-filter</v-icon>
-          <h4 class="mt-4 mx-3">Filtros:</h4>
+          <div class="mt-4 mx-3">Filtros:</div>
           <v-chip-group
-              v-model="filterSelected"
-              active-class="primary--text"
-              multiple
+            v-model="filterSelected"
+            active-class="primary--text"
+            multiple
           >
             <v-chip
-                v-for="index in filterChoices.length"
-                :key="index"
-                class="pa-5"
-                @click="cleanModel(index - 1)"
+              v-for="index in filterChoices.length"
+              :key="index"
+              class="pa-5"
+              @click="cleanModel(index - 1)"
             >{{ filterChoices[index - 1] }}
             </v-chip>
           </v-chip-group>
         </v-card>
-
       </div>
       <div class="d-flex flex-row mb-6" style="gap: 1em">
-        <v-card v-for="(selected, index) in filterSelected" :key="index" outlined>
-          <h5 class="ml-4 mt-2">{{filterChoices[selected]}}</h5>
-          <div class="d-flex flex-row justify-center" v-if="selected !== undefined">
+        <v-card
+          v-for="(selected, index) in filterSelected"
+          :key="index"
+          outlined
+        >
+          <h5 class="ml-4 mt-2">{{ filterChoices[selected] }}</h5>
+          <div
+            class="d-flex flex-row justify-center"
+            v-if="selected !== undefined"
+          >
             <v-chip-group
-                v-model="filtersModels[selected]"
-                column
-                color="primary"
-                active-class="primary--text"
+              v-model="filtersModels[selected]"
+              column
+              color="primary"
+              active-class="primary--text"
             >
               <v-chip
-                  v-for="index in filters[selected].valueNames.length"
-                  :key="index"
-                  class="pa-5 mx-5"
+                v-for="index in filters[selected].valueNames.length"
+                :key="index"
+                class="pa-5 mx-5"
               >{{ filters[selected].valueNames[index - 1] }}
               </v-chip>
             </v-chip-group>
           </div>
         </v-card>
       </div>
-      <div v-if="debouncedInput.length >= 3 || isFiltering" class="d-flex flex-row">
+      <div
+        v-if="debouncedInput.length >= 3 || isFiltering"
+        class="d-flex flex-row"
+      >
         <v-select
           label="Ordenar Por"
           v-model="order"
@@ -62,7 +75,12 @@
           item-text="name"
           item-value="valueCall"
         ></v-select>
-        <v-card class="d-flex flex-row justify-center align-center ml-2 px-2" style="max-height: 40px" outlined v-if="order !== ''">
+        <v-card
+          class="d-flex flex-row justify-center align-center ml-2 px-2"
+          style="max-height: 40px"
+          outlined
+          v-if="order !== ''"
+        >
           <h4 class="">Ascendente o Descendente:</h4>
           <v-chip-group
             v-model="ascOrDes"
@@ -71,10 +89,10 @@
             mandatory
           >
             <v-chip class="pa-2 mx-2">
-              <v-icon >mdi-sort-alphabetical-ascending</v-icon>
+              <v-icon>mdi-sort-alphabetical-ascending</v-icon>
             </v-chip>
             <v-chip class="pa-2 mx-2">
-              <v-icon >mdi-sort-alphabetical-descending</v-icon>
+              <v-icon>mdi-sort-alphabetical-descending</v-icon>
             </v-chip>
           </v-chip-group>
         </v-card>
@@ -103,6 +121,9 @@
         />
       </div>
     </div>
+    <v-snackbar v-model="connectError" :timeout="3000" color="red">
+      Hubo un error en el servicio de búsqueda, lo estamos resolviendo!
+    </v-snackbar>
   </div>
 </template>
 
@@ -159,31 +180,37 @@ export default {
       else this.filteredList();
     },
     async filteredList(searchValue) {
-      let object = {};
+      const search = {};
       if (searchValue !== null && searchValue !== undefined)
-        object["search"] = searchValue;
-      if (this.order !== "") object["orderBy"] = this.order;
-      object["direction"] = this.ascOrDesVec[this.ascOrDes];
+        search["search"] = searchValue;
+      if (this.order !== "") search["orderBy"] = this.order;
+      search["direction"] = this.ascOrDesVec[this.ascOrDes];
       for (let i = 0; i < this.filterSelected.length; i++) {
         const paramValue =
           this.filters[this.filterSelected[i]].valueCall[
             this.filtersModels[this.filterSelected[i]]
-          ];
+            ];
         if (paramValue !== undefined)
-          object[this.filters[this.filterSelected[i]].nameOfParam] = paramValue;
+          search[this.filters[this.filterSelected[i]].nameOfParam] = paramValue;
       }
-      this.searchingList = await this.getAnotherPage(object);
+      const page = await this.getAnotherPage(search);
+      if (!page) this.connectError = true;
+      this.searchingList = page || [];
       this.resetPages();
     },
   },
   async mounted() {
-    this.popularRoutines = await this.getAnotherPage({ score: 5 });
+    const popular = await this.getAnotherPage({ score: 5 });
+    if (popular) {
+      this.popularRoutines = popular;
+    }
     this.resetPages();
     this.popularRoutines = this.popularRoutines.concat(
-      await this.getAnotherPage({ score: 4 })
+      (await this.getAnotherPage({ score: 4 })) || []
     );
     this.resetPages();
-    this.otherRoutines = await this.getAnotherPage({ difficulty: "beginner" });
+    this.otherRoutines =
+      (await this.getAnotherPage({ difficulty: "beginner" })) || [];
     this.resetPages();
   },
   data() {
@@ -227,13 +254,14 @@ export default {
             "Espalda",
             "Piernas",
             "Abdominales",
-            "Brazos",
+            "Brazos"
           ],
           valueCall: [1, 2, 3, 4, 5, 6],
-          nameOfParam: "categoryId",
+          nameOfParam: "categoryId"
         },
       ],
       routines: [],
+      connectError: false
     };
   },
 };
