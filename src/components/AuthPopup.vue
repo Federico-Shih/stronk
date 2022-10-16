@@ -48,6 +48,8 @@ export default {
     },
   },
   data: () => ({
+    loading: false,
+    errorMessage: "",
     MAX_USERLENGTH: 20,
     usernameNotFound: false,
     usernameAlreadyTaken: false,
@@ -89,7 +91,8 @@ export default {
     isVerification: false,
     verificationCode: "",
     verificationMessage: "¡Ingrese el Código Enviado a su Email!",
-    rememberPassword: false
+    rememberPassword: false,
+    loginNotVerified: false
   }),
   methods: {
     ...mapActions(useProfileStore, [
@@ -102,8 +105,10 @@ export default {
     ...mapActions(usePopupStore, ["hidePopup"]),
     async onSubmit() {
       this.$refs.form.validate();
+      this.errorMessage = "";
       if (this.valid) {
         if (this.isRegister) {
+          this.loading = true;
           const res = await this.createNewProfile(
             this.username,
             this.password,
@@ -111,8 +116,12 @@ export default {
             this.firstName,
             this.lastName
           );
-          console.log(res);
+          this.loading = false;
           // 'UNIQUE constraint failed: User.email' 'UNIQUE constraint failed: User.username'
+          if (!res) {
+            this.errorMessage = "Error de API";
+            return;
+          }
           if (res.code === 2) {
             if (res.details[0] === "UNIQUE constraint failed: User.username") {
               this.usernameAlreadyTaken = true;
@@ -126,14 +135,27 @@ export default {
           this.isRegister = false;
           this.isVerification = true;
         } else {
-          await this.login(this.username, this.password, this.rememberPassword);
+          this.loading = true;
+          const res = await this.login(
+            this.username,
+            this.password,
+            this.rememberPassword
+          );
+
           if (this.getToken !== "") {
             await this.loadCurrentNames();
             this.setStartingConditionsAndClose();
+          } else if (!res) {
+            this.errorMessage = "Error de API";
           } else {
-            this.usernameNotFound = true;
-            return;
+            if (res.code === 4) {
+              this.usernameNotFound = true;
+            } else if (res.code === 8) {
+              this.isVerification = true;
+              this.loginNotVerified = true;
+            }
           }
+          this.loading = false;
         }
         if (this.onAuthRoute !== this.$route.path) {
           await this.$router.push(this.onAuthRoute);
@@ -141,6 +163,8 @@ export default {
       }
     },
     async verify() {
+      this.loading = true;
+
       await this.verify_email(this.email, this.verificationCode);
       const valid = this.getCorrectVerification;
       if (valid) {
@@ -154,6 +178,7 @@ export default {
       } else {
         this.verificationMessage = "Lo sentimos, ese código es incorrecto...";
       }
+      this.loading = false;
     },
     resendVerification() {
       this.resend_verification(this.email);
@@ -166,6 +191,7 @@ export default {
       this.isVerification = false;
       this.hidePopup();
       if (this.$route.path === "/auth") {
+        console.log("hola");
         this.$router.go(-1);
       }
     },
@@ -191,28 +217,20 @@ export default {
           <v-col :key="1" v-else-if="isRegister" class="text-lg-center"
             >Registrarse</v-col
           >
-          <v-col :key="2" v-else class="text-lg-center"
-            >Iniciar Sesión</v-col
-          >
+          <v-col :key="2" v-else class="text-lg-center">Iniciar Sesión</v-col>
         </v-fade-transition>
       </v-row>
       <v-expand-transition>
         <v-form @submit.prevent="onSubmit" ref="form" class="" v-model="valid">
-          <v-expand-transition>
-            <v-text-field
-              v-model="username"
-              label="Nombre de Usuario"
-              :counter="MAX_USERLENGTH"
-              :rules="[
-                ...usernameRules,
-                usernameTakenRule,
-                usernameNotFoundRule,
-              ]"
-              v-if="isRegister || !isVerification"
-              :key="1"
-              required
-            ></v-text-field>
-          </v-expand-transition>
+          <v-text-field
+            v-model="username"
+            label="Nombre de Usuario"
+            :counter="MAX_USERLENGTH"
+            :rules="[...usernameRules, usernameTakenRule, usernameNotFoundRule]"
+            v-if="isRegister || !isVerification"
+            :key="1"
+            required
+          ></v-text-field>
           <v-text-field
             v-model="firstName"
             label="Primer Nombre"
@@ -235,7 +253,7 @@ export default {
             v-model="email"
             :rules="[...emailRules, emailTakenRule]"
             label="Correo Electrónico"
-            v-if="isRegister"
+            v-if="isRegister || loginNotVerified"
             required
             :key="2"
           ></v-text-field>
@@ -258,29 +276,35 @@ export default {
             :key="25"
             v-model="verificationCode"
           ></v-text-field>
-          <v-expand-transition>
-            <v-text-field
-              v-if="isRegister && !isVerification"
-              label="Confirmar Contraseña"
-              required
-              v-model="confirmPassword"
-              :append-icon="hideConfirm ? 'mdi-eye-off' : 'mdi-eye'"
-              :type="hideConfirm ? 'password' : 'text'"
-              @click:append="hideConfirm = !hideConfirm"
-              :key="4"
-              :rules="[passwordConfirmRule]"
-            >
-            </v-text-field>
-            <v-checkbox
-              v-if="!isRegister && !isVerification"
-              label="Recordar contraseña"
-              v-model="rememberPassword"
-            />
-          </v-expand-transition>
+          <v-text-field
+            v-if="isRegister && !isVerification"
+            label="Confirmar Contraseña"
+            required
+            v-model="confirmPassword"
+            :append-icon="hideConfirm ? 'mdi-eye-off' : 'mdi-eye'"
+            :type="hideConfirm ? 'password' : 'text'"
+            @click:append="hideConfirm = !hideConfirm"
+            :key="4"
+            :rules="[passwordConfirmRule]"
+          >
+          </v-text-field>
+          <v-checkbox
+            v-if="!isRegister && !isVerification"
+            label="Recordar contraseña"
+            v-model="rememberPassword"
+          />
+          <div style="color: red" class="text-center font-weight-bold">
+            {{ errorMessage }}
+          </div>
           <v-container class="width_full d-flex flex-column align-center">
-            <v-btn v-if="!isVerification" type="submit" color="primary">{{
-              isRegister ? "Registrarse" : "Iniciar Sesión"
-            }}</v-btn>
+            <v-btn
+              :loading="loading"
+              v-if="!isVerification"
+              type="submit"
+              color="primary"
+            >{{ isRegister ? "Registrarse" : "Iniciar Sesión" }}
+            </v-btn
+            >
             <v-btn v-if="isVerification" @click="verify()" color="primary">
               Verifique su correo electrónico
             </v-btn>

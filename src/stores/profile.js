@@ -84,14 +84,8 @@ export const useProfileStore = defineStore({
     },
     async resend_verification(email) {
       try {
-        await fetch("http://localhost:8080/api/users/resend_verification", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-          }),
+        await baseAxios("/users/resend_verification", {
+          email
         });
       } catch (error) {
         console.log(error);
@@ -151,12 +145,15 @@ export const useProfileStore = defineStore({
       }
     },
     async getRoutinesFrom(id) {
-      let routines=[];
-      let currPage=0;
+      let routines = [];
+      let currPage = 0;
       let isLastPage = false;
       try {
-        while(!isLastPage) {
-          const {data} = await authAxios.get(`/users/${id}/routines?` + new URLSearchParams({ page: currPage, size: 10}));
+        while (!isLastPage) {
+          const { data } = await authAxios.get(
+            `/users/${id}/routines?` +
+            new URLSearchParams({ page: currPage, size: 10 })
+          );
           console.log(data);
           isLastPage = data.isLastPage;
           currPage++;
