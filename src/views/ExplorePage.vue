@@ -4,7 +4,7 @@
       <h1 class="mb-1">Explorar Nuevas Rutinas</h1>
       <div class="d-flex flex-row">
         <v-text-field
-          label="Busca una rutina o creador en particular..."
+          label="Busca una rutina en particular..."
           outlined
           clearable
           v-model="input"
