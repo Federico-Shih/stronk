@@ -27,7 +27,7 @@
             class="mt-4"
             label="Nombre del ciclo"
             v-model="cycleName"
-            :rules="[rules.required]"
+            :rules="[rules.required, rules.maxLength(100)]"
           />
           <h3 v-else class="mt-4">{{ cycleName }}</h3>
           <v-btn
@@ -210,7 +210,10 @@ export default {
       },
       lessThan(n) {
         return (value) => value < n || `Menor a ${n}`;
-      }
+      },
+      maxLength(n) {
+        return (value) => value.length <= n || `Maximo ${n} caracteres`;
+      },
     }
   }),
   methods: {
