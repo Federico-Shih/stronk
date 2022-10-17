@@ -1,12 +1,7 @@
 <template>
   <v-overlay :value="this.show">
     <v-card class="pa-8 card-anim" min-width="500px">
-      <v-btn
-        style="position: absolute; right: 0; top: 0; z-index: 1000"
-        class="ma-5"
-        icon
-        @click="hide()"
-      >
+      <v-btn class="ma-5 absolute-topright" icon @click="hide()">
         <v-icon>mdi-close</v-icon>
       </v-btn>
       <v-form v-model="valid">
@@ -114,4 +109,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.absolute-topright {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+</style>

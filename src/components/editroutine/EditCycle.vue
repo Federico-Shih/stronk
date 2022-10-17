@@ -2,9 +2,8 @@
   <v-form v-model="valid">
     <v-card outlined class="d-flex flex-row">
       <div
-        style="border: 6px solid; width: 136px"
         :style="{ borderColor: this.$vuetify.theme.themes.light.primary }"
-        class="pa-3 ml-6 my-5 d-flex flex-column justify-end rounded-xl"
+        class="pa-3 ml-6 my-5 d-flex flex-column justify-end rounded-xl custom-border"
       >
         <div style="width: 100px">
           <v-text-field
@@ -92,6 +91,7 @@
             <div class="d-flex flex-row justify-center">
               <v-btn icon @click="addExercise(index + 1)" color="primary">
                 <v-icon>mdi-plus-circle</v-icon>
+                <div class="noneDisplay">Agregar ejercicio</div>
               </v-btn>
             </div>
             <v-divider
@@ -321,3 +321,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.custom-border {
+  border: 6px solid;
+  width: 136px;
+}
+</style>

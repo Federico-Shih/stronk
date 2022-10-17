@@ -58,7 +58,7 @@
               />
               <div style="display: none">Foto y link de usuario</div>
             </v-btn>
-            <div class="mt-1 text-sm-h6">hecho por {{ creatorname }}</div>
+            <div class="mt-1">hecho por {{ creatorname }}</div>
           </div>
           <div
             class="d-flex flex-row offset-1 align-center justify-space-between"

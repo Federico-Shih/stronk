@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-row">
-    <div class="d-flex flex-column" style="width: 100%">
+    <div class="d-flex flex-column">
       <h3 class="font-weight-medium text-decoration-none mb-2">
         {{ this.$props.name }}
       </h3>
@@ -13,7 +13,7 @@
               height="7em"
               :src="img_url"
             ></v-img>
-            <div style="width: 120px">
+            <div class="tamano-input">
               <v-text-field
                 v-if="type === 'Repeticiones' || type === 'Ambos'"
                 class="mr-2"
@@ -29,7 +29,7 @@
                 ]"
               />
             </div>
-            <div style="width: 120px">
+            <div class="tamano-input">
               <v-text-field
                 v-if="type === 'Tiempo' || type === 'Ambos'"
                 class="mr-4"
@@ -50,6 +50,7 @@
         <div class="d-flex flex-row justify-end align-center">
           <v-btn icon @click="deleteDialog = true" color="primary">
             <v-icon>mdi-delete</v-icon>
+            <div class="noneDisplay">Borrar ciclo</div>
           </v-btn>
           <div class="d-flex flex-column">
             <v-btn
@@ -59,9 +60,11 @@
               color="primary"
             >
               <v-icon>mdi-arrow-up-bold</v-icon>
+              <div class="noneDisplay">Mover ejercicio arriba</div>
             </v-btn>
             <v-btn icon :disabled="last" @click="moveDown()" color="primary">
               <v-icon>mdi-arrow-down-bold</v-icon>
+              <div class="noneDisplay">Mover ejercicio abajo</div>
             </v-btn>
           </div>
         </div>
@@ -153,6 +156,12 @@ export default {
     this.bus.$on("validate", () => {
       if (this.valid) this.bus.$emit("validatedEx", this.cycleOrder);
     });
-  },
+  }
 };
 </script>
+
+<style>
+.tamano-input {
+  width: 120px;
+}
+</style>

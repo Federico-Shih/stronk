@@ -1,16 +1,11 @@
 <template>
   <div>
     <div class="d-flex flex-row justify-center">
-      <div style="position: absolute; left: 0; top: 0" class="ml-8">
+      <div class="ml-8 absolute-topleft">
         <GoBackButton :on-click-function="showExitDialog"></GoBackButton>
       </div>
-      <v-card
-        outlined
-        width="60%"
-        class="mx-16 pa-8 d-flex flex-column"
-        style="gap: 20px"
-      >
-        <v-form class="d-flex flex-column" style="gap: 20px" v-model="valid">
+      <v-card outlined width="60%" class="mx-16 pa-8 d-flex flex-column gap-20">
+        <v-form class="d-flex flex-column gap-20" v-model="valid">
           <div class="d-flex flex-row justify-start align-center mb-8">
             <v-img
               :lazy-src="temp"
@@ -79,17 +74,21 @@
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-date-picker
-                v-model="date"
-                :active-picker.sync="activePicker"
-                :max="
-                  new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                    .toISOString()
-                    .substr(0, 10)
-                "
-                min="1900-01-01"
-                @change="save"
-              ></v-date-picker>
+              <v-list-item>
+                <v-date-picker
+                  v-model="date"
+                  :active-picker.sync="activePicker"
+                  :max="
+                    new Date(
+                      Date.now() - new Date().getTimezoneOffset() * 60000
+                    )
+                      .toISOString()
+                      .substr(0, 10)
+                  "
+                  min="1900-01-01"
+                  @change="save"
+                ></v-date-picker>
+              </v-list-item>
             </v-menu>
             <v-text-field
               outlined
@@ -166,7 +165,7 @@ import { useProfileStore } from "../stores/profile";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog.vue";
 
 const httpRegex =
-  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 
 export default {
   components: {
@@ -254,3 +253,15 @@ export default {
   },
 };
 </script>
+
+<style>
+.absolute-topleft {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+</style>
