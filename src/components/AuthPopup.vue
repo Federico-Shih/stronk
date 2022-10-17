@@ -339,7 +339,7 @@ export default {
             <div v-else-if="!isVerification" class="mt-2">
               ¿No tiene una cuenta?
               <a @click="isRegister = true" class="secondary--text"
-              >Registrese</a
+              >Regístrese</a
               >
             </div>
             <div v-else class="mt-4 mb-2">

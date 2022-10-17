@@ -42,7 +42,7 @@
           <div class="alignedToCenter">
             <v-btn v-if="ownShowArrow" plain @click="increaseCounterOwn">
               <v-icon>mdi-chevron-double-down</v-icon>
-              <div>Mostrar mas</div>
+              <div>Mostrar más</div>
             </v-btn>
           </div>
         </v-container>
@@ -78,7 +78,7 @@
           <div class="alignedToCenter">
             <v-btn v-if="favShowArrow" plain @click="increaseCounterFav">
               <v-icon>mdi-chevron-double-down</v-icon>
-              <div>Mostrar mas</div>
+              <div>Mostrar más</div>
             </v-btn>
           </div>
         </v-container>
@@ -156,7 +156,7 @@ export default {
       this.loading = false;
       this.loadingDialogState = "notFound";
     }
-  }
+  },
 };
 /* podemos hacer una método computed el cual haga un splice desde
  * donde queramos de un array hasta counter*3 por ejemplo, el v-for haría

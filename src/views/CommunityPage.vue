@@ -27,12 +27,16 @@
               :profileId="person.id"
             />
           </div>
-          <v-icon
-            x-large
-            v-if="showArrow && searcher === ''"
-            @click="loadMoreUsers"
-          >mdi-chevron-double-down
-          </v-icon>
+          <div>
+            <v-btn
+              v-if="showArrow && searcher === ''"
+              plain
+              @click="loadMoreUsers"
+            >
+              <v-icon>mdi-chevron-double-down</v-icon>
+              <div>Mostrar más</div>
+            </v-btn>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -60,7 +64,7 @@ export default {
   data() {
     return {
       searcher: "",
-      pageSize: 10,
+      pageSize: 5,
       id: null,
       hasProf: false,
       showArrow: true,
