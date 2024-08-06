@@ -1,6 +1,8 @@
 # stronk
+Get stronk with us!
 
-This template should help get you started developing with Vue 3 in Vite.
+Stronk is a modern web app using Vue 3, Volar and Vite implementing an ExpressJS backend for a Human Computer Interface course. Its a classic exercise routine creator supporting routine, cycle and exercise creation, modal based authentication for easy login and register, Pinia stores for service/view architecture and Vuetify as a component library.
+
 
 ## Recommended IDE Setup
 
